@@ -14,9 +14,9 @@ These are **not** build exercises. A tutorial, a colleague, or a dashboard *look
 **Career levels** match [CAREER-LEVELS.md](CAREER-LEVELS.md). Time = thinking time, not typing.
 
 <details>
-<summary>📎 Syntax traps — <code>'</code> vs <code>"</code> (cheat sheet, not a separate challenge)</summary>
+<summary>📎 Syntax &amp; text traps — quotes, case, accents (cheat sheet, not a separate challenge)</summary>
 
-SQL (DuckDB / PostgreSQL / DataCamp-style courses):
+### Quotes: `'` vs `"`
 
 | You write | Engine reads it as |
 |-----------|-------------------|
@@ -26,9 +26,31 @@ SQL (DuckDB / PostgreSQL / DataCamp-style courses):
 | `'O''Reilly'` | one string: `O'Reilly` (double `''` = escaped quote) |
 | `''` | empty string (zero characters) |
 
-**Rule of thumb:** filters on text → **single quotes** `'...'`. Double quotes are for names you spelled weirdly, e.g. `"User ID"`.
+**Rule:** filter values → **single quotes** `'...'`. Woven into **Spot Check 9**.
 
-This shows up again in **Spot Check 9** (optional extra question).
+### Letters & languages: `A` ≠ `Á`
+
+Same letter to a human, **different character** to the database (unless collation says otherwise).
+
+| You filter | In the data | Match? (typical default) |
+|------------|-------------|--------------------------|
+| `country = 'Mexico'` | `México` | ❌ often no |
+| `name LIKE 'A%'` | `Álvaro` | ❌ often no |
+| `NOT LIKE '%A.%'` | `A.J.` | excluded ✅ |
+| `NOT LIKE '%A.%'` | `Á.J.` (A + acute) | **kept** — pattern is ASCII `A`, not `Á` |
+| `NOT ILIKE '%a.%'` | `Á.J.` | **still kept** — `ILIKE` fixes **case**, not **accents** |
+
+**DE angle:** CSVs from EU/LATAM, user names, city names — clean **once in staging** (normalize Unicode, fold accents if product agrees), don't assume `=` catches "the same word."
+
+**Fixes (production):**
+
+- ETL: `normalize()` to NFC; optional `unaccent()` / accent-stripping with documented rules
+- Explicit lookup table (`México` → `Mexico`) when business needs one canonical label
+- `COLLATE` / locale-aware comparison — only when you know your warehouse defaults
+
+**Unicode gotcha:** `é` can be **one codepoint** (`U+00E9`) or **`e` + combining accent** (`U+0065 U+0301`) — strings look identical on screen, `=` may still fail. Normalize before load.
+
+Woven into **Spot Check 10** (optional extra question).
 
 </details>
 
@@ -364,7 +386,7 @@ Text values need **single quotes** — `Germany` without quotes is a column name
 
 ---
 
-## Spot Check 10 — NOT LIKE Case Trap ⏱️ ~5 min · 🟩 Junior
+## Spot Check 10 — NOT LIKE: Case & Accent Trap ⏱️ ~5 min · 🟩 Junior
 
 **Source**: "Exclude names with an **A-dot** initial pattern" (DataCamp-style).
 
@@ -374,13 +396,17 @@ FROM people
 WHERE first_name NOT LIKE '%A.%';
 ```
 
-Dataset: `A.J.`, `aj.`, `Maria`. Analyst expects only `Maria`. Result still includes **`aj.`**.
+Dataset: `A.J.`, `aj.`, `Á.J.`, `Maria`.
+
+- Analyst expects only `Maria`.
+- Result still includes **`aj.`** and **`Á.J.`**.
 
 **Your task**
 
 1. Why does `aj.` pass the filter?
-2. Name two ways to make the match case-insensitive.
+2. Name two ways to make the match **case**-insensitive.
 3. Does `NOT LIKE` return rows where `first_name IS NULL`?
+4. **Text trap (30 sec):** `Á.J.` looks like an A-initial to a human — why does SQL still **keep** it?
 
 <details>
 <summary>✅ Check your answer</summary>
@@ -392,6 +418,8 @@ Dataset: `A.J.`, `aj.`, `Maria`. Analyst expects only `Maria`. Result still incl
    - `LOWER(first_name) NOT LIKE '%a.%'`
 
 3. **NULL**: `NULL NOT LIKE '%A.%'` → UNKNOWN → row is **excluded** from results (not treated as "match" or "non-match"). Use `IS NULL` explicitly if NULLs matter.
+
+4. **`Á` ≠ `A`**: accent is a **different Unicode character**. `'%A.%'` does not match `Á.J.` → `NOT LIKE` does not exclude it. `ILIKE` alone won't help — it ignores case, not accents. For real pipelines: normalize names in staging or use locale/`unaccent` with explicit product rules.
 
 </details>
 
@@ -453,7 +481,7 @@ WHERE user_id NOT IN (
 | 7 | Window grain | 🟨 | ⬜ |
 | 8 | Partition / types | 🟨 | ⬜ |
 | 9 | IN syntax / OR / `'...'` vs `"..."` | 🟩 | ⬜ |
-| 10 | NOT LIKE case / NULL | 🟩 | ⬜ |
+| 10 | NOT LIKE — case + accents (`A` ≠ `Á`) | 🟩 | ⬜ |
 | 11 | NOT IN + NULL | 🟨 | ⬜ |
 
 Mark ✅ in your fork when you can explain each trap **without** peeking.

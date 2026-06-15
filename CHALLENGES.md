@@ -695,7 +695,7 @@ Structure:
 
 > **Different muscle.** These don't ask you to *build* — they ask you to spot what **doesn't pass a correctness check**: wrong counts, silent data loss, tutorial typos, precedence traps. Try **before** opening answers.
 >
-> **Quote traps** (`'` vs `"`): optional cheat sheet at the top of [SPOT-CHECK.md](SPOT-CHECK.md) — plus 30-sec extras in **#9** (SQL) and **#6** (YAML). No new challenge count.
+> **Quote traps** (`'` vs `"`): optional cheat sheet at the top of [SPOT-CHECK.md](SPOT-CHECK.md) — plus 30-sec extras in **#9** (SQL) and **#10** (case + accents `A`/`Á`). No new challenge count.
 
 Full set (11 exercises, ~5–10 min each): **[SPOT-CHECK.md](SPOT-CHECK.md)**
 
@@ -710,7 +710,7 @@ Full set (11 exercises, ~5–10 min each): **[SPOT-CHECK.md](SPOT-CHECK.md)**
 | 7 | Window sum at wrong grain | 🟨 | Challenge 1.3 |
 | 8 | String dates vs partition pruning | 🟨 | Challenges 4.1–4.2 |
 | 9 | `IN` — parens, `'...'` not `"..."` | 🟩 | DataCamp text filters |
-| 10 | `NOT LIKE` case-sensitive | 🟩 | DataCamp LIKE |
+| 10 | `NOT LIKE` — case + accents (`A` ≠ `Á`) | 🟩 | DataCamp LIKE |
 | 11 | `NOT IN` + NULL subquery | 🟨 | Interview classic |
 
 **When to use**: after Level 1, or spread one per day during the interview sprint. Passing = you can explain the bug **without** peeking.
