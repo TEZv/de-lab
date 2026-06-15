@@ -13,50 +13,91 @@ These are **not** build exercises. A tutorial, a colleague, or a dashboard *look
 
 **Career levels** match [CAREER-LEVELS.md](CAREER-LEVELS.md). Time = thinking time, not typing.
 
+**Quest order:** start with **#1–#2** when DataCamp text filters bite — same rules as every Spot Check: guess first, then peek.
+
+---
+
+## Spot Check 1 — The Quote Quest ⏱️ ~5 min · 🟦 Intern
+
+**Source**: Three analysts, one filter — three ways to write "France".
+
+```sql
+-- Analyst 1
+SELECT title FROM films WHERE country = France;
+
+-- Analyst 2 ("added quotes")
+SELECT title FROM films WHERE country = "France";
+
+-- Analyst 3
+SELECT title FROM films WHERE country = 'France';
+```
+
+Bonus row: filter for author **O'Reilly** in `books.author`.
+
+**Your task**
+
+1. Which analyst is right for filtering **text**? What happens with the other two?
+2. In one sentence: what does SQL think `"France"` means vs `'France'`?
+3. How do you write the string `O'Reilly` inside single quotes?
+4. What is `''` (two single quotes with nothing between)?
+
 <details>
-<summary>📎 Syntax &amp; text traps — quotes, case, accents (cheat sheet, not a separate challenge)</summary>
+<summary>✅ Check your answer</summary>
 
-### Quotes: `'` vs `"`
+1. **Analyst 3 only.** Analyst 1: `France` is a **column name** — error or wrong column compare. Analyst 2: `"France"` is a **quoted identifier** (table/column name), not a text value.
+2. `'France'` = string literal. `"France"` = "thing named France" in the schema — not the country string.
+3. `WHERE author = 'O''Reilly'` — double the inner `'` → `''`.
+4. **Empty string** (zero characters). Not NULL.
 
-| You write | Engine reads it as |
-|-----------|-------------------|
-| `'France'` | **string** (text value) ✅ |
-| `"France"` | **identifier** (column/table name called `France`) ❌ for filters |
-| `Germany` (no quotes) | column name — not the word Germany |
-| `'O''Reilly'` | one string: `O'Reilly` (double `''` = escaped quote) |
-| `''` | empty string (zero characters) |
-
-**Rule:** filter values → **single quotes** `'...'`. Woven into **Spot Check 9**.
-
-### Letters & languages: `A` ≠ `Á`
-
-Same letter to a human, **different character** to the database (unless collation says otherwise).
-
-| You filter | In the data | Match? (typical default) |
-|------------|-------------|--------------------------|
-| `country = 'Mexico'` | `México` | ❌ often no |
-| `name LIKE 'A%'` | `Álvaro` | ❌ often no |
-| `NOT LIKE '%A.%'` | `A.J.` | excluded ✅ |
-| `NOT LIKE '%A.%'` | `Á.J.` (A + acute) | **kept** — pattern is ASCII `A`, not `Á` |
-| `NOT ILIKE '%a.%'` | `Á.J.` | **still kept** — `ILIKE` fixes **case**, not **accents** |
-
-**DE angle:** CSVs from EU/LATAM, user names, city names — clean **once in staging** (normalize Unicode, fold accents if product agrees), don't assume `=` catches "the same word."
-
-**Fixes (production):**
-
-- ETL: `normalize()` to NFC; optional `unaccent()` / accent-stripping with documented rules
-- Explicit lookup table (`México` → `Mexico`) when business needs one canonical label
-- `COLLATE` / locale-aware comparison — only when you know your warehouse defaults
-
-**Unicode gotcha:** `é` can be **one codepoint** (`U+00E9`) or **`e` + combining accent** (`U+0065 U+0301`) — strings look identical on screen, `=` may still fail. Normalize before load.
-
-Woven into **Spot Check 10** (optional extra question).
+**Remember by doing:** text in filters → **single quotes** `'...'`. You'll reuse this in **#11 (IN)**.
 
 </details>
 
 ---
 
-## Spot Check 1 — Wildcard Trap ⏱️ ~5 min · 🟩 Junior
+## Spot Check 2 — Same Letter, Different Character ⏱️ ~5 min · 🟩 Junior
+
+**Source**: Pipeline Quest loaded EU user CSVs into `users`. PM runs:
+
+```sql
+SELECT COUNT(*) FROM users WHERE country = 'Mexico';
+-- 0 rows
+
+SELECT COUNT(*) FROM users WHERE country = 'México';
+-- 847 rows
+```
+
+Same week, HR filter:
+
+```sql
+SELECT first_name FROM people
+WHERE first_name NOT LIKE '%A.%';
+```
+
+Dataset includes `A.J.`, `Á.J.`, `Maria`. Result still has **`Á.J.`** (but not `A.J.`).
+
+**Your task**
+
+1. Why is the PM's `Mexico` count zero?
+2. `Á.J.` looks like an "A initial" to a human — why does SQL **keep** it?
+3. Will `NOT ILIKE '%a.%'` drop `Á.J.`? Why or why not?
+4. **DE move:** one staging-layer fix so dashboards don't split `Mexico` / `México`.
+
+<details>
+<summary>✅ Check your answer</summary>
+
+1. **`é` ≠ `e`** — different Unicode code points. `=` is not "same word to a human"; it's exact byte/character match (unless collation says otherwise).
+2. Pattern uses ASCII **`A`**, not **`Á`**. `NOT LIKE '%A.%'` only excludes rows matching that exact pattern — `Á.J.` doesn't match.
+3. **No.** `ILIKE` ignores **case** (`a`/`A`), not **accents** (`A`/`Á`).
+4. Staging: Unicode **NFC** normalize; optional accent fold / lookup table (`México` → `Mexico`) with **documented** product rules — never assume analysts will guess the encoding in the CSV.
+
+**Unicode bonus:** `é` can be one character or `e` + combining accent — looks identical, `=` may still fail. Normalize **once** on ingest.
+
+</details>
+
+---
+
+## Spot Check 3 — Wildcard Trap ⏱️ ~5 min · 🟩 Junior
 
 **Source**: A SQL course slide says `LIKE 'Adel%'` matches **Adel**, **Adelaide**, and **Aden**.
 
@@ -83,7 +124,7 @@ WHERE name LIKE 'Adel%';
 
 ---
 
-## Spot Check 2 — AND Eats OR ⏱️ ~5 min · 🟩 Junior
+## Spot Check 4 — AND Eats OR ⏱️ ~5 min · 🟩 Junior
 
 **Source**: Analyst wants big-budget Spanish **or** French films from 1990–2000.
 
@@ -127,7 +168,7 @@ WHERE release_year BETWEEN 1990 AND 2000
 
 ---
 
-## Spot Check 3 — COUNT the NULLs ⏱️ ~5 min · 🟩 Junior
+## Spot Check 5 — COUNT the NULLs ⏱️ ~5 min · 🟩 Junior
 
 **Source**: PM asks: "How many users had at least one event?"
 
@@ -163,7 +204,7 @@ WHERE user_id IS NOT NULL;
 
 ---
 
-## Spot Check 4 — JOIN Then Lose ⏱️ ~7 min · 🟩 Junior
+## Spot Check 6 — JOIN Then Lose ⏱️ ~7 min · 🟩 Junior
 
 **Source**: "List **all** users and their total revenue (0 if none)."
 
@@ -200,7 +241,7 @@ Users with no events: one row, `SUM` is NULL → `COALESCE` → 0.
 
 ---
 
-## Spot Check 5 — DISTINCT Band-Aid ⏱️ ~7 min · 🟨 Middle
+## Spot Check 7 — DISTINCT Band-Aid ⏱️ ~7 min · 🟨 Middle
 
 **Source**: Revenue per country looks **2× too high**. Teammate's fix:
 
@@ -238,7 +279,7 @@ See Challenge 1.4 — dedupe before aggregate.
 
 ---
 
-## Spot Check 6 — HAVING Too Early ⏱️ ~7 min · 🟨 Middle
+## Spot Check 8 — HAVING Too Early ⏱️ ~7 min · 🟨 Middle
 
 **Source**: "Countries with more than $1M completed revenue."
 
@@ -277,7 +318,7 @@ HAVING SUM(e.revenue) > 1000000;
 
 ---
 
-## Spot Check 7 — Window Without Frame ⏱️ ~10 min · 🟨 Middle
+## Spot Check 9 — Window Without Frame ⏱️ ~10 min · 🟨 Middle
 
 **Source**: "Running total revenue per user by day."
 
@@ -312,7 +353,7 @@ Fix paths:
 
 ---
 
-## Spot Check 8 — "Free" Full Table Scan ⏱️ ~10 min · 🟨 Middle
+## Spot Check 10 — "Free" Full Table Scan ⏱️ ~10 min · 🟨 Middle
 
 **Source**: Dashboard query on a partitioned `events` table (millions of rows):
 
@@ -344,7 +385,7 @@ Links: Challenges 4.1–4.2 (cost + partitioning).
 
 ---
 
-## Spot Check 9 — IN or Nothing ⏱️ ~5 min · 🟩 Junior
+## Spot Check 11 — IN or Nothing ⏱️ ~5 min · 🟩 Junior
 
 **Source**: DataCamp-style filter — films from Germany or France (1920, 1930, or 1940).
 
@@ -354,17 +395,13 @@ WHERE release_year IN 1920, 1930, 1940
 
 -- Version B: countries
 WHERE country IN Germany, France
-
--- Version C: "fixed" with double quotes (still wrong in SQL)
-WHERE country IN ("Germany", "France")
 ```
 
 **Your task**
 
 1. What's syntactically wrong with Version A and B?
-2. Rewrite Version B correctly.
+2. Rewrite Version B correctly (remember **#1 — Quote Quest**).
 3. When is `IN (...)` better than chaining `OR`?
-4. **Syntax check (30 sec):** Why is Version C still wrong even though it has `"quotes"`?
 
 <details>
 <summary>✅ Check your answer</summary>
@@ -376,9 +413,7 @@ WHERE release_year IN (1920, 1930, 1940)
 WHERE country IN ('Germany', 'France')
 ```
 
-Text values need **single quotes** — `Germany` without quotes is a column name, not a string.
-
-**Version C:** double quotes `"Germany"` are **identifiers** (like a column alias), not string literals. Engine looks for a column named `Germany` → error or wrong plan. DataCamp / standard SQL text = `'...'`.
+Text values need **single quotes** `'...'` — `Germany` without quotes is a column name. Double quotes `"Germany"` are identifiers, not strings (**#1**).
 
 `IN` shines when the list is long (5+ values) or you generate values from a subquery. For two options, `OR` is fine — but `IN` is clearer to read.
 
@@ -386,7 +421,7 @@ Text values need **single quotes** — `Germany` without quotes is a column name
 
 ---
 
-## Spot Check 10 — NOT LIKE: Case & Accent Trap ⏱️ ~5 min · 🟩 Junior
+## Spot Check 12 — NOT LIKE: Case Trap ⏱️ ~5 min · 🟩 Junior
 
 **Source**: "Exclude names with an **A-dot** initial pattern" (DataCamp-style).
 
@@ -396,17 +431,14 @@ FROM people
 WHERE first_name NOT LIKE '%A.%';
 ```
 
-Dataset: `A.J.`, `aj.`, `Á.J.`, `Maria`.
-
-- Analyst expects only `Maria`.
-- Result still includes **`aj.`** and **`Á.J.`**.
+Dataset: `A.J.`, `aj.`, `Maria`. Analyst expects only `Maria`. Result still includes **`aj.`**.
 
 **Your task**
 
 1. Why does `aj.` pass the filter?
-2. Name two ways to make the match **case**-insensitive.
+2. Name two ways to make the match case-insensitive.
 3. Does `NOT LIKE` return rows where `first_name IS NULL`?
-4. **Text trap (30 sec):** `Á.J.` looks like an A-initial to a human — why does SQL still **keep** it?
+4. If you also see `Á.J.` in the data — which earlier Spot Check explains it?
 
 <details>
 <summary>✅ Check your answer</summary>
@@ -417,15 +449,15 @@ Dataset: `A.J.`, `aj.`, `Á.J.`, `Maria`.
    - `NOT ILIKE '%A.%'` (Postgres, DuckDB)
    - `LOWER(first_name) NOT LIKE '%a.%'`
 
-3. **NULL**: `NULL NOT LIKE '%A.%'` → UNKNOWN → row is **excluded** from results (not treated as "match" or "non-match"). Use `IS NULL` explicitly if NULLs matter.
+3. **NULL**: `NULL NOT LIKE '%A.%'` → UNKNOWN → row is **excluded** from results. Use `IS NULL` explicitly if NULLs matter.
 
-4. **`Á` ≠ `A`**: accent is a **different Unicode character**. `'%A.%'` does not match `Á.J.` → `NOT LIKE` does not exclude it. `ILIKE` alone won't help — it ignores case, not accents. For real pipelines: normalize names in staging or use locale/`unaccent` with explicit product rules.
+4. **`Á.J.`** → **Spot Check #2** (accents). `ILIKE` won't save you there.
 
 </details>
 
 ---
 
-## Spot Check 11 — NOT IN and the NULL Ghost ⏱️ ~7 min · 🟨 Middle
+## Spot Check 13 — NOT IN and the NULL Ghost ⏱️ ~7 min · 🟨 Middle
 
 **Source**: "Users who never purchased product 42."
 
@@ -472,17 +504,19 @@ WHERE user_id NOT IN (
 
 | # | Topic | Level | Done |
 |---|-------|-------|------|
-| 1 | LIKE wildcards | 🟩 | ⬜ |
-| 2 | AND / OR | 🟩 | ⬜ |
-| 3 | COUNT vs NULL | 🟩 | ⬜ |
-| 4 | INNER vs LEFT | 🟩 | ⬜ |
-| 5 | DISTINCT band-aid | 🟨 | ⬜ |
-| 6 | WHERE vs HAVING | 🟨 | ⬜ |
-| 7 | Window grain | 🟨 | ⬜ |
-| 8 | Partition / types | 🟨 | ⬜ |
-| 9 | IN syntax / OR / `'...'` vs `"..."` | 🟩 | ⬜ |
-| 10 | NOT LIKE — case + accents (`A` ≠ `Á`) | 🟩 | ⬜ |
-| 11 | NOT IN + NULL | 🟨 | ⬜ |
+| 1 | Quote quest `'...'` vs `"..."` | 🟦 | ⬜ |
+| 2 | Accents `A` ≠ `Á`, México/Mexico | 🟩 | ⬜ |
+| 3 | LIKE wildcards | 🟩 | ⬜ |
+| 4 | AND / OR | 🟩 | ⬜ |
+| 5 | COUNT vs NULL | 🟩 | ⬜ |
+| 6 | INNER vs LEFT | 🟩 | ⬜ |
+| 7 | DISTINCT band-aid | 🟨 | ⬜ |
+| 8 | WHERE vs HAVING | 🟨 | ⬜ |
+| 9 | Window grain | 🟨 | ⬜ |
+| 10 | Partition / types | 🟨 | ⬜ |
+| 11 | IN syntax / OR | 🟩 | ⬜ |
+| 12 | NOT LIKE case / NULL | 🟩 | ⬜ |
+| 13 | NOT IN + NULL | 🟨 | ⬜ |
 
 Mark ✅ in your fork when you can explain each trap **without** peeking.
 

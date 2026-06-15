@@ -58,7 +58,7 @@ de-lab/
 
 👉 **[CHALLENGES.md](CHALLENGES.md)** — 18+ hands-on challenges from beginner to interview-ready, with questions to think about and a progress tracker.
 
-🔍 **[SPOT-CHECK.md](SPOT-CHECK.md)** — 11 "something's off" drills (tutorial typos, SQL precedence, silent data loss). Answer before you peek.
+🔍 **[SPOT-CHECK.md](SPOT-CHECK.md)** — 13 spot-the-bug challenges (`'` vs `"`, accents, LIKE, JOINs…). Guess before you peek.
 
 Fork this repo and start practicing!
 
