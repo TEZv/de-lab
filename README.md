@@ -4,7 +4,9 @@
 
 A hands-on repository for learning Data Engineering: from SQL to dbt, from Python ETL to BigQuery and interview prep.
 
-Inspired by [devops-lab](https://github.com/TEZv/devops-lab): quest format, difficulty levels, progress tracker.
+Inspired by [devops-lab](https://github.com/TEZv/devops-lab): quest format, career levels, progress tracker, interview sprint.
+
+**North star:** Data Engineering with product analytics sense — see [CAREER-LEVELS.md](CAREER-LEVELS.md) and [AE-vs-DE.md](interview-sprint/AE-vs-DE.md).
 
 ## What's Included
 
@@ -45,8 +47,9 @@ de-lab/
 ├── python/              # ETL exercises, pytest
 ├── dbt/                 # dbt project (after Level 3)
 ├── bigquery/            # BQ notes + cost checklist
-├── interview-sprint/    # 30-day interview prep
+├── interview-sprint/    # 30-day interview prep (+ AE vs DE guide)
 ├── portfolio/           # Pet project template
+├── CAREER-LEVELS.md     # Intern → Senior badges
 └── CHALLENGES.md        # 🎮 Main quest
 ```
 
@@ -65,13 +68,15 @@ Fork this repo and start practicing!
 
 ## Interview Sprint
 
-Parallel track for technical interviews:
+Parallel track for technical interviews — **DE primary**, AE secondary:
 
 - [`interview-sprint/00-README.md`](interview-sprint/00-README.md)
+- [`interview-sprint/AE-vs-DE.md`](interview-sprint/AE-vs-DE.md) — **start here**
 - [`01-SQL-Sprint-30.md`](interview-sprint/01-SQL-Sprint-30.md)
 - [`02-Python-LiveCoding.md`](interview-sprint/02-Python-LiveCoding.md)
 - [`03-Data-Modeling-Case.md`](interview-sprint/03-Data-Modeling-Case.md)
 - [`04-Senior-AE-Additions.md`](interview-sprint/04-Senior-AE-Additions.md)
+- [`05-Senior-DE-Additions.md`](interview-sprint/05-Senior-DE-Additions.md)
 
 ## License
 

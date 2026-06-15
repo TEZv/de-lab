@@ -1,6 +1,8 @@
-# Senior Analytics Engineer — Additions (future reference)
+# Senior Analytics Engineer — Additions
 
-> Senior Analytics Engineer roles often require 3+ years and 2+ years of dbt. This file is a **term map** so you know where you're heading (9–12 month horizon).
+> **Secondary track** for Genesis / product companies hiring **Analytics Engineer**. Your **primary north star** for higher DE comp: [`05-Senior-DE-Additions.md`](05-Senior-DE-Additions.md) + [`AE-vs-DE.md`](AE-vs-DE.md).
+
+Senior AE roles often require 3+ years and 2+ years of dbt. Horizon: **9–12 months** if you parallel lab + sprint.
 
 ## Terms (look up + explain in one sentence)
 
