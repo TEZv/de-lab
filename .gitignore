@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 de_lab.duckdb
-python/output/
+python/output/*
+!python/output/.gitkeep
 dbt/target/
 dbt/dbt_packages/
 .env
