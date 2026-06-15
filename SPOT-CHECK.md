@@ -13,6 +13,25 @@ These are **not** build exercises. A tutorial, a colleague, or a dashboard *look
 
 **Career levels** match [CAREER-LEVELS.md](CAREER-LEVELS.md). Time = thinking time, not typing.
 
+<details>
+<summary>📎 Syntax traps — <code>'</code> vs <code>"</code> (cheat sheet, not a separate challenge)</summary>
+
+SQL (DuckDB / PostgreSQL / DataCamp-style courses):
+
+| You write | Engine reads it as |
+|-----------|-------------------|
+| `'France'` | **string** (text value) ✅ |
+| `"France"` | **identifier** (column/table name called `France`) ❌ for filters |
+| `Germany` (no quotes) | column name — not the word Germany |
+| `'O''Reilly'` | one string: `O'Reilly` (double `''` = escaped quote) |
+| `''` | empty string (zero characters) |
+
+**Rule of thumb:** filters on text → **single quotes** `'...'`. Double quotes are for names you spelled weirdly, e.g. `"User ID"`.
+
+This shows up again in **Spot Check 9** (optional extra question).
+
+</details>
+
 ---
 
 ## Spot Check 1 — Wildcard Trap ⏱️ ~5 min · 🟩 Junior
@@ -313,13 +332,17 @@ WHERE release_year IN 1920, 1930, 1940
 
 -- Version B: countries
 WHERE country IN Germany, France
+
+-- Version C: "fixed" with double quotes (still wrong in SQL)
+WHERE country IN ("Germany", "France")
 ```
 
 **Your task**
 
-1. What's syntactically wrong with both lines?
+1. What's syntactically wrong with Version A and B?
 2. Rewrite Version B correctly.
 3. When is `IN (...)` better than chaining `OR`?
+4. **Syntax check (30 sec):** Why is Version C still wrong even though it has `"quotes"`?
 
 <details>
 <summary>✅ Check your answer</summary>
@@ -331,7 +354,9 @@ WHERE release_year IN (1920, 1930, 1940)
 WHERE country IN ('Germany', 'France')
 ```
 
-Text values need **quotes** — `Germany` alone is a column name, not a string.
+Text values need **single quotes** — `Germany` without quotes is a column name, not a string.
+
+**Version C:** double quotes `"Germany"` are **identifiers** (like a column alias), not string literals. Engine looks for a column named `Germany` → error or wrong plan. DataCamp / standard SQL text = `'...'`.
 
 `IN` shines when the list is long (5+ values) or you generate values from a subquery. For two options, `OR` is fine — but `IN` is clearer to read.
 
@@ -427,7 +452,7 @@ WHERE user_id NOT IN (
 | 6 | WHERE vs HAVING | 🟨 | ⬜ |
 | 7 | Window grain | 🟨 | ⬜ |
 | 8 | Partition / types | 🟨 | ⬜ |
-| 9 | IN syntax / OR | 🟩 | ⬜ |
+| 9 | IN syntax / OR / `'...'` vs `"..."` | 🟩 | ⬜ |
 | 10 | NOT LIKE case / NULL | 🟩 | ⬜ |
 | 11 | NOT IN + NULL | 🟨 | ⬜ |
 
