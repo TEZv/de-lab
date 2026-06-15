@@ -1,0 +1,14 @@
+{
+  "name": "Data Engineering Lab",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {},
+  "postCreateCommand": "pip install -r python/requirements.txt && cd sql && python -c \"import duckdb; c=duckdb.connect('de_lab.duckdb'); c.execute(open('setup.sql').read())\"",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "mtxr.sqltools"
+      ]
+    }
+  }
+}
