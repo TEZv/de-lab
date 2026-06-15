@@ -691,6 +691,46 @@ Structure:
 
 ---
 
+## 🔍 Spot Check — "Something's Off"
+
+> **Different muscle.** These don't ask you to *build* — they ask you to spot what **doesn't pass a correctness check**: wrong counts, silent data loss, tutorial typos, precedence traps. Try **before** opening answers.
+
+Full set (11 exercises, ~5–10 min each): **[SPOT-CHECK.md](SPOT-CHECK.md)**
+
+| # | Trap | Level | Ties to |
+|---|------|-------|---------|
+| 1 | `LIKE 'Adel%'` — does **Aden** match? | 🟩 | Text filters |
+| 2 | `AND` / `OR` without parentheses | 🟩 | Challenge 1.2 |
+| 3 | `COUNT(user_id)` vs NULLs | 🟩 | Challenge 1.1 |
+| 4 | `INNER JOIN` when you need all users | 🟩 | Challenge 1.2 |
+| 5 | `DISTINCT` as JOIN band-aid | 🟨 | Challenge 1.4 |
+| 6 | `status` in `HAVING` not `WHERE` | 🟨 | Aggregations |
+| 7 | Window sum at wrong grain | 🟨 | Challenge 1.3 |
+| 8 | String dates vs partition pruning | 🟨 | Challenges 4.1–4.2 |
+| 9 | `IN` without parentheses / quotes | 🟩 | DataCamp text filters |
+| 10 | `NOT LIKE` case-sensitive | 🟩 | DataCamp LIKE |
+| 11 | `NOT IN` + NULL subquery | 🟨 | Interview classic |
+
+**When to use**: after Level 1, or spread one per day during the interview sprint. Passing = you can explain the bug **without** peeking.
+
+<details>
+<summary>🔧 Example — Spot Check 2 (peek only after you try)</summary>
+
+```sql
+WHERE release_year BETWEEN 1990 AND 2000
+  AND budget > 100000000
+  AND language = 'Spanish'
+  OR language = 'French';
+```
+
+Parsed as: `(year AND budget AND Spanish) OR French` → **all French films** pass, even outside 1990–2000.
+
+Fix: `AND (language = 'Spanish' OR language = 'French')`.
+
+</details>
+
+---
+
 ## 🏆 Bonus: Portfolio Project
 
 ### Bonus 1 — End-to-End Pet Project ⏱️ ~8–12 hours · 🟨 Middle
@@ -759,6 +799,7 @@ Prioritize **product-aware DE** mini cases in that file. Pair with Bonus 1 portf
 | 5.2 Python Live | 🟨 | ~45 min | ⬜ |
 | 5.3 Modeling Case | 🟨 | ~60 min | ⬜ |
 | 5.4 Pipeline Pitch | 🟨 | ~30 min | ⬜ |
+| 🔍 Spot Check (11) | 🟩–🟨 | ~1.5 hr total | ⬜ |
 | Bonus 1 Portfolio | 🟨 | ~8–12 hrs | ⬜ |
 | Bonus 2 Senior AE | 🟥 | ~4 hrs | ⬜ |
 | Bonus 3 Senior DE | 🟥 | ~4 hrs | ⬜ |
@@ -780,6 +821,7 @@ Complete all challenges and your quest evolves:
 | 📐 Trusted Models | 3.1–3.4 |
 | ☁️ Production Mindset | 4.1–4.4 |
 | 🎤 Interview Ready | 5.1–5.4 |
+| 🔍 Sharp Eyes | Spot Check ≥ 8/11 without peeking |
 | 🏆 Portfolio DE | Bonus 1 |
 
 **You started with CSVs and a CEO question. You ended with a pipeline, tests, and an interview.** 🎉

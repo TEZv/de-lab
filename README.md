@@ -50,12 +50,15 @@ de-lab/
 ├── interview-sprint/    # 30-day interview prep (+ AE vs DE guide)
 ├── portfolio/           # Pet project template
 ├── CAREER-LEVELS.md     # Intern → Senior badges
+├── SPOT-CHECK.md        # 🔍 "Something's off" — correctness traps (no peeking)
 └── CHALLENGES.md        # 🎮 Main quest
 ```
 
 ## Challenges
 
 👉 **[CHALLENGES.md](CHALLENGES.md)** — 18+ hands-on challenges from beginner to interview-ready, with questions to think about and a progress tracker.
+
+🔍 **[SPOT-CHECK.md](SPOT-CHECK.md)** — 11 "something's off" drills (tutorial typos, SQL precedence, silent data loss). Answer before you peek.
 
 Fork this repo and start practicing!
 
