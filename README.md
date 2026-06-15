@@ -56,6 +56,13 @@ de-lab/
 
 Fork this repo and start practicing!
 
+## Related Labs
+
+| Repo | Focus |
+|------|-------|
+| **[de-lab](https://github.com/TEZv/de-lab)** (you are here) | SQL, Python, dbt, BigQuery, interview sprint |
+| **[devops-lab](https://github.com/TEZv/devops-lab)** | Docker, Terraform, K8s, CI/CD |
+
 ## Interview Sprint
 
 Parallel track for technical interviews:
