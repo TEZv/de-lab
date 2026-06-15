@@ -7,9 +7,11 @@ Seed data for Level 1 ([CHALLENGES.md](../CHALLENGES.md)).
 ```bash
 pip install duckdb
 cd sql
-duckdb de_lab.duckdb < setup.sql
+python init_db.py
 duckdb de_lab.duckdb -c "SELECT COUNT(*) FROM events;"
 ```
+
+Or from repo root: `python sql/init_db.py`
 
 ## Files
 
