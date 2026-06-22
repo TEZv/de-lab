@@ -120,6 +120,8 @@ WHERE name LIKE 'Adel%';
 
 **Bonus trap**: `'Eve'` without `LIKE` is a literal string, not a pattern. Wildcards only work with `LIKE` / `NOT LIKE`.
 
+**See also**: **#14** — `%` can match **zero** characters (`%apple` vs `%apple%`).
+
 </details>
 
 ---
@@ -500,6 +502,55 @@ WHERE user_id NOT IN (
 
 ---
 
+## Spot Check 14 — Apple Percent: Suffix or Surround? ⏱️ ~5 min · 🟩 Junior
+
+**Source**: DataCamp *Exploratory Data Analysis in SQL* — `fruit.fav_fruit` cleanup. A colleague insists both patterns below mean "the word apple, nothing else."
+
+```sql
+-- Pattern A
+WHERE fav_fruit LIKE '%apple'
+
+-- Pattern B
+WHERE fav_fruit LIKE '%apple%'
+```
+
+Imagine these rows in `fav_fruit`:
+
+| fav_fruit |
+|-----------|
+| `apple` |
+| `APPLE` |
+| `apples` |
+| `applesauce` |
+| `pineapple` |
+
+**Your task**
+
+1. For the **exact** value `apple` (no extra letters): do Pattern A and Pattern B both match? What does the leading `%` "consume" when there is nothing before `apple`?
+2. For `apples` and `applesauce`: which pattern(s) still match — A only, B only, both, or neither?
+3. For `pineapple`: which pattern(s) match? If the PM wanted "apple" as a survey answer, is that a **feature** or a **false positive**?
+4. **DE move:** one pattern or filter tweak so you get `apple` / `APPLE` but not `pineapple` (hint: word boundaries are awkward in SQL — name two realistic options).
+
+<details>
+<summary>✅ Check your answer</summary>
+
+1. **Both match** plain `apple`. `%` means **zero or more** characters — the first `%` can match **nothing** (empty), then the literal `apple` lines up. Same for `%apple%`: both `%` signs can be zero-width → exact `apple`.
+
+2. **`apples` / `applesauce`:** only **Pattern B** (`%apple%`). Pattern A requires the string to **end** with exactly `apple`; `apples` ends with `…es`, `applesauce` ends with `…auce`.
+
+3. **`pineapple`:** **both** patterns match (`…pine` + `apple` suffix for A; `apple` substring for B). That's a **false positive** if the business question is "picked apple" — classic *pineapple* trap from the course video.
+
+4. Realistic fixes (pick one mindset):
+   - **Exact match after normalize:** `LOWER(TRIM(fav_fruit)) = 'apple'` (drops plurals/spaces; still need a rule for `apples`).
+   - **Delimiter / tokenize:** `split_part` or regex word boundary if the engine supports it; or staging table that maps raw → `standardized_fruit`.
+   - **Not** "just add `%`" — more `%` usually matches **more**, not less.
+
+**Pair with #3:** #3 is **prefix** (`Adel%` vs `Aden`); #14 is **suffix / substring** (`%apple` vs `%apple%` vs `pineapple`).
+
+</details>
+
+---
+
 ## Progress
 
 | # | Topic | Level | Done |
@@ -517,6 +568,7 @@ WHERE user_id NOT IN (
 | 11 | IN syntax / OR | 🟩 | ⬜ |
 | 12 | NOT LIKE case / NULL | 🟩 | ⬜ |
 | 13 | NOT IN + NULL | 🟨 | ⬜ |
+| 14 | `%apple` vs `%apple%` / pineapple | 🟩 | ⬜ |
 
 Mark ✅ in your fork when you can explain each trap **without** peeking.
 

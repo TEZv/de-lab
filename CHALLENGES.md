@@ -697,7 +697,7 @@ Structure:
 >
 > **#1–#2** are text-filter foundations (`'` vs `"`, accents) — full challenges, not handouts. Do them first if DataCamp trips you up.
 
-Full set (13 exercises, ~5–10 min each): **[SPOT-CHECK.md](SPOT-CHECK.md)**
+Full set (14 exercises, ~5–10 min each): **[SPOT-CHECK.md](SPOT-CHECK.md)**
 
 | # | Trap | Level | Ties to |
 |---|------|-------|---------|
@@ -714,6 +714,7 @@ Full set (13 exercises, ~5–10 min each): **[SPOT-CHECK.md](SPOT-CHECK.md)**
 | 11 | `IN` without parentheses | 🟩 | DataCamp text filters |
 | 12 | `NOT LIKE` case / NULL | 🟩 | DataCamp LIKE |
 | 13 | `NOT IN` + NULL subquery | 🟨 | Interview classic |
+| 14 | `%apple` vs `%apple%`, pineapple trap | 🟩 | DataCamp EDA SQL |
 
 **When to use**: after Level 1, or spread one per day during the interview sprint. Passing = you can explain the bug **without** peeking.
 
@@ -803,7 +804,7 @@ Prioritize **product-aware DE** mini cases in that file. Pair with Bonus 1 portf
 | 5.2 Python Live | 🟨 | ~45 min | ⬜ |
 | 5.3 Modeling Case | 🟨 | ~60 min | ⬜ |
 | 5.4 Pipeline Pitch | 🟨 | ~30 min | ⬜ |
-| 🔍 Spot Check (13) | 🟦–🟨 | ~1.75 hr total | ⬜ |
+| 🔍 Spot Check (14) | 🟦–🟨 | ~2 hr total | ⬜ |
 | Bonus 1 Portfolio | 🟨 | ~8–12 hrs | ⬜ |
 | Bonus 2 Senior AE | 🟥 | ~4 hrs | ⬜ |
 | Bonus 3 Senior DE | 🟥 | ~4 hrs | ⬜ |
@@ -825,7 +826,7 @@ Complete all challenges and your quest evolves:
 | 📐 Trusted Models | 3.1–3.4 |
 | ☁️ Production Mindset | 4.1–4.4 |
 | 🎤 Interview Ready | 5.1–5.4 |
-| 🔍 Sharp Eyes | Spot Check ≥ 9/13 without peeking |
+| 🔍 Sharp Eyes | Spot Check ≥ 10/14 without peeking |
 | 🏆 Portfolio DE | Bonus 1 |
 
 **You started with CSVs and a CEO question. You ended with a pipeline, tests, and an interview.** 🎉
