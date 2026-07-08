@@ -9,7 +9,13 @@
       "tag": "PY · карта",
       "title": "Чистий Python vs Pandas",
       "instruction": "На скрінінгу можуть заборонити import pandas — май обидва шаблони.",
-      "diagram": "ДОЗВОЛИЛИ PANDAS          │  ЧИСТИЙ PYTHON\n─────────────────────────┼──────────────────────\ngroupby + agg + mean     │  dict counter += 1\npd.merge(..., how=left)  │  map / loop join\nfillna / dropna          │  if x is None\n\nПастка: a = list → a[item] тільки з INTEGER індексом\nЛічильник потребує counts = {} (dict), не list!",
+      "viz": {
+        "type": "splitCompare",
+        "columns": [
+          { "title": "🐼 Pandas", "color": "#5b8def", "items": ["groupby + agg + mean", "pd.merge(how=left)", "fillna / dropna"] },
+          { "title": "🐍 Чистий Python", "color": "#e8a84b", "items": ["dict counter += 1", "loop / map join", "if x is None"] }
+        ]
+      },
       "bullets": [
         "list[i] — i має бути int",
         "dict[key] — key може бути str/int/tuple",

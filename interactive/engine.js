@@ -67,29 +67,47 @@
       wrap.appendChild(story);
     }
 
-    if (level.diagram) {
-      const pre = document.createElement('pre');
-      pre.className = 'pl-diagram pl-diagram-alive';
-      pre.textContent = level.diagram;
-      wrap.appendChild(pre);
+    if (level.viz && global.TheoryViz) {
+      const vizBox = document.createElement('div');
+      vizBox.className = 'pl-viz-mount';
+      TheoryViz.mount(vizBox, level.viz);
+      wrap.appendChild(vizBox);
     }
 
     if (level.flow?.length) {
-      const flow = document.createElement('div');
-      flow.className = 'pl-flow';
-      level.flow.forEach((step, i) => {
-        const chip = document.createElement('div');
-        chip.className = 'pl-flow-step';
-        chip.innerHTML = `<strong>${escapeHtml(step.title)}</strong><span>${escapeHtml(step.desc || '')}</span>`;
-        flow.appendChild(chip);
-        if (i < level.flow.length - 1) {
-          const arrow = document.createElement('div');
-          arrow.className = 'pl-flow-arrow';
-          arrow.textContent = '→';
-          flow.appendChild(arrow);
-        }
-      });
-      wrap.appendChild(flow);
+      if (global.TheoryViz) {
+        const flowBox = document.createElement('div');
+        flowBox.className = 'pl-viz-mount';
+        TheoryViz.mountFlow(flowBox, level.flow);
+        wrap.appendChild(flowBox);
+      } else {
+        const flow = document.createElement('div');
+        flow.className = 'pl-flow';
+        level.flow.forEach((step, i) => {
+          const chip = document.createElement('div');
+          chip.className = 'pl-flow-step';
+          chip.innerHTML = `<strong>${escapeHtml(step.title)}</strong><span>${escapeHtml(step.desc || '')}</span>`;
+          flow.appendChild(chip);
+          if (i < level.flow.length - 1) {
+            const arrow = document.createElement('div');
+            arrow.className = 'pl-flow-arrow';
+            arrow.textContent = '→';
+            flow.appendChild(arrow);
+          }
+        });
+        wrap.appendChild(flow);
+      }
+    }
+
+    if (level.diagram) {
+      if (level.viz && global.TheoryViz) {
+        TheoryViz.mountDiagramFallback(wrap, level);
+      } else {
+        const pre = document.createElement('pre');
+        pre.className = 'pl-diagram pl-diagram-alive';
+        pre.textContent = level.diagram;
+        wrap.appendChild(pre);
+      }
     }
 
     if (level.bullets?.length) {
@@ -754,7 +772,12 @@
   function mountWhatsWrong(root, level, onComplete) {
     const wrap = document.createElement('div');
     wrap.className = 'pl-whats-wrong';
-    if (level.diagram) {
+    if (level.viz && global.TheoryViz) {
+      const vizBox = document.createElement('div');
+      vizBox.className = 'pl-viz-mount';
+      TheoryViz.mount(vizBox, level.viz);
+      wrap.appendChild(vizBox);
+    } else if (level.diagram) {
       const pre = document.createElement('pre');
       pre.className = 'pl-diagram';
       pre.textContent = level.diagram;
@@ -800,7 +823,12 @@
   function mountMultiChoice(root, level, onComplete) {
     const wrap = document.createElement('div');
     wrap.className = 'pl-mc';
-    if (level.diagram) {
+    if (level.viz && global.TheoryViz) {
+      const vizBox = document.createElement('div');
+      vizBox.className = 'pl-viz-mount';
+      TheoryViz.mount(vizBox, level.viz);
+      wrap.appendChild(vizBox);
+    } else if (level.diagram) {
       const pre = document.createElement('pre');
       pre.className = 'pl-diagram';
       pre.textContent = level.diagram;

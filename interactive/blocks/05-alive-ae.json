@@ -191,12 +191,16 @@
       "title": "Мінімальний чекліст до скрінінгу",
       "storyEmoji": "🎒",
       "story": "Не вчи «все під сонцем». Візьми це як рюкзак на 1.5 год.",
-      "flow": [
-        { "title": "SQL", "desc": "HAVING, ROW_NUMBER, LAG, JOIN-дублі" },
-        { "title": "Python", "desc": "dict counter, [::-1], groupby mean" },
-        { "title": "Model", "desc": "STG→CORE→MARTS, Star, SCD2" },
-        { "title": "Soft", "desc": "думаєш вголос, уточнюєш умову" }
-      ],
+      "viz": {
+        "type": "skillOrbit",
+        "center": "🎒",
+        "items": [
+          { "title": "SQL", "desc": "HAVING · ROW_NUMBER · LAG", "color": "#3d9a6a" },
+          { "title": "Python", "desc": "dict · [::-1] · mean", "color": "#5b8def" },
+          { "title": "Model", "desc": "STG→CORE→MARTS", "color": "#e8a84b" },
+          { "title": "Soft", "desc": "вголос · уточни умову", "color": "#c77dff" }
+        ]
+      },
       "bullets": [
         "Палички: уточни power+age vs code+power",
         "Блокнот паперовий — легально",

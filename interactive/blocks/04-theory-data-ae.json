@@ -9,7 +9,23 @@
       "tag": "AE · карта",
       "title": "Шари сховища",
       "instruction": "Фраза на інтервʼю: «спочатку map систему, потім quality, потім нове».",
-      "diagram": "SOURCES → INGEST → STAGING (сирі)\n                 → CORE/DWH (чистка, facts+dims)\n                 → MARTS (вітрини під BI/ML)\n\nOrchestration: Airflow/Dagster\nTransform:     SQL + dbt + Python\nConsume:       Tableau / Power BI / Jupyter",
+      "viz": {
+        "type": "layerStack",
+        "title": "Потік даних знизу вгору",
+        "layers": [
+          { "label": "SOURCES", "sublabel": "API · CSV · DB · events", "color": "#8b9cb3", "icon": "⚡" },
+          { "label": "INGEST", "sublabel": "завантаження без змін", "color": "#4ecdc4", "icon": "⬇" },
+          { "label": "STAGING", "sublabel": "сирі копії, без бізнес-логіки", "color": "#5b8def", "icon": "📦" },
+          { "label": "CORE / DWH", "sublabel": "dedup · facts · dims · SCD", "color": "#3d9a6a", "icon": "🧽" },
+          { "label": "MARTS", "sublabel": "вітрини під BI / ML", "color": "#e8a84b", "icon": "🏪" }
+        ],
+        "side": [
+          { "label": "Orchestration", "items": ["Airflow", "Dagster"] },
+          { "label": "Transform", "items": ["dbt", "SQL", "Python"] },
+          { "label": "Consume", "items": ["Tableau", "Power BI", "Jupyter"] }
+        ]
+      },
+      "diagram": "SOURCES → INGEST → STAGING (сирі)\n                 → CORE/DWH (чистка, facts+dims)\n                 → MARTS (вітрини під BI/ML)",
       "bullets": [
         "Staging — без бізнес-логіки",
         "Core — dedup, COALESCE, SCD, Star",
@@ -32,7 +48,8 @@
       "type": "multi_choice",
       "tag": "AE · 2",
       "title": "Star vs Snowflake",
-      "diagram": "STAR: fact ──1 JOIN──> dim (країна текстом)\nSNOW: fact → dim_products → dim_countries",
+      "viz": { "type": "starCompare" },
+      "diagram": "STAR: fact ──1 JOIN──> dim\nSNOW: fact → dim_products → dim_countries",
       "question": "Для BigQuery що краще і чому?",
       "options": [
         "Star Schema — менше JOIN, швидше і дешевше на колоночній БД",
@@ -59,6 +76,15 @@
       "type": "whats_wrong",
       "tag": "AE · 4 · BigQuery",
       "title": "SELECT * … LIMIT 10",
+      "viz": {
+        "type": "barCompare",
+        "bars": [
+          { "label": "SELECT * + LIMIT 10", "value": 100, "color": "#ff6b6b", "caption": "сканує ВСІ колонки 💸" },
+          { "label": "3 колонки + LIMIT 10", "value": 28, "color": "#3d9a6a", "caption": "лише потрібне" },
+          { "label": "+ партиція по даті", "value": 12, "color": "#5b8def", "caption": "ще дешевше" }
+        ],
+        "footnote": "LIMIT ріже вивід після скану — не економить колонки."
+      },
       "buggyCode": "-- маркетолог:\nSELECT * FROM staging.user_clicks\nWHERE click_date = '2026-07-01'\nLIMIT 10;\n-- «LIMIT же економить?»",
       "prompt": "Що не так із вартістю?",
       "options": [
@@ -119,6 +145,13 @@
       "type": "multi_choice",
       "tag": "AE · 8",
       "title": "Logical vs Physical model",
+      "viz": {
+        "type": "splitCompare",
+        "columns": [
+          { "title": "🧠 Logical", "color": "#5b8def", "items": ["сутності для бізнесу", "User → Status", "без типів SQL"] },
+          { "title": "🗄 Physical", "color": "#3d9a6a", "items": ["таблиці в DWH", "dim_users(valid_from…)", "шари STG/CORE/MART"] }
+        ]
+      },
       "question": "Логічна vs фізична модель — що є що?",
       "options": [
         "Логічна = сутності/звʼязки для бізнесу; фізична = таблиці, типи, ключі, шари DWH",

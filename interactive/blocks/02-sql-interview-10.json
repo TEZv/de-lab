@@ -9,7 +9,10 @@
       "tag": "SQL · карта",
       "title": "Перед тренуванням · порядок SQL",
       "instruction": "Сервер виконує не той порядок, який ти пишеш очима.",
-      "diagram": "FROM → WHERE → GROUP BY → HAVING → SELECT (AS) → ORDER BY\n\nWHERE  = фільтр СИрих рядків (до агрегації)\nHAVING = фільтр після GROUP BY (AVG/SUM/MAX)\nOVER   = вікно: рядки НЕ стискає",
+      "viz": {
+        "type": "sqlOrder",
+        "over": "вікно: рядки НЕ стискає — ROW_NUMBER / LAG"
+      },
       "bullets": [
         "Аліаси з SELECT не працюють у WHERE/GROUP BY",
         "У SELECT все не-агреговане → обовʼязково у GROUP BY",
