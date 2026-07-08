@@ -9,35 +9,45 @@ const MENTORSHIP_DASH = 'https://sphere-mentorship-hub.vercel.app/dashboard.html
 const ROADS = [
   {
     id: 'theory',
-    title: '📚 Теорія мага',
-    blurb: 'Карти типів компаній, шари DWH, A/B, день-1 — з інтерактивом, не сухим PDF.',
+    titleKey: 'roadTheory',
+    blurbKey: 'roadTheoryBlurb',
     skill: 'modeling',
     blocks: [
-      { id: '10-interview-company-types', title: 'Типи компаній і скрінінг', ready: true, skill: 'modeling' },
-      { id: '04-theory-data-ae', title: 'Шари / Star / SCD / BigQuery', ready: true, skill: 'modeling' },
-      { id: '05-alive-ae', title: 'Living Lab · сценарії', ready: true, skill: 'modeling' },
-      { id: '11-interview-skills-universal', title: 'Універсальні мʼязи', ready: true, skill: 'sql' },
+      { id: '10-interview-company-types', ready: true, skill: 'modeling' },
+      { id: '04-theory-data-ae', ready: true, skill: 'modeling' },
+      { id: '05-alive-ae', ready: true, skill: 'modeling' },
+      { id: '11-interview-skills-universal', ready: true, skill: 'sql' },
     ],
   },
   {
     id: 'practice',
-    title: '⚔️ Практика · місії',
-    blurb: 'SQL із заглушками + таблиці/CSV, Python, work-sim, жестові рівні.',
+    titleKey: 'roadPractice',
+    blurbKey: 'roadPracticeBlurb',
     skill: 'sql',
     blocks: [
-      { id: '12-sku-minprice-mission', title: 'Місія: найдешевший SKU', ready: true, skill: 'sql' },
-      { id: '01-window-functions', title: 'Віконні · місії + ____', ready: true, skill: 'sql' },
-      { id: '02-sql-interview-10', title: 'SQL drills · 10', ready: true, skill: 'sql' },
-      { id: '03-python-interview-10', title: 'Python drills · 10', ready: true, skill: 'python' },
-      { id: '20-sim-product-mobile', title: 'Sim · Product/Mobile', ready: true, skill: 'product' },
-      { id: '21-sim-marketplace', title: 'Sim · Marketplace', ready: true, skill: 'sql' },
-      { id: '22-sim-media', title: 'Sim · Media', ready: true, skill: 'dq' },
-      { id: '23-sim-iot-consulting', title: 'Sim · Consulting/IoT', ready: true, skill: 'pipeline' },
-      { id: '24-sim-fintech', title: 'Sim · Fintech', ready: true, skill: 'dq' },
-      { id: '30-unique-plays', title: '✦ Стріли / туман / сузірʼя', ready: true, skill: 'pipeline' },
+      { id: '12-sku-minprice-mission', ready: true, skill: 'sql' },
+      { id: '01-window-functions', ready: true, skill: 'sql' },
+      { id: '02-sql-interview-10', ready: true, skill: 'sql' },
+      { id: '03-python-interview-10', ready: true, skill: 'python' },
+      { id: '20-sim-product-mobile', ready: true, skill: 'product' },
+      { id: '21-sim-marketplace', ready: true, skill: 'sql' },
+      { id: '22-sim-media', ready: true, skill: 'dq' },
+      { id: '23-sim-iot-consulting', ready: true, skill: 'pipeline' },
+      { id: '24-sim-fintech', ready: true, skill: 'dq' },
+      { id: '30-unique-plays', ready: true, skill: 'pipeline' },
     ],
   },
 ];
+
+function t(key, ...args) {
+  return (window.DeLabI18n && DeLabI18n.t(key, ...args)) || key;
+}
+function withLang(url) {
+  return (window.DeLabI18n && DeLabI18n.withLang(url)) || url;
+}
+function blockTitle(id) {
+  return (window.DeLabI18n && DeLabI18n.blockTitle(id)) || id;
+}
 
 const SKILLS = [
   { id: 'sql', label: 'SQL', color: '#3d9a6a' },
@@ -104,10 +114,13 @@ function skillScores() {
 function mageRank() {
   const scores = skillScores();
   const lit = SKILLS.filter((s) => scores[s.id].done > 0).length;
-  if (lit >= 6) return { title: 'Archmage of Data', tier: 3 };
-  if (lit >= 4) return { title: 'DE Mage', tier: 2 };
-  if (lit >= 2) return { title: 'Apprentice DE', tier: 1 };
-  return { title: 'Novice Caster', tier: 0 };
+  let tier = 0;
+  if (lit >= 6) tier = 3;
+  else if (lit >= 4) tier = 2;
+  else if (lit >= 2) tier = 1;
+  const ranks = t('ranks');
+  const title = Array.isArray(ranks) ? ranks[tier] : ranks;
+  return { title, tier };
 }
 
 function mageGlow(tier) {
@@ -231,7 +244,28 @@ function drawMageOnCanvas(ctx, ox, oy, scale, tier) {
 
 function shareCaption(rank, scores) {
   const skills = SKILLS.map((s) => `${s.label} ${scores[s.id].done}/${scores[s.id].total}`).join(' · ');
-  return `I claimed ${rank.title} in DE Lab Interview Gym ✨\n${skills}\n\nPlay / train: ${GYM_URL}\nMarkdown DE quest: ${DE_QUEST_MD}`;
+  return t('shareCap', rank.title, skills, GYM_URL, DE_QUEST_MD);
+}
+
+function paintChrome() {
+  document.title = t('pageTitle');
+  const h1 = document.getElementById('hdr-title');
+  const lede = document.getElementById('hdr-lede');
+  if (h1) h1.textContent = t('headerTitle');
+  if (lede) lede.textContent = t('headerLede');
+  const map = [
+    ['nav-de-gym', 'navDeGym'],
+    ['nav-de-md', 'navDeMd'],
+    ['nav-mentorship', 'navMentorship'],
+    ['nav-repo', 'navRepo'],
+  ];
+  map.forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t(key);
+  });
+  const m = document.getElementById('nav-mentorship');
+  if (m) m.href = withLang(MENTORSHIP);
+  if (window.DeLabI18n) DeLabI18n.mountToggle(document.getElementById('lang-slot'));
 }
 
 async function copyText(text) {
@@ -274,15 +308,15 @@ function renderHeroCabin() {
     <aside class="hero-cabin" id="hero-cabin">
       <div class="hero-visual">${mageSvg(rank.tier)}</div>
       <div class="hero-meta">
-        <p class="hero-eyebrow">Твій аватар у DE Lab</p>
+        <p class="hero-eyebrow">${t('heroEyebrow')}</p>
         <h2 class="hero-rank">${rank.title}</h2>
-        <p class="hero-tip">Після розділів запалюються орби-навички. Забери мага → share-картка.</p>
+        <p class="hero-tip">${t('heroTip')}</p>
         <div class="skill-orb-row">${orbs}</div>
         <div class="hero-actions">
-          <button type="button" class="ghost" id="btn-share">🪪 Забери героя · share</button>
-          <a class="ghost nav-pill" href="#/">DE Quest · цей Gym</a>
-          <a class="ghost nav-pill" href="${DE_QUEST_MD}" target="_blank" rel="noopener">DE Quest · markdown</a>
-          <a class="ghost nav-pill" href="${MENTORSHIP}" target="_blank" rel="noopener">Mentorship hub</a>
+          <button type="button" class="ghost" id="btn-share">${t('btnShare')}</button>
+          <a class="ghost nav-pill" href="#/">${t('linkDeGym')}</a>
+          <a class="ghost nav-pill" href="${DE_QUEST_MD}" target="_blank" rel="noopener">${t('linkDeMd')}</a>
+          <a class="ghost nav-pill" href="${withLang(MENTORSHIP)}" target="_blank" rel="noopener">${t('linkMentorship')}</a>
         </div>
       </div>
     </aside>`;
@@ -295,20 +329,20 @@ function wireHero(root) {
 }
 
 function renderHome(root) {
+  const homeBody = t('homeBody')
+    .replace('{deQuest}', DE_QUEST_MD)
+    .replace('{mQuest}', withLang(MENTORSHIP_QUEST))
+    .replace('{mDash}', withLang(MENTORSHIP_DASH));
   root.innerHTML = `
     ${renderHeroCabin()}
     <section class="pl-card">
-      <h2>DE Lab · кабінет мага</h2>
-      <p style="color:var(--muted)">Два світи: <strong>Теорія</strong> і <strong>Практика</strong> нижче — це і є <strong>DE Quest</strong> (інтерактив).
-      Повний markdown-квест: <a href="${DE_QUEST_MD}" target="_blank" rel="noopener">CHALLENGES.md</a>.
-      Mentorship — окремий хаб SPHERE (Science/E/Technology), не заміна DE-лаби:
-      <a href="${MENTORSHIP_QUEST}" target="_blank" rel="noopener">Quest · Technology</a>
-      · <a href="${MENTORSHIP_DASH}" target="_blank" rel="noopener">Dashboard</a>.</p>
+      <h2>${t('homeTitle')}</h2>
+      <p style="color:var(--muted)">${homeBody}</p>
     </section>
     ${ROADS.map((road) => `
       <section class="pl-card road-${road.id}">
-        <h3>${road.title}</h3>
-        <p style="color:var(--muted)">${road.blurb}</p>
+        <h3>${t(road.titleKey)}</h3>
+        <p style="color:var(--muted)">${t(road.blurbKey)}</p>
         <div class="pl-block-grid">
           ${road.blocks.map((b) => {
             const prog = loadProgress()[b.id] || {};
@@ -316,8 +350,8 @@ function renderHome(root) {
             return `
               <button type="button" class="pl-block-btn" data-block="${b.id}" ${b.ready ? '' : 'disabled'}>
                 <span class="pl-track-label">${b.skill || ''}</span>
-                <strong>${b.title}</strong><br>
-                <span style="color:var(--muted);font-size:13px">${b.ready ? `Прогрес: ${done} ✓` : 'скоро'}</span>
+                <strong>${blockTitle(b.id)}</strong><br>
+                <span style="color:var(--muted);font-size:13px">${b.ready ? t('progress', done) : t('soon')}</span>
               </button>`;
           }).join('')}
         </div>
@@ -335,12 +369,13 @@ async function renderBlock(root, blockId, levelId) {
   try {
     block = await loadBlock(blockId);
   } catch {
-    root.innerHTML = '<p class="pl-card">Блок ще не готовий або JSON зламаний.</p>';
+    root.innerHTML = `<p class="pl-card">${t('blockBroken')}</p>`;
     return;
   }
   const prog = loadProgress()[blockId] || {};
   const currentId = levelId || block.levels[0]?.id;
   const meta = allBlocks().find((b) => b.id === blockId);
+  const displayTitle = blockTitle(blockId) !== blockId ? blockTitle(blockId) : block.title;
 
   root.innerHTML = `
     <div class="hero-mini" id="hero-mini">
@@ -352,11 +387,11 @@ async function renderBlock(root, blockId, levelId) {
       }).join('')}</div>
     </div>
     <section class="pl-card">
-      <button type="button" class="ghost" id="pl-back">← Кабінет</button>
-      <h2>${PrepLevelsEngine.escapeHtml(block.title)}</h2>
+      <button type="button" class="ghost" id="pl-back">${t('backCabin')}</button>
+      <h2>${PrepLevelsEngine.escapeHtml(displayTitle)}</h2>
       <p style="color:var(--muted)">${PrepLevelsEngine.escapeHtml(block.subtitle || '')}
-        ${meta?.skill ? ` · орб: <strong>${meta.skill}</strong>` : ''}</p>
-      <p class="pl-progress-line" id="pl-prog">Збережено: ${countDone(prog)} / ${block.levels.length}</p>
+        ${meta?.skill ? ` · ${t('orb')}: <strong>${meta.skill}</strong>` : ''}</p>
+      <p class="pl-progress-line" id="pl-prog">${t('saved', countDone(prog), block.levels.length)}</p>
       <div class="pl-level-tabs" id="pl-tabs"></div>
       <div id="pl-level-body"></div>
     </section>`;
@@ -373,7 +408,7 @@ async function renderBlock(root, blockId, levelId) {
     tabs.querySelectorAll('.pl-level-tab').forEach((tab) => {
       tab.classList.toggle('done', !!p[tab.dataset.lid]);
     });
-    progLine.textContent = `Збережено: ${countDone(p)} / ${block.levels.length}`;
+    progLine.textContent = t('saved', countDone(p), block.levels.length);
     const mini = root.querySelector('#hero-mini .skill-orb-row');
     if (mini) {
       mini.innerHTML = SKILLS.map((s) => {
@@ -423,13 +458,13 @@ function paintShareCard(canvas, rank, scores) {
   ctx.fillStyle = '#e8a84b';
   ctx.font = 'bold 26px Segoe UI, sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText('DE Lab · Mage Claim', 40, 52);
+  ctx.fillText(t('claimTitle'), 40, 52);
   ctx.fillStyle = '#e8eef5';
   ctx.font = 'bold 34px Segoe UI, sans-serif';
   ctx.fillText(rank.title, 40, 100);
   ctx.fillStyle = '#8b9cb3';
   ctx.font = '15px Segoe UI, sans-serif';
-  ctx.fillText('Skills lit:', 40, 138);
+  ctx.fillText(t('skillsLit'), 40, 138);
 
   let y = 172;
   SKILLS.forEach((s) => {
@@ -459,18 +494,18 @@ function renderShare(root) {
   root.innerHTML = `
     ${renderHeroCabin()}
     <section class="pl-card">
-      <button type="button" class="ghost" id="pl-back">← Кабінет</button>
-      <h2>Забери DE-мага</h2>
-      <p style="color:var(--muted)">Картка з героєм справа. Текст шеру автозаповнюється в буфер — ти лише вставляєш / підтверджуєш у мережі. Дані лише в браузері.</p>
+      <button type="button" class="ghost" id="pl-back">${t('backCabin')}</button>
+      <h2>${t('shareTitle')}</h2>
+      <p style="color:var(--muted)">${t('shareLede')}</p>
       <canvas id="share-canvas" width="720" height="420"></canvas>
-      <label class="share-caption-label" for="share-caption">Текст для шеру (можна правити)</label>
+      <label class="share-caption-label" for="share-caption">${t('shareCaptionLabel')}</label>
       <textarea id="share-caption" class="share-caption" rows="5"></textarea>
       <div class="hero-actions share-bar" style="margin-top:12px">
-        <button type="button" id="btn-dl">⬇️ Download PNG</button>
-        <button type="button" class="share-li" id="btn-li">in LinkedIn</button>
-        <button type="button" class="share-ig" id="btn-ig">Instagram</button>
-        <button type="button" class="ghost" id="btn-copy">Copy text</button>
-        <button type="button" class="ghost" id="btn-native" hidden>Share…</button>
+        <button type="button" id="btn-dl">${t('btnDl')}</button>
+        <button type="button" class="share-li" id="btn-li">${t('btnLi')}</button>
+        <button type="button" class="share-ig" id="btn-ig">${t('btnIg')}</button>
+        <button type="button" class="ghost" id="btn-copy">${t('btnCopy')}</button>
+        <button type="button" class="ghost" id="btn-native" hidden>${t('btnNative')}</button>
       </div>
       <p class="share-hint" id="share-hint" style="color:var(--muted);font-size:13px;margin:10px 0 0"></p>
     </section>`;
@@ -487,27 +522,26 @@ function renderShare(root) {
 
   root.querySelector('#btn-dl').addEventListener('click', () => {
     downloadCanvasPng(canvas, `de-mage-${rank.tier}.png`);
-    setHint('PNG завантажено.');
+    setHint(t('hintDl'));
   });
 
   root.querySelector('#btn-copy').addEventListener('click', async () => {
     const ok = await copyText(getCaption());
-    setHint(ok ? 'Текст скопійовано.' : 'Не вдалось скопіювати — виділи поле вручну.');
+    setHint(ok ? t('hintCopyOk') : t('hintCopyFail'));
   });
 
   root.querySelector('#btn-li').addEventListener('click', async () => {
     await copyText(getCaption());
-    // LinkedIn share UI takes URL; caption already in clipboard for paste into post
     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(GYM_URL)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
-    setHint('LinkedIn відкрито · текст уже в буфері — вставь у пост (Ctrl+V / Cmd+V). PNG можна додати з Download.');
+    setHint(t('hintLi'));
   });
 
   root.querySelector('#btn-ig').addEventListener('click', async () => {
     await copyText(getCaption());
     downloadCanvasPng(canvas, `de-mage-${rank.tier}.png`);
     window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
-    setHint('Instagram не вміє автотекст з браузера: PNG завантажено + підпис у буфері. Створи пост / Stories → встав зображення й Ctrl+V підпис.');
+    setHint(t('hintIg'));
   });
 
   const nativeBtn = root.querySelector('#btn-native');
@@ -523,16 +557,17 @@ function renderShare(root) {
         } else {
           await navigator.share(data);
         }
-        setHint('Системний Share відкрито.');
+        setHint(t('hintShareOk'));
       } catch (e) {
-        if (e && e.name === 'AbortError') setHint('Share скасовано.');
-        else setHint('Share недоступний — скористайся LinkedIn / Instagram кнопками.');
+        if (e && e.name === 'AbortError') setHint(t('hintShareAbort'));
+        else setHint(t('hintShareFail'));
       }
     });
   }
 }
 
 async function render() {
+  paintChrome();
   const root = document.getElementById('app');
   const route = parseRoute();
   if (route.view === 'home') renderHome(root);
@@ -541,4 +576,5 @@ async function render() {
 }
 
 window.addEventListener('hashchange', render);
+window.addEventListener('site:langchange', render);
 render();

@@ -9,18 +9,22 @@
 <body>
   <header>
     <div>
-      <h1>🧙 DE Lab · Mage Gym</h1>
-      <p>Теорія / Практика · орби навичок · місії з SQL ____. Mentorship — двері до квестів SPHERE.</p>
+      <h1 id="hdr-title">🧙 DE Lab · Mage Gym</h1>
+      <p id="hdr-lede">Теорія / Практика · орби навичок · місії з SQL ____. Mentorship — двері до квестів SPHERE.</p>
     </div>
-    <nav>
-      <a href="https://de-lab-interview-gym.web.app/" target="_blank" rel="noopener">DE Quest · Gym</a>
-      <a href="https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md" target="_blank" rel="noopener">DE Quest · MD</a>
-      <a href="https://sphere-mentorship-hub.vercel.app" target="_blank" rel="noopener">Mentorship</a>
-      <a href="https://github.com/TEZv/de-lab" target="_blank" rel="noopener">Repo</a>
-    </nav>
+    <div class="header-right">
+      <div id="lang-slot"></div>
+      <nav>
+        <a id="nav-de-gym" href="https://de-lab-interview-gym.web.app/" target="_blank" rel="noopener">DE Quest · Gym</a>
+        <a id="nav-de-md" href="https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md" target="_blank" rel="noopener">DE Quest · MD</a>
+        <a id="nav-mentorship" href="https://sphere-mentorship-hub.vercel.app" target="_blank" rel="noopener">Mentorship</a>
+        <a id="nav-repo" href="https://github.com/TEZv/de-lab" target="_blank" rel="noopener">Repo</a>
+      </nav>
+    </div>
   </header>
   <main id="app"><p>Завантаження…</p></main>
   <script src="https://cdn.jsdelivr.net/npm/alasql@4.6.6/dist/alasql.min.js"></script>
+  <script src="i18n.js"></script>
   <script src="engine.js"></script>
   <script src="app.js"></script>
 </body>

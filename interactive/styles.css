@@ -30,6 +30,34 @@ header {
 header h1 { margin: 0 0 6px; font-size: 1.6rem; }
 header p { margin: 0; color: var(--muted); max-width: 52ch; }
 header nav { display: flex; gap: 10px; flex-wrap: wrap; }
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.lang-toggle button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.lang-toggle button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 header nav a {
   padding: 8px 14px;
   border: 1px solid var(--line);
