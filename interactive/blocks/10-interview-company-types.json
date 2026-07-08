@@ -1,26 +1,26 @@
 {
   "id": "10-interview-company-types",
   "title": "Типи компаній і відмінності техінтервʼю",
-  "subtitle": "Спочатку якорі в карті → потім матч зі стрілами. Не вікторина на вгадування.",
+  "subtitle": "Спочатку якорі в карті → потім Матч зі стрілами. Не вікторина на вгадування.",
   "levels": [
     {
       "id": "C0",
       "type": "company_map",
-      "tag": "карта",
+      "tag": "Карта",
       "title": "5 архетипів, де працює DE / AE",
-      "intro": "П’ять порталів навколо кристала. Кожен має сигіл і гачок — запам’ятай їх на вигляд, не читай простині. Клік = відкрити портал.",
-      "completeHint": "Усі сигіли запалені. На «матч» — ті самі кольори й стрілки.",
+      "intro": "П’ять порталів навколо кристала. Кожен має Сигіл і Гачок — запам’ятай їх на вигляд, не читай простині. Клік = відкрити портал.",
+      "completeHint": "Усі Сигіли запалені. На «Матч» — ті самі кольори й стрілки.",
       "types": [
         {
           "themeId": "product",
           "orbit": 0,
           "name": "Product / Mobile",
           "sigil": "LTV",
-          "hook": "Підписка → cohort → LTV",
-          "oneLiner": "Підписки, UA, cohorts",
-          "focusChip": "Метрики продукту + SQL/pandas",
-          "day": "ETL маркетингу/білінгу, вітрини для product/UA, data quality подій.",
-          "interview": "SQL windows + pandas; кейс «поясни метрику»; інколи Airflow/dbt на словах.",
+          "hook": "Підписка → Cohort → LTV",
+          "oneLiner": "Підписки, UA, Cohorts",
+          "focusChip": "Метрики продукту + SQL/Pandas",
+          "day": "ETL маркетингу/білінгу, вітрини для Product/UA, Data quality подій.",
+          "interview": "SQL windows + Pandas; кейс «поясни метрику»; інколи Airflow/dbt на словах.",
           "stack": "BQ/Snowflake, dbt, Airflow, Amplitude/AppsFlyer, Tableau/Looker"
         },
         {
@@ -29,7 +29,7 @@
           "name": "Marketplace",
           "sigil": "JOIN",
           "hook": "1 замовлення → N рядків",
-          "oneLiner": "Каталог, sellers, logistics",
+          "oneLiner": "Каталог, Sellers, Logistics",
           "focusChip": "JOIN cardinality + статуси замовлень",
           "day": "Факти замовлень, статуси доставок, SEO/ads spend, антифрод-зрізи.",
           "interview": "JOIN-пастки 1:N, дедуп, SCD «статус замовлення», SQL на уважність.",
@@ -41,10 +41,10 @@
           "name": "Media / Content",
           "sigil": "CLEAN",
           "hook": "Грязні логи → чистий звіт",
-          "oneLiner": "Охоплення, ad inventory",
-          "focusChip": "Cleaning великих датасетів + reporting",
-          "day": "Парсинг/очистка великих логів, дашборди перформансу, reproducible reporting.",
-          "interview": "Python cleaning, SQL агрегації, інколи «поясни пайплайн звіту».",
+          "oneLiner": "Охоплення, Ad inventory",
+          "focusChip": "Cleaning великих датасетів + Reporting",
+          "day": "Парсинг/очистка великих логів, дашборди перформансу, reproducible Reporting.",
+          "interview": "Python Cleaning, SQL агрегації, інколи «поясни пайплайн звіту».",
           "stack": "Python, SQL, Power BI/Looker, Sheets/Apps Script"
         },
         {
@@ -53,7 +53,7 @@
           "name": "Consulting / IoT",
           "sigil": "LIVE",
           "hook": "Умова задачі = половина відповіді",
-          "oneLiner": "PoC → prod, сенсори поруч",
+          "oneLiner": "PoC → Prod, сенсори поруч",
           "focusChip": "Live coding + уважність до умови",
           "day": "Швидкі пайплайни під клієнта, DQ, фічі для DS, доки.",
           "interview": "Live SQL/Python + modeling + логіка; інколи stats/A-B base; уважність до формулювань.",
@@ -65,9 +65,9 @@
           "name": "Fintech",
           "sigil": "DEDUP",
           "hook": "Два рази той самий платіж = біда",
-          "oneLiner": "Транзакції, risk, reconciliation",
+          "oneLiner": "Транзакції, Risk, Reconciliation",
           "focusChip": "Точність, дедуп, ідемпотентність",
-          "day": "Ідемпотентність, дедуп платежів, reconciliation, аудит слідів.",
+          "day": "Ідемпотентність, дедуп платежів, Reconciliation, аудит слідів.",
           "interview": "SQL точність, edge cases, інколи soft на ownership/compliance.",
           "stack": "SQL, Python, DWH, моніторинг, строгий DQ"
         }
@@ -76,18 +76,17 @@
     {
       "id": "C1",
       "type": "match_pairs",
-      "tag": "матч",
+      "tag": "Матч",
       "title": "Який фокус скрінінгу?",
       "instruction": "Не вгадуй: спочатку закріпи пари (як на карті), потім зʼєднай — зʼявляться лінії.",
       "studyFirst": true,
-      "studyIntro": "<strong>Крок 1 · закріпи якорі.</strong> Ті самі стрілки, що «🎯» на карті. Прочитай кожен рядок. Потім — матч із лініями.",
-      "studyCta": "Закарбувала · почати матч зі стрілами",
+      "studyIntro": "<strong>Крок 1 · Сигіли.</strong> Ті самі кольори й гачки, що на атласі. Проговори кожен рядок — потім Матч із лініями.",
+      "studyCta": "Закарбувала · почати Матч зі стрілами",
       "matchTip": "Ліворуч тип компанії → праворуч фокус. Вірна пара фарбується й малюється лінія. Помилка не скидає лівий вибір.",
-      "studyIntro": "<strong>Крок 1 · сигіли.</strong> Ті самі кольори й гачки, що на атласі. Проговори кожен рядок — потім матч із лініями.",
       "pairs": [
-        { "themeId": "product", "left": "Product / Mobile", "right": "Метрики продукту + SQL/pandas" },
+        { "themeId": "product", "left": "Product / Mobile", "right": "Метрики продукту + SQL/Pandas" },
         { "themeId": "market", "left": "Marketplace", "right": "JOIN cardinality + статуси замовлень" },
-        { "themeId": "media", "left": "Media / Content", "right": "Cleaning великих датасетів + reporting" },
+        { "themeId": "media", "left": "Media / Content", "right": "Cleaning великих датасетів + Reporting" },
         { "themeId": "consult", "left": "Consulting / IoT", "right": "Live coding + уважність до умови" },
         { "themeId": "fintech", "left": "Fintech", "right": "Точність, дедуп, ідемпотентність" }
       ]
@@ -95,7 +94,7 @@
     {
       "id": "C2",
       "type": "scenario",
-      "tag": "вибір",
+      "tag": "Вибір",
       "title": "Куди цілитись тобі зараз?",
       "emoji": "🧭",
       "scene": "Ти близька до Analytics Engineering / engineering analytics: SQL+Python, вітрини, продукт. Який трек симуляції логичніший як «основний» на найближчий місяць?",
@@ -111,19 +110,19 @@
         },
         {
           "label": "Тільки теорія без таблиць",
-          "feedback": "Набридає і не готує до live. Краще CSV-лаби в work-sim."
+          "feedback": "Набридає і не готує до Live. Краще CSV-лаби в work-sim."
         }
       ]
     },
     {
       "id": "C3",
       "type": "theory",
-      "tag": "чесно",
+      "tag": "Чесно",
       "title": "Що Gym покриває / не покриває",
       "storyEmoji": "🎒",
       "story": "Gym = репетиція мислення + типові патерни. Не «гарантія офера» і не злив чужих тестових.",
       "flow": [
-        { "title": "Покриває", "desc": "SQL windows, pandas, layers, DQ, day-1, CSV drills" },
+        { "title": "Покриває", "desc": "SQL windows, Pandas, layers, DQ, day-1, CSV drills" },
         { "title": "Не покриває", "desc": "Секретні тести роботодавця, стрес 1:1 без твоєї репетиції вголос" },
         { "title": "Етика", "desc": "Лише узагальнені/публічні патерни, без брендів замовників" }
       ],

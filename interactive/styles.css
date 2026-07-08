@@ -515,13 +515,22 @@ button.marked { background: var(--good); }
 
 /* Sigil atlas — company map */
 .pl-sigil-atlas-wrap { max-width: 100%; }
+.pl-atlas-intro {
+  margin: 0 0 28px;
+  max-width: 46ch;
+  position: relative;
+  z-index: 4;
+}
 .pl-sigil-atlas {
   position: relative;
   width: 100%;
   max-width: 520px;
-  margin: 8px auto 16px;
-  aspect-ratio: 1 / 1;
-  min-height: 320px;
+  margin: 0 auto 16px;
+  aspect-ratio: 1 / 1.05;
+  min-height: 340px;
+  padding: 12px 8px 8px;
+  box-sizing: border-box;
+  isolation: isolate;
 }
 .pl-atlas-svg {
   position: absolute;
@@ -569,15 +578,14 @@ button.marked { background: var(--good); }
 }
 .pl-atlas-core-label {
   font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: .06em;
   color: var(--muted);
 }
 .pl-atlas-node {
   position: absolute;
   z-index: 2;
   transform: translate(-50%, -50%);
-  width: min(118px, 28vw);
+  width: min(108px, 26vw);
   padding: 10px 8px 8px;
   border-radius: 14px;
   border: 2px solid color-mix(in srgb, var(--node) 45%, var(--line));

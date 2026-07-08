@@ -26,15 +26,22 @@
   };
 
   const ORBIT_SLOTS = [
-    { x: 50, y: 5 },
-    { x: 93, y: 36 },
-    { x: 80, y: 90 },
-    { x: 20, y: 90 },
-    { x: 7, y: 36 },
+    { x: 50, y: 16 },
+    { x: 88, y: 38 },
+    { x: 74, y: 84 },
+    { x: 26, y: 84 },
+    { x: 12, y: 38 },
   ];
 
   function archetypeTheme(themeId) {
     return ARCHETYPE_THEMES[themeId] || { color: '#8b9cb3', glyph: '◇', sigil: '?' };
+  }
+
+  /** Перше слово з малої → з великої (карта → Карта, cohort у рядку — у JSON). */
+  function labelCap(value) {
+    const s = String(value ?? '').trim();
+    if (!s || /^[A-ZА-ЯІЇЄҐ0-9"«]/.test(s)) return s;
+    return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
   function toast(root, text, ok = true) {
@@ -732,7 +739,7 @@
       study.appendChild(go);
       const skipHint = document.createElement('p');
       skipHint.className = 'pl-feedback';
-      skipHint.textContent = 'Порада: повернись на вкладку «карта», якщо рядок не чіпляється.';
+      skipHint.textContent = 'Порада: повернись на вкладку «Карта», якщо рядок не чіпляється.';
       study.appendChild(skipHint);
       wrap.appendChild(study);
     } else {
@@ -829,7 +836,7 @@
   function renderLevel(container, level, onComplete) {
     const head = document.createElement('div');
     head.className = 'pl-level-head';
-    const tag = level.tag ? `<span class="pl-tag">${escapeHtml(level.tag)}</span>` : '';
+    const tag = level.tag ? `<span class="pl-tag">${escapeHtml(labelCap(level.tag))}</span>` : '';
     head.innerHTML = `${tag}<h3>${escapeHtml(level.title)}</h3><p>${escapeHtml(level.instruction || '')}</p>`;
     const body = document.createElement('div');
     container.append(head, body);
@@ -1303,7 +1310,7 @@
     wrap.className = 'pl-company-map pl-sigil-atlas-wrap';
     if (level.intro) {
       const p = document.createElement('p');
-      p.className = 'pl-tip';
+      p.className = 'pl-tip pl-atlas-intro';
       p.textContent = level.intro;
       wrap.appendChild(p);
     }
@@ -1326,7 +1333,7 @@
     core.appendChild(coreCount);
     const coreLabel = document.createElement('span');
     coreLabel.className = 'pl-atlas-core-label';
-    coreLabel.textContent = 'сигіли';
+    coreLabel.textContent = 'Сигіли';
     core.appendChild(coreLabel);
     arena.append(svg, core);
 

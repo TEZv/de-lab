@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260708c';
+const BUILD = '20260708d';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
@@ -42,6 +42,11 @@ const ROADS = [
 
 function t(key, ...args) {
   return (window.DeLabI18n && DeLabI18n.t(key, ...args)) || key;
+}
+function labelCap(value) {
+  const s = String(value ?? '').trim();
+  if (!s || /^[A-ZА-ЯІЇЄҐ0-9"«]/.test(s)) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 function withLang(url) {
   return (window.DeLabI18n && DeLabI18n.withLang(url)) || url;
@@ -577,7 +582,7 @@ async function renderBlock(root, blockId, levelId) {
     tab.type = 'button';
     tab.dataset.lid = level.id;
     tab.className = `pl-level-tab ${level.id === currentId ? 'active' : ''} ${prog[level.id] ? 'done' : ''}`;
-    tab.textContent = level.tag || level.id;
+    tab.textContent = labelCap(level.tag || level.id);
     tab.title = level.title;
     tab.addEventListener('click', () => { location.hash = `#/block/${blockId}/${level.id}`; });
     tabs.appendChild(tab);
