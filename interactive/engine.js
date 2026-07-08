@@ -17,6 +17,26 @@
     return copy;
   }
 
+  const ARCHETYPE_THEMES = {
+    product: { color: '#5b8def', glyph: '📱', sigil: 'LTV' },
+    market: { color: '#e8a84b', glyph: '🛒', sigil: 'JOIN' },
+    media: { color: '#c77dff', glyph: '📺', sigil: 'CLEAN' },
+    consult: { color: '#4ecdc4', glyph: '🔬', sigil: 'LIVE' },
+    fintech: { color: '#ff6b6b', glyph: '💳', sigil: 'DEDUP' },
+  };
+
+  const ORBIT_SLOTS = [
+    { x: 50, y: 5 },
+    { x: 93, y: 36 },
+    { x: 80, y: 90 },
+    { x: 20, y: 90 },
+    { x: 7, y: 36 },
+  ];
+
+  function archetypeTheme(themeId) {
+    return ARCHETYPE_THEMES[themeId] || { color: '#8b9cb3', glyph: '◇', sigil: '?' };
+  }
+
   function toast(root, text, ok = true) {
     const el = document.createElement('div');
     el.className = `pl-toast ${ok ? 'ok' : 'bad'}`;
@@ -607,13 +627,19 @@
         });
       }
 
+      const pairByLeft = {};
+      (level.pairs || []).forEach((p) => { pairByLeft[p.left] = p; });
+
       leftItems.forEach((text) => {
+        const p = pairByLeft[text];
+        const th = archetypeTheme(p?.themeId);
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'pl-match-btn';
+        btn.className = 'pl-match-btn pl-match-themed';
         btn.dataset.side = 'left';
         btn.dataset.value = text;
-        btn.textContent = text;
+        btn.style.setProperty('--match', th.color);
+        btn.innerHTML = `<span class="pl-match-sigil">${escapeHtml(th.sigil)}</span><span>${escapeHtml(text)}</span>`;
         btn.addEventListener('click', () => {
           if (btn.classList.contains('done')) return;
           leftCol.querySelectorAll('.pl-match-btn:not(.done)').forEach((b) => b.classList.remove('sel'));
@@ -640,7 +666,7 @@
           const pair = level.pairs.find((p) => p.left === selectedLeft && p.right === text);
           const leftBtn = [...leftCol.querySelectorAll('.pl-match-btn')].find((b) => b.dataset.value === selectedLeft);
           if (pair && leftBtn) {
-            const color = PAIR_COLORS[matched % PAIR_COLORS.length];
+            const color = archetypeTheme(pair.themeId).color || PAIR_COLORS[matched % PAIR_COLORS.length];
             btn.classList.add('done');
             leftBtn.classList.add('done');
             leftBtn.classList.remove('sel');
@@ -686,11 +712,13 @@
       study.appendChild(h);
       const list = document.createElement('div');
       list.className = 'pl-study-list';
-      (level.pairs || []).forEach((p, i) => {
+      (level.pairs || []).forEach((p) => {
+        const th = archetypeTheme(p.themeId);
         const row = document.createElement('div');
         row.className = 'pl-study-row';
-        row.style.setProperty('--pair', PAIR_COLORS[i % PAIR_COLORS.length]);
+        row.style.setProperty('--pair', th.color);
         row.innerHTML = `
+          <span class="pl-study-sigil" style="--sigil:${th.color}">${escapeHtml(p.sigil || th.sigil)}</span>
           <span class="pl-study-left">${escapeHtml(p.left)}</span>
           <span class="pl-study-arrow" aria-hidden="true">⟶</span>
           <span class="pl-study-right">${escapeHtml(p.right)}</span>`;
@@ -1272,56 +1300,125 @@
 
   function mountCompanyMap(root, level, onComplete) {
     const wrap = document.createElement('div');
-    wrap.className = 'pl-company-map';
+    wrap.className = 'pl-company-map pl-sigil-atlas-wrap';
     if (level.intro) {
       const p = document.createElement('p');
       p.className = 'pl-tip';
       p.textContent = level.intro;
       wrap.appendChild(p);
     }
-    const grid = document.createElement('div');
-    grid.className = 'pl-type-grid';
+
+    const cards = [...(level.types || [])].sort((a, b) => (a.orbit ?? 0) - (b.orbit ?? 0));
     let opened = 0;
-    const cards = level.types || [];
-    cards.forEach((t) => {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'pl-type-card';
-      const chip = t.focusChip
-        ? `<span class="pl-focus-chip">🎯 ${escapeHtml(t.focusChip)}</span>`
-        : '';
-      card.innerHTML = `<strong>${escapeHtml(t.name)}</strong><span class="muted">${escapeHtml(t.oneLiner || '')}</span>${chip}`;
-      const detail = document.createElement('div');
-      detail.className = 'pl-type-detail hidden';
-      detail.innerHTML = `
-        <p><b>Типовий день DE:</b> ${escapeHtml(t.day || '')}</p>
-        <p><b>На скрінінгу частіше:</b> ${escapeHtml(t.interview || '')}</p>
-        ${t.focusChip ? `<p class="pl-anchor"><b>Якір для матчу:</b> ${escapeHtml(t.focusChip)}</p>` : ''}
-        <p><b>Стек-сигнали:</b> ${escapeHtml(t.stack || '')}</p>`;
-      card.addEventListener('click', () => {
-        const was = !detail.classList.contains('hidden');
-        detail.classList.toggle('hidden', was);
-        if (!was && !card.dataset.seen) {
-          card.dataset.seen = '1';
+
+    const arena = document.createElement('div');
+    arena.className = 'pl-sigil-atlas';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.className = 'pl-atlas-svg';
+    svg.setAttribute('aria-hidden', 'true');
+
+    const core = document.createElement('div');
+    core.className = 'pl-atlas-core';
+    const coreCount = document.createElement('span');
+    coreCount.className = 'pl-atlas-count';
+    coreCount.textContent = `0 / ${cards.length}`;
+    core.innerHTML = '<span class="pl-atlas-gem" aria-hidden="true">◆</span>';
+    core.appendChild(coreCount);
+    const coreLabel = document.createElement('span');
+    coreLabel.className = 'pl-atlas-core-label';
+    coreLabel.textContent = 'сигіли';
+    core.appendChild(coreLabel);
+    arena.append(svg, core);
+
+    const detailDock = document.createElement('div');
+    detailDock.className = 'pl-atlas-dock hidden';
+
+    function paintAtlasLines() {
+      const ar = arena.getBoundingClientRect();
+      svg.setAttribute('width', String(ar.width));
+      svg.setAttribute('height', String(ar.height));
+      svg.style.width = `${ar.width}px`;
+      svg.style.height = `${ar.height}px`;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      const cx = ar.width / 2;
+      const cy = ar.height / 2;
+      arena.querySelectorAll('.pl-atlas-node.seen').forEach((node) => {
+        const nr = node.getBoundingClientRect();
+        const x2 = nr.left + nr.width / 2 - ar.left;
+        const y2 = nr.top + nr.height / 2 - ar.top;
+        const color = node.style.getPropertyValue('--node') || '#8b9cb3';
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const mid = (cx + x2) / 2;
+        path.setAttribute('d', `M ${cx} ${cy} Q ${mid} ${cy} ${x2} ${y2}`);
+        path.setAttribute('stroke', color);
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('opacity', '0.55');
+        svg.appendChild(path);
+      });
+    }
+
+    function showDock(t, th) {
+      detailDock.classList.remove('hidden');
+      detailDock.style.setProperty('--node', th.color);
+      detailDock.innerHTML = `
+        <div class="pl-atlas-dock-head">
+          <span class="pl-sigil-badge">${escapeHtml(t.sigil || th.sigil)}</span>
+          <strong>${escapeHtml(th.glyph)} ${escapeHtml(t.name)}</strong>
+          <span class="pl-atlas-hook">${escapeHtml(t.hook || '')}</span>
+        </div>
+        <div class="pl-atlas-dock-body">
+          <p><span class="pl-dock-ico">🎯</span> <b>Якір матчу:</b> ${escapeHtml(t.focusChip || '')}</p>
+          <p><span class="pl-dock-ico">☀</span> <b>День DE:</b> ${escapeHtml(t.day || '')}</p>
+          <p><span class="pl-dock-ico">🎤</span> <b>Скрінінг:</b> ${escapeHtml(t.interview || '')}</p>
+          <p><span class="pl-dock-ico">🧰</span> <b>Стек:</b> ${escapeHtml(t.stack || '')}</p>
+        </div>`;
+    }
+
+    cards.forEach((t, idx) => {
+      const th = archetypeTheme(t.themeId);
+      const slot = ORBIT_SLOTS[t.orbit ?? idx] || ORBIT_SLOTS[idx] || { x: 50, y: 50 };
+      const node = document.createElement('button');
+      node.type = 'button';
+      node.className = 'pl-atlas-node';
+      node.style.setProperty('--node', th.color);
+      node.style.left = `${slot.x}%`;
+      node.style.top = `${slot.y}%`;
+      node.innerHTML = `
+        <span class="pl-sigil-badge">${escapeHtml(t.sigil || th.sigil)}</span>
+        <span class="pl-node-glyph">${th.glyph}</span>
+        <span class="pl-node-name">${escapeHtml(t.name)}</span>
+        <span class="pl-node-hook">${escapeHtml(t.hook || t.oneLiner || '')}</span>`;
+      node.addEventListener('click', () => {
+        arena.querySelectorAll('.pl-atlas-node').forEach((n) => n.classList.remove('active'));
+        node.classList.add('active');
+        showDock(t, th);
+        if (!node.dataset.seen) {
+          node.dataset.seen = '1';
+          node.classList.add('seen');
           opened += 1;
-          card.classList.add('seen');
+          coreCount.textContent = `${opened} / ${cards.length}`;
+          paintAtlasLines();
           if (opened >= cards.length) {
-            toast(root, 'Карта типів відкрита', true);
+            core.classList.add('lit');
+            toast(root, 'Атлас запалений — іди на матч', true);
             if (onComplete) onComplete(level.id);
           }
         }
       });
-      const cell = document.createElement('div');
-      cell.append(card, detail);
-      grid.appendChild(cell);
+      arena.appendChild(node);
     });
-    wrap.appendChild(grid);
+
+    wrap.append(arena, detailDock);
     const tip = document.createElement('p');
     tip.className = 'pl-feedback';
     tip.textContent = level.completeHint
-      || 'Відкрий усі типи. Запамʼятай «якір для матчу» — наступний рівень перевірить саме його, не вікторину на удачу.';
+      || 'Відкрий усі портали. Гачок + сигіл = те, що матч перевірить.';
     wrap.appendChild(tip);
     root.appendChild(wrap);
+    requestAnimationFrame(paintAtlasLines);
+    window.addEventListener('resize', paintAtlasLines, { passive: true });
   }
 
   global.PrepLevelsEngine = { renderLevel, escapeHtml };
