@@ -303,3 +303,56 @@ button.marked { background: var(--good); }
 }
 .pl-pipe-slot small { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
 .pl-scenario .pl-options { margin-top: 12px; }
+.pl-mission {
+  background: linear-gradient(145deg, rgba(232,168,75,.14), rgba(61,154,106,.1));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.pl-mission-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.pl-mission-head span { font-size: 1.6rem; }
+.pl-mission-head p { margin: 4px 0 0; color: var(--muted); }
+.pl-mission-ask {
+  margin: 10px 0 0;
+  font-weight: 600;
+  color: var(--accent2);
+}
+.pl-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+}
+.pl-mini-table th,
+.pl-mini-table td {
+  border: 1px solid var(--line);
+  padding: 6px 8px;
+  text-align: left;
+}
+.pl-mini-table th { background: #0d1117; color: var(--muted); }
+.pl-mini-table tr.hl td {
+  background: rgba(61,154,106,.2);
+}
+.pl-pick-table tr {
+  cursor: pointer;
+}
+.pl-pick-table tr:hover td {
+  background: rgba(232,168,75,.1);
+}
+.pl-pick-table tr.picked td {
+  background: rgba(61,154,106,.18);
+  outline: 1px solid var(--good);
+}
+.pl-pick-table tr.bad-pick td {
+  background: rgba(212,93,93,.18);
+}
+.pl-pick-table .pick-mark {
+  text-align: center;
+  color: var(--accent2);
+}

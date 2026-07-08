@@ -1,49 +1,91 @@
 {
   "id": "01-window",
   "title": "Віконні функції SQL",
-  "subtitle": "Interview sprint · DE must-know",
+  "subtitle": "Спочатку задача людини → потім ____ у SQL",
   "levels": [
     {
       "id": "L1",
-      "type": "theory",
-      "title": "Рівень 1 · Схема й конспект",
-      "instruction": "Спочатку карта — потім заглушки. Не зазубрюй синтаксис, впізнавай шаблон.",
-      "diagram": "┌─────────────────────────────────────┐\n│  ЗВИЧАЙНА АГРЕГАЦІЯ (GROUP BY)      │\n│  рядки → зливаються в 1 рядок групи │\n└─────────────────────────────────────┘\n┌─────────────────────────────────────┐\n│  ВІКОННА ФУНКЦІЯ (OVER)             │\n│  рядок лишається + «вікно» поруч    │\n│  PARTITION BY = межі вікна          │\n│  ORDER BY     = порядок у вікні     │\n└─────────────────────────────────────┘",
-      "bullets": [
-        "ROW_NUMBER() — номер рядка у вікні (1, 2, 3…)",
-        "LAG(col, 1) — значення з попереднього рядка",
-        "LEAD(col, 1) — значення з наступного рядка",
-        "PARTITION BY department — окреме вікно для кожного відділу"
-      ],
-      "pairs": [
-        ["GROUP BY", "зливає рядки в групи"],
-        ["OVER (PARTITION BY … ORDER BY …)", "залишає рядки + додає колонку"]
+      "type": "flip_cards",
+      "tag": "L1 · відчуття",
+      "title": "GROUP BY vs OVER — відчуй різницю",
+      "instruction": "Клікай картки. Це не конспект для зубріння.",
+      "cards": [
+        { "front": "GROUP BY", "back": "Стискає багато рядків в 1. Деталі зникають." },
+        { "front": "OVER (…)", "back": "Рядки лишаються. Поруч нова колонка «з вікна»." },
+        { "front": "PARTITION BY", "back": "Межі кімнати: для кожного user/dept нумерація своя." },
+        { "front": "ORDER BY у вікні", "back": "Хто перший у кімнаті: ASC/DESC." },
+        { "front": "ROW_NUMBER", "back": "1,2,3… завжди унікальні в кімнаті." },
+        { "front": "LAG", "back": "Зазирнути в попередній рядок тієї ж кімнати." }
       ]
     },
     {
       "id": "L2",
       "type": "fill_blanks",
-      "title": "Рівень 2 · Схема з заглушками",
-      "instruction": "Клікай слова з банку по порядку — заповни ____ зліва направо.",
-      "template": "SELECT user_id, ____, LAG(____, 1) OVER (PARTITION BY ____ ORDER BY ____) AS prev_amount FROM payments",
-      "answers": ["amount", "amount", "user_id", "paid_at"],
-      "wordBank": ["amount", "paid_at", "user_id", "GROUP BY", "HAVING", "ROW_NUMBER"],
+      "tag": "L2 · місія LAG",
+      "title": "Місія: попередня покупка",
+      "instruction": "Не «заповни бланк» — розкажи бізнес-питання.",
+      "mission": {
+        "emoji": "💳",
+        "title": "Product analytics",
+        "brief": "Менеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна.",
+        "ask": "Яка колонка порівнюється з минулим? Хто = партиція? Що = час?"
+      },
+      "sampleTable": {
+        "headers": ["user_id", "paid_at", "amount", "prev (очікуємо)"],
+        "rows": [
+          ["7", "01-01", "10", "NULL"],
+          ["7", "01-05", "40", "10"],
+          ["7", "01-09", "15", "40"],
+          ["9", "01-03", "20", "NULL"]
+        ],
+        "highlight": [1, 2],
+        "caption": "LAG дивиться «вгору» всередині user_id після сортування по paid_at."
+      },
+      "why": "На інтервʼю спочатку намалюй таку табличку на папері — і лише потім пиши OVER.",
+      "template": "SELECT user_id, paid_at, amount,\n  LAG(____, 1) OVER (\n    PARTITION BY ____\n    ORDER BY ____\n  ) AS prev_amount\nFROM payments;",
+      "answers": ["amount", "user_id", "paid_at"],
+      "wordBank": ["amount", "user_id", "paid_at", "GROUP BY", "HAVING", "ROW_NUMBER"],
       "hints": [
-        "Перші два пропуски — та сама колонка, яку порівнюємо з «попереднім».",
-        "PARTITION BY — за ким розбиваємо вікна (часто user_id).",
-        "ORDER BY у вікні — хронологія (paid_at / order_date)."
-      ]
+        "LAG(яка_колонка) — ту, чиє минуле значення хочемо.",
+        "PARTITION BY — межа «цього ж юзера».",
+        "ORDER BY — хронологія оплат."
+      ],
+      "controlTip": "Місія й таблиця — вище. Нижче лише кістяк SQL."
     },
     {
       "id": "L3",
+      "type": "pick_rows",
+      "tag": "L3 · top-1 руками",
+      "title": "Перед SQL: хто «переможець» у кімнаті?",
+      "instruction": "Уяви ROW_NUMBER без коду.",
+      "mission": {
+        "emoji": "🏆",
+        "title": "Топ-1 зарплата в департаменті",
+        "brief": "Для кожного department лишаємо людину з НАЙБІЛЬШОЮ salary.",
+        "ask": "Клікни переможців (по одному на департамент)."
+      },
+      "headers": ["employee", "department", "salary"],
+      "rows": [
+        { "id": "a", "employee": "Іра", "department": "IT", "salary": 3500, "correct": true },
+        { "id": "b", "employee": "Олег", "department": "IT", "salary": 3000, "correct": false },
+        { "id": "c", "employee": "Катя", "department": "HR", "salary": 1800, "correct": false },
+        { "id": "d", "employee": "Ліза", "department": "HR", "salary": 2200, "correct": true },
+        { "id": "e", "employee": "Макс", "department": "Sales", "salary": 2500, "correct": true }
+      ],
+      "pickHint": "IT → Іра 3500; HR → Ліза 2200; Sales → Макс.",
+      "success": "У SQL: ROW_NUMBER() OVER(PARTITION BY department ORDER BY salary DESC) … WHERE rn=1"
+    },
+    {
+      "id": "L4",
       "type": "match_pairs",
-      "title": "Рівень 3 · Хто за що відповідає",
-      "instruction": "З'єднай функцію / клаузу з роллю (як на співбесіді).",
+      "tag": "L4 · швидкий матч",
+      "title": "Закріпи назви",
+      "instruction": "Швидкий матч після місій — без сухої теорії спереду.",
       "pairs": [
         { "left": "ROW_NUMBER()", "right": "Порядковий номер у вікні" },
         { "left": "LAG()", "right": "Попереднє значення в партиції" },
-        { "left": "PARTITION BY", "right": "Межі вікна (групи рядків)" },
-        { "left": "ORDER BY у OVER", "right": "Сортування всередині вікна" }
+        { "left": "PARTITION BY", "right": "Межі «кімнати»" },
+        { "left": "ORDER BY у OVER", "right": "Хто стане №1 у кімнаті" }
       ]
     }
   ]

@@ -1,7 +1,8 @@
 const STORAGE_KEY = 'de-lab-interactive-v1';
 const BLOCKS = [
+  { id: '06-ollivander-mission', title: 'Ollivander Mission · HP SQL', track: 'DataObrii', ready: true },
   { id: '05-alive-ae', title: 'AE Living Lab · не нудно', track: 'Start here', ready: true },
-  { id: '01-window-functions', title: 'Віконні функції (intro)', track: 'SQL', ready: true },
+  { id: '01-window-functions', title: 'Віконні функції (місії)', track: 'SQL', ready: true },
   { id: '02-sql-interview-10', title: 'SQL Interview · 10', track: 'SQL', ready: true },
   { id: '03-python-interview-10', title: 'Python Interview · 10', track: 'Python', ready: true },
   { id: '04-theory-data-ae', title: 'Theory · AE (опорна)', track: 'Theory', ready: true },

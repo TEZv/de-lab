@@ -254,7 +254,115 @@
     root.appendChild(wrap);
   }
 
+  function mountMissionBrief(root, level) {
+    if (!level.mission && !level.sampleTable && !level.why) return;
+    const brief = document.createElement('div');
+    brief.className = 'pl-mission';
+    if (level.mission) {
+      brief.innerHTML = `
+        <div class="pl-mission-head">
+          <span>${escapeHtml(level.mission.emoji || '🎯')}</span>
+          <div>
+            <strong>${escapeHtml(level.mission.title || 'Місія')}</strong>
+            <p>${escapeHtml(level.mission.brief || '')}</p>
+          </div>
+        </div>`;
+      if (level.mission.ask) {
+        const ask = document.createElement('p');
+        ask.className = 'pl-mission-ask';
+        ask.textContent = level.mission.ask;
+        brief.appendChild(ask);
+      }
+    }
+    if (level.why) {
+      const why = document.createElement('p');
+      why.className = 'pl-tip';
+      why.textContent = level.why;
+      brief.appendChild(why);
+    }
+    if (level.sampleTable) {
+      const table = document.createElement('table');
+      table.className = 'pl-mini-table';
+      const thead = document.createElement('thead');
+      thead.innerHTML = `<tr>${(level.sampleTable.headers || []).map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
+      const tbody = document.createElement('tbody');
+      (level.sampleTable.rows || []).forEach((row, ri) => {
+        const tr = document.createElement('tr');
+        if ((level.sampleTable.highlight || []).includes(ri)) tr.classList.add('hl');
+        tr.innerHTML = row.map((c) => `<td>${escapeHtml(c)}</td>`).join('');
+        tbody.appendChild(tr);
+      });
+      table.append(thead, tbody);
+      brief.appendChild(table);
+      if (level.sampleTable.caption) {
+        const cap = document.createElement('p');
+        cap.className = 'pl-tip';
+        cap.textContent = level.sampleTable.caption;
+        brief.appendChild(cap);
+      }
+    }
+    root.appendChild(brief);
+  }
+
+  function mountPickRows(root, level, onComplete) {
+    mountMissionBrief(root, level);
+    const selected = new Set();
+    const need = (level.rows || []).filter((r) => r.correct).map((r) => String(r.id));
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+    feedback.textContent = level.pickHint || 'Клікай рядки, які мають лишитися у відповіді. Злі/дорожчі — не чіпай.';
+
+    const table = document.createElement('table');
+    table.className = 'pl-mini-table pl-pick-table';
+    const headers = level.headers || Object.keys(level.rows[0] || {}).filter((k) => k !== 'correct');
+    table.innerHTML = `<thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}<th>pick</th></tr></thead>`;
+    const tbody = document.createElement('tbody');
+
+    (level.rows || []).forEach((row) => {
+      const tr = document.createElement('tr');
+      tr.dataset.id = String(row.id);
+      tr.innerHTML = `${headers.map((h) => `<td>${escapeHtml(row[h])}</td>`).join('')}<td class="pick-mark">○</td>`;
+      tr.addEventListener('click', () => {
+        if (selected.has(tr.dataset.id)) {
+          selected.delete(tr.dataset.id);
+          tr.classList.remove('picked');
+          tr.querySelector('.pick-mark').textContent = '○';
+        } else {
+          selected.add(tr.dataset.id);
+          tr.classList.add('picked');
+          tr.querySelector('.pick-mark').textContent = '●';
+        }
+        feedback.textContent = `Обрано ${selected.size} · треба ${need.length}`;
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    const check = document.createElement('button');
+    check.type = 'button';
+    check.textContent = 'Перевірити вибір';
+    check.addEventListener('click', () => {
+      const ok = need.length === selected.size && need.every((id) => selected.has(id));
+      if (ok) {
+        feedback.textContent = `✅ ${level.success || 'Саме ці рядки = rn = 1 після PARTITION!'}`;
+        toast(root, 'Місія: дані обрані', true);
+        tbody.querySelectorAll('tr').forEach((tr) => {
+          const id = tr.dataset.id;
+          if (need.includes(id)) tr.classList.add('hl');
+          else if (selected.has(id)) tr.classList.add('bad-pick');
+        });
+        if (onComplete) onComplete(level.id);
+      } else {
+        feedback.textContent = '❌ Не той набір. Підказка: спочатку відкинь evil, потім найдешевшу в кожній парі (power, age).';
+        toast(root, 'Ще не ті палички', false);
+      }
+    });
+
+    root.append(table, check, feedback);
+  }
+
   function mountFillBlanks(root, level, onComplete) {
+    mountMissionBrief(root, level);
     const answers = level.answers || [];
     const filled = answers.map(() => '');
     let activeSlot = 0;
@@ -266,7 +374,7 @@
     feedback.className = 'pl-feedback';
     const tip = document.createElement('p');
     tip.className = 'pl-tip';
-    tip.textContent = 'Перетягни чіп у ____ або клікни слот → потім слово.';
+    tip.textContent = level.controlTip || 'Спочатку зрозумій місію вище ↑ потім заповни SQL. Перетягни чіп у ____.';
 
     function nextEmpty(from = 0) {
       for (let i = from; i < answers.length; i += 1) if (!filled[i]) return i;
@@ -586,6 +694,9 @@
         break;
       case 'scenario':
         mountScenario(body, level, onComplete);
+        break;
+      case 'pick_rows':
+        mountPickRows(body, level, onComplete);
         break;
       case 'fill_blanks':
         mountFillBlanks(body, level, onComplete);
