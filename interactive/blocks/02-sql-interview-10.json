@@ -1,0 +1,158 @@
+{
+  "id": "02-sql-interview-10",
+  "title": "SQL Interview · 10 задач",
+  "subtitle": "HAVING · windows · JOIN traps · Harry Potter · LAG · SCD · DQ",
+  "levels": [
+    {
+      "id": "S0",
+      "type": "theory",
+      "tag": "SQL · карта",
+      "title": "Перед тренуванням · порядок SQL",
+      "instruction": "Сервер виконує не той порядок, який ти пишеш очима.",
+      "diagram": "FROM → WHERE → GROUP BY → HAVING → SELECT (AS) → ORDER BY\n\nWHERE  = фільтр СИрих рядків (до агрегації)\nHAVING = фільтр після GROUP BY (AVG/SUM/MAX)\nOVER   = вікно: рядки НЕ стискає",
+      "bullets": [
+        "Аліаси з SELECT не працюють у WHERE/GROUP BY",
+        "У SELECT все не-агреговане → обовʼязково у GROUP BY",
+        "ROW_NUMBER/LAG — інструмент №1 на live-coding"
+      ]
+    },
+    {
+      "id": "S1",
+      "type": "fill_blanks",
+      "tag": "SQL · 1/10",
+      "title": "HAVING vs WHERE",
+      "instruction": "Відділи зі середньою зарплатою > 2000.",
+      "template": "SELECT department, AVG(salary) AS avg_sal\nFROM core.employees\nGROUP BY department\n____ AVG(salary) > 2000;",
+      "answers": ["HAVING"],
+      "wordBank": ["HAVING", "WHERE", "ORDER BY", "LIMIT"],
+      "hints": ["Агрегат живе після GROUP BY.", "WHERE не бачить AVG()."]
+    },
+    {
+      "id": "S2",
+      "type": "fill_blanks",
+      "tag": "SQL · 2/10",
+      "title": "ROW_NUMBER · top-1 у групі",
+      "instruction": "Найдешевша паличка для кожної пари code+power.",
+      "template": "WITH Ranked AS (\n  SELECT id, code, coins_needed, power,\n         ROW_NUMBER() OVER(____ BY code, power ____ BY coins_needed ____) AS rn\n  FROM staging.wands\n)\nSELECT * FROM Ranked WHERE rn = ____;",
+      "answers": ["PARTITION", "ORDER", "ASC", "1"],
+      "wordBank": ["PARTITION", "ORDER", "ASC", "DESC", "GROUP", "1", "0"],
+      "hints": [
+        "Вікно ділить PARTITION BY, не GROUP BY.",
+        "Найдешевша → ASC, номер 1."
+      ]
+    },
+    {
+      "id": "S3",
+      "type": "fill_blanks",
+      "tag": "SQL · 3/10",
+      "title": "Harry Potter · канон (power, age)",
+      "instruction": "Найдешевша серед не-evil для кожної пари power+age.",
+      "template": "WITH ranked AS (\n  SELECT w.id, wp.age, w.coins_needed, w.power,\n         ROW_NUMBER() OVER(\n           PARTITION BY w.____, wp.____\n           ORDER BY w.coins_needed ____\n         ) AS rn\n  FROM Wands w\n  JOIN Wands_Property wp ON w.code = wp.code\n  WHERE wp.is_evil = ____\n)\nSELECT id, age, coins_needed, power FROM ranked\nWHERE rn = 1\nORDER BY power ____, age DESC;",
+      "answers": ["power", "age", "ASC", "0", "DESC"],
+      "wordBank": ["power", "age", "code", "ASC", "DESC", "0", "1"],
+      "hints": [
+        "Канон HackerRank: PARTITION BY power, age.",
+        "is_evil = 0 означає не-зли.",
+        "Фінальний ORDER: power DESC, age DESC."
+      ],
+      "revealOnFail": false
+    },
+    {
+      "id": "S4",
+      "type": "fill_blanks",
+      "tag": "SQL · 4/10",
+      "title": "LAG · попередня сесія",
+      "instruction": "Час попередньої сесії того ж юзера.",
+      "template": "SELECT user_id, session_start,\n  ____(session_start) OVER(PARTITION BY user_id ORDER BY session_start) AS prev_session\nFROM core.user_sessions;",
+      "answers": ["LAG"],
+      "wordBank": ["LAG", "LEAD", "ROW_NUMBER", "FIRST_VALUE", "NOW"],
+      "hints": ["Попередній рядок = LAG, наступний = LEAD.", "NOW() — це «зараз», не минула сесія."]
+    },
+    {
+      "id": "S5",
+      "type": "whats_wrong",
+      "tag": "SQL · 5/10 · пастка",
+      "title": "Що не так?",
+      "instruction": "Класична помилка інтернів.",
+      "buggyCode": "SELECT customer_id, MAX(amount) AS maximum_order_amount\nFROM orders\nWHERE MAX(amount) > 500\nGROUP BY maximum_order_amount\nORDER BY 2 DESC;",
+      "prompt": "Обери головний баг (їх кілька, але ключовий діагноз).",
+      "options": [
+        "Агрегати у WHERE + GROUP BY по аліасу — треба HAVING і GROUP BY customer_id",
+        "Треба SELECT * замість customer_id",
+        "ORDER BY 2 DESC заборонений у всіх БД",
+        "MAX завжди потребує віконної функції"
+      ],
+      "correctIndex": 0,
+      "explainOk": "WHERE MAX(...) нелегально; аліас у GROUP BY теж. Правильно: GROUP BY customer_id HAVING MAX(amount) > 500.",
+      "explanation": "Агрегати фільтруй через HAVING."
+    },
+    {
+      "id": "S6",
+      "type": "multi_choice",
+      "tag": "SQL · 6/10",
+      "title": "JOIN · дублі рядків",
+      "instruction": "Критичний Middle-кейс.",
+      "diagram": "users: 10 унікальних user_id\norders: багато замовлень на 1 user\nLEFT JOIN users → orders",
+      "question": "Чи може результат LEFT JOIN мати БІЛЬШЕ 10 рядків?",
+      "options": [
+        "Так — якщо у одного user кілька orders, рядок user продублюється",
+        "Ні — LEFT JOIN ніколи не збільшує кількість рядків лівої таблиці",
+        "Лише якщо INNER JOIN",
+        "Лише якщо FULL OUTER JOIN"
+      ],
+      "correctIndex": 0,
+      "explanation": "1:N звʼязок роздуває cardinality. Це часта причина дублів метрик."
+    },
+    {
+      "id": "S7",
+      "type": "fill_blanks",
+      "tag": "SQL · 7/10",
+      "title": "COALESCE · NULL у CORE",
+      "instruction": "NULL у amount → 0 на шарі очищення.",
+      "template": "SELECT order_id, ____(amount, ____) AS cleaned_amount\nFROM staging.orders;",
+      "answers": ["COALESCE", "0"],
+      "wordBank": ["COALESCE", "IFNULL", "0", "NULL", "CASE"],
+      "hints": ["COALESCE повертає перше не-NULL.", "Альтернатива: CASE WHEN amount IS NULL THEN 0."]
+    },
+    {
+      "id": "S8",
+      "type": "fill_blanks",
+      "tag": "SQL · 8/10",
+      "title": "Дедуплікація",
+      "instruction": "Лишити найсвіжіший рядок на user_id.",
+      "template": "WITH RankedData AS (\n  SELECT *,\n         ROW_NUMBER() OVER(PARTITION BY ____ ORDER BY ____ DESC) AS rn\n  FROM staging.users\n)\nSELECT * FROM RankedData WHERE rn = ____;",
+      "answers": ["user_id", "updated_at", "1"],
+      "wordBank": ["user_id", "updated_at", "created_at", "1", "0", "email"],
+      "hints": ["Ключ унікальності = user_id.", "Найновіший = ORDER BY updated_at DESC, rn=1."]
+    },
+    {
+      "id": "S9",
+      "type": "match_pairs",
+      "tag": "SQL · 9/10",
+      "title": "MATCH · віконні vs агрегати",
+      "instruction": "Зʼєднай інструмент із поведінкою.",
+      "pairs": [
+        { "left": "GROUP BY + SUM", "right": "Стискає рядки в 1 на групу" },
+        { "left": "SUM() OVER(PARTITION BY …)", "right": "Сума поруч, рядки лишаються" },
+        { "left": "RANK()", "right": "1,2,2,4 — пропуск після tie" },
+        { "left": "DENSE_RANK()", "right": "1,2,2,3 — без пропуску" },
+        { "left": "ROW_NUMBER()", "right": "Завжди унікальні 1,2,3,4" }
+      ]
+    },
+    {
+      "id": "S10",
+      "type": "drag_order",
+      "tag": "SQL · 10/10",
+      "title": "Порядок виконання запиту",
+      "instruction": "Розстав у порядку, як бачить сервер (не як ти пишеш).",
+      "items": [
+        "FROM",
+        "WHERE",
+        "GROUP BY",
+        "HAVING",
+        "SELECT",
+        "ORDER BY"
+      ]
+    }
+  ]
+}

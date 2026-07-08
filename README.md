@@ -43,6 +43,7 @@ Open **[CHALLENGES.md](CHALLENGES.md)** — Level 1, Challenge 1.1.
 ```
 de-lab/
 ├── .devcontainer/       # Codespace configuration
+├── interactive/         # 🏋️ Interview Gym (drag ____ / whats-wrong / theory)
 ├── sql/                 # Schema + seed data for DuckDB
 ├── python/              # ETL exercises, pytest
 ├── dbt/                 # dbt project (after Level 3)
@@ -54,6 +55,19 @@ de-lab/
 └── CHALLENGES.md        # 🎮 Main quest
 ```
 
+### Interview Gym (local UI)
+
+```bash
+cd interactive
+python -m http.server 8770
+# http://127.0.0.1:8770/
+```
+
+SQL×10 · Python×10 · Theory/AE — see `interactive/README.md`.
+
+**Deploy (після push `interactive/`):** Vercel → Import `TEZv/de-lab` → **Root Directory = `interactive`** → Deploy.  
+Або GitHub Pages: Settings → Pages → Deploy from branch `/interactive` (або Actions).  
+Поки папка не в `origin/main` — з GitHub «відкрити як сайт» не вийде.
 ## Challenges
 
 👉 **[CHALLENGES.md](CHALLENGES.md)** — 18+ hands-on challenges from beginner to interview-ready, with questions to think about and a progress tracker.
@@ -75,6 +89,7 @@ Parallel track for technical interviews — **DE primary**, AE secondary:
 
 - [`interview-sprint/00-README.md`](interview-sprint/00-README.md)
 - [`interview-sprint/AE-vs-DE.md`](interview-sprint/AE-vs-DE.md) — **start here**
+- [`interactive/`](interactive/) — **рівні 1–3: схема, заглушки, drag/match** (окремо від markdown-квестів)
 - [`01-SQL-Sprint-30.md`](interview-sprint/01-SQL-Sprint-30.md)
 - [`02-Python-LiveCoding.md`](interview-sprint/02-Python-LiveCoding.md)
 - [`03-Data-Modeling-Case.md`](interview-sprint/03-Data-Modeling-Case.md)

@@ -1,0 +1,157 @@
+{
+  "id": "03-python-interview-10",
+  "title": "Python Interview · 10 задач",
+  "subtitle": "types · counter dict · slices · recursion · pandas · TypeError trap",
+  "levels": [
+    {
+      "id": "P0",
+      "type": "theory",
+      "tag": "PY · карта",
+      "title": "Чистий Python vs Pandas",
+      "instruction": "На скрінінгу можуть заборонити import pandas — май обидва шаблони.",
+      "diagram": "ДОЗВОЛИЛИ PANDAS          │  ЧИСТИЙ PYTHON\n─────────────────────────┼──────────────────────\ngroupby + agg + mean     │  dict counter += 1\npd.merge(..., how=left)  │  map / loop join\nfillna / dropna          │  if x is None\n\nПастка: a = list → a[item] тільки з INTEGER індексом\nЛічильник потребує counts = {} (dict), не list!",
+      "bullets": [
+        "list[i] — i має бути int",
+        "dict[key] — key може бути str/int/tuple",
+        "set / dict як індекс списку → TypeError",
+        "isinstance(x, dict/list/tuple) — розбір брудних даних"
+      ]
+    },
+    {
+      "id": "P1",
+      "type": "fill_blanks",
+      "tag": "PY · 1/10",
+      "title": "Паліндром",
+      "instruction": "Перевірка слова з обох боків.",
+      "template": "def is_palindrome(word):\n    clean = word.____()\n    if clean == clean[____]:\n        return True\n    else:\n        return ____",
+      "answers": ["lower", "::-1", "False"],
+      "wordBank": ["lower", "upper", "::-1", "False", "True", "None"],
+      "hints": ["Нормалізуй регістр.", "Зріз [::-1] перевертає.", "Повертай bool, не саме слово."]
+    },
+    {
+      "id": "P2",
+      "type": "fill_blanks",
+      "tag": "PY · 2/10",
+      "title": "Лічильник у dict",
+      "instruction": "Скільки разів зустрічається кожен бренд.",
+      "template": "counts = {}\nfor car in cars:\n    if car in counts:\n        counts[car] += ____\n    else:\n        counts[car] = ____",
+      "answers": ["1", "1"],
+      "wordBank": ["1", "0", "car", "True"],
+      "hints": ["Вперше = 1, далі += 1.", "Альтернатива: counts.get(car, 0) + 1."]
+    },
+    {
+      "id": "P3",
+      "type": "fill_blanks",
+      "tag": "PY · 3/10",
+      "title": "Рекурсія · факторіал",
+      "instruction": "Базовий випадок + виклик себе.",
+      "template": "def factorial(n):\n    if n == 1:\n        return 1\n    else:\n        return n * ____(n - 1)",
+      "answers": ["factorial"],
+      "wordBank": ["factorial", "n", "loop", "return"],
+      "hints": ["Функція викликає себе по імені.", "Без базового випадку → StackOverflow."]
+    },
+    {
+      "id": "P4",
+      "type": "whats_wrong",
+      "tag": "PY · 4/10 · hardcore",
+      "title": "TypeError: list indices … not set",
+      "instruction": "Класична пастка live-coding.",
+      "buggyCode": "a = [[16,'A'], (5,'R'), {2:'O'}, {3,'N'}, 7, 'T']\nfor item in a:\n    if item in a:\n        a[item] += 1   # 💥",
+      "prompt": "Чому падає?",
+      "options": [
+        "a — list; a[item] потребує int-індекс. item=set/dict → TypeError. Для лічильника потрібен counts={}",
+        "Треба було написати a.append(item)",
+        "set не можна класти у list взагалі",
+        "+= 1 заборонено для чисел у Python"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Паттерн лічильника — для dict, не для модифікації list через складний обʼєкт як індекс.",
+      "explanation": "isinstance + розбір типів, або порожній dict."
+    },
+    {
+      "id": "P5",
+      "type": "fill_blanks",
+      "tag": "PY · 5/10",
+      "title": "Pandas groupby + mean",
+      "instruction": "Середня зарплата по відділу. Памʼятай: mean ≠ avg.",
+      "template": "result = df.____('department').____(mean_salary=('salary', '____')).____()",
+      "answers": ["groupby", "agg", "mean", "reset_index"],
+      "wordBank": ["groupby", "agg", "mean", "avg", "sum", "reset_index", "merge"],
+      "hints": [
+        "SQL AVG → Pandas 'mean'.",
+        "groupby робить ключ індексом → reset_index()."
+      ]
+    },
+    {
+      "id": "P6",
+      "type": "fill_blanks",
+      "tag": "PY · 6/10",
+      "title": "pd.merge = LEFT JOIN",
+      "instruction": "users ⟕ orders по user_id.",
+      "template": "merged = pd.merge(\n    ____,\n    ____,\n    on='____',\n    how='____'\n)",
+      "answers": ["df_users", "df_orders", "user_id", "left"],
+      "wordBank": ["df_users", "df_orders", "user_id", "left", "inner", "right", "outer"],
+      "hints": ["Ліва таблиця — куди джойнимо.", "how='left' зберігає всіх users."]
+    },
+    {
+      "id": "P7",
+      "type": "multi_choice",
+      "tag": "PY · 7/10",
+      "title": "Що далі з res?",
+      "question": "Після groupby+agg ти маєш res. Як використати далі?",
+      "options": [
+        "res — звичайний DataFrame: filter / sort / merge назад / to_csv",
+        "res можна лише print; далі мерджити не можна",
+        "reset_index знищує дані",
+        "agg завжди повертає list"
+      ],
+      "correctIndex": 0,
+      "explanation": "res.sort_values(...).head(10); df.merge(res, on='k'); res.to_csv(...)."
+    },
+    {
+      "id": "P8",
+      "type": "whats_wrong",
+      "tag": "PY · 8/10",
+      "title": "fillna / dropna без присвоєння",
+      "buggyCode": "df.dropna()\ndf.fillna(0)\nprint(df)  # NULL все ще тут!",
+      "prompt": "У чому підвох?",
+      "options": [
+        "Методи повертають новий DF; треба clean = df.dropna() або inplace=True",
+        "dropna видаляє лише колонки, не рядки",
+        "fillna не працює з числовими NULL",
+        "Треба спочатку groupby"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Без присвоєння / inplace оригінал не змінюється.",
+      "explanation": "На інтервʼю кажи: clean = df.dropna(subset=['amount'])."
+    },
+    {
+      "id": "P9",
+      "type": "match_pairs",
+      "tag": "PY · 9/10",
+      "title": "MATCH · типи",
+      "instruction": "Що можна юзати як ключ / індекс?",
+      "pairs": [
+        { "left": "list[i]", "right": "лише int (або slice)" },
+        { "left": "dict[k]", "right": "hashable key (str/int/tuple)" },
+        { "left": "isinstance(x, dict)", "right": "перевірка типу перед парсингом" },
+        { "left": "word[::-1]", "right": "перевернутий рядок" },
+        { "left": "counts.get(k, 0)", "right": "лічильник без if/else" }
+      ]
+    },
+    {
+      "id": "P10",
+      "type": "drag_order",
+      "tag": "PY · 10/10",
+      "title": "Розбір брудного списку (hah trick)",
+      "instruction": "Порядок кроків для парсингу mixed types → clean_dict.",
+      "items": [
+        "Створити clean_dict = {}",
+        "for item in a: перевірити isinstance",
+        "dict → витягти key/value (у т.ч. вкладений 'hah, trick')",
+        "list/tuple → item[0]=key, item[1]=value",
+        "Відсортувати ключі й зібрати рядок/результат"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "id": "04-theory-data-ae",
+  "title": "Theory · AE / Modeling / Stats / DQ",
+  "subtitle": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1",
+  "levels": [
+    {
+      "id": "T0",
+      "type": "theory",
+      "tag": "AE · карта",
+      "title": "Шари сховища",
+      "instruction": "Фраза на інтервʼю: «спочатку map систему, потім quality, потім нове».",
+      "diagram": "SOURCES → INGEST → STAGING (сирі)\n                 → CORE/DWH (чистка, facts+dims)\n                 → MARTS (вітрини під BI/ML)\n\nOrchestration: Airflow/Dagster\nTransform:     SQL + dbt + Python\nConsume:       Tableau / Power BI / Jupyter",
+      "bullets": [
+        "Staging — без бізнес-логіки",
+        "Core — dedup, COALESCE, SCD, Star",
+        "Marts — готово під дашборд / feature gen"
+      ]
+    },
+    {
+      "id": "T1",
+      "type": "fill_blanks",
+      "tag": "AE · 1",
+      "title": "Три шари",
+      "instruction": "ROI-звіт: кліки Ads + платежі.",
+      "template": "Сирі логи без змін → ____\nОчищення + факти → ____\nФінальна вітрина для Tableau → ____",
+      "answers": ["STAGING", "CORE (DWH)", "MARTS"],
+      "wordBank": ["STAGING", "CORE (DWH)", "MARTS", "LAKEHOUSE", "REDIS"],
+      "hints": ["Сирі = staging.", "Чистота = core.", "BI = marts."]
+    },
+    {
+      "id": "T2",
+      "type": "multi_choice",
+      "tag": "AE · 2",
+      "title": "Star vs Snowflake",
+      "diagram": "STAR: fact ──1 JOIN──> dim (країна текстом)\nSNOW: fact → dim_products → dim_countries",
+      "question": "Для BigQuery що краще і чому?",
+      "options": [
+        "Star Schema — менше JOIN, швидше і дешевше на колоночній БД",
+        "Snowflake — завжди швидше через нормалізацію",
+        "Байдуже, LIMIT 10 все одно безкоштовний",
+        "Лише Data Vault"
+      ],
+      "correctIndex": 0,
+      "explanation": "Памʼять дешева; дорогі — скани й JOIN-и. Star = golden path для analytics DWH."
+    },
+    {
+      "id": "T3",
+      "type": "fill_blanks",
+      "tag": "AE · 3",
+      "title": "SCD Type 2",
+      "instruction": "Зберегти історію статусу юзера Free→Premium.",
+      "template": "CREATE TABLE dim_users (\n  user_id INT,\n  user_status VARCHAR,\n  ____ DATE,\n  ____ DATE,\n  ____ BOOLEAN\n);",
+      "answers": ["valid_from", "valid_to", "is_current"],
+      "wordBank": ["valid_from", "valid_to", "is_current", "PRIMARY KEY", "NOT NULL"],
+      "hints": ["Новий рядок замість overwrite.", "Активний зараз: is_current=True / valid_to=9999-12-31."]
+    },
+    {
+      "id": "T4",
+      "type": "whats_wrong",
+      "tag": "AE · 4 · BigQuery",
+      "title": "SELECT * … LIMIT 10",
+      "buggyCode": "-- маркетолог:\nSELECT * FROM staging.user_clicks\nWHERE click_date = '2026-07-01'\nLIMIT 10;\n-- «LIMIT же економить?»",
+      "prompt": "Що не так із вартістю?",
+      "options": [
+        "BigQuery платить за проскановані КОЛОНКИ; LIMIT ріже вивід ПІСЛЯ скану → SELECT * все одно 💸",
+        "LIMIT завжди безкоштовний у BQ",
+        "WHERE по даті ігнорується",
+        "Треба GROUP BY для економії"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Колоночна БД + SELECT * + LIMIT = класична пастка вартості.",
+      "explanation": "Fix: конкретні колонки + Preview / партиції."
+    },
+    {
+      "id": "T5",
+      "type": "multi_choice",
+      "tag": "AE · 5",
+      "title": "Constraints у BigQuery",
+      "question": "PRIMARY KEY / UNIQUE у BigQuery при INSERT…",
+      "options": [
+        "Не форсяться — дублі можуть пройти; dedup робить аналітик (SQL/dbt)",
+        "Завжди блокують дублі як у Postgres",
+        "Працюють лише для INT",
+        "Замінюють партиціонування"
+      ],
+      "correctIndex": 0,
+      "explanation": "Postgres = стіна. Analytics DWH = швидкість > enforce. Quality на CORE."
+    },
+    {
+      "id": "T6",
+      "type": "match_pairs",
+      "tag": "AE · 6 · DQ",
+      "title": "Data Quality checks",
+      "instruction": "Зʼєднай перевірку з сенсом.",
+      "pairs": [
+        { "left": "freshness", "right": "MAX(updated_at) не старше X год" },
+        { "left": "volume", "right": "COUNT сьогодні ≈ вчора (±N%)" },
+        { "left": "schema", "right": "колонки/типи на місці" },
+        { "left": "duplicates", "right": "COUNT(*) vs COUNT(DISTINCT id)" }
+      ]
+    },
+    {
+      "id": "T7",
+      "type": "fill_blanks",
+      "tag": "AE · 7 · A/B",
+      "title": "Гіпотези A/B",
+      "instruction": "Мінімум статистики для Analytics Engineer.",
+      "template": "____ = різниці немає (контроль = тест)\n____ = різниця є\np < 0.05 → ____ H0\nType I = false ____\nType II = false ____",
+      "answers": ["H0", "H1", "відхиляємо", "+", "-"],
+      "wordBank": ["H0", "H1", "відхиляємо", "приймаємо", "+", "-"],
+      "hints": [
+        "H0 — «нема ефекту».",
+        "p малий → рідко випадковість → відхиляємо H0.",
+        "Type I = помилково побачили ефект (+)."
+      ]
+    },
+    {
+      "id": "T8",
+      "type": "multi_choice",
+      "tag": "AE · 8",
+      "title": "Logical vs Physical model",
+      "question": "Логічна vs фізична модель — що є що?",
+      "options": [
+        "Логічна = сутності/звʼязки для бізнесу; фізична = таблиці, типи, ключі, шари DWH",
+        "Логічна = тільки SQL files; фізична = Tableau",
+        "Фізична ніколи не містить дат",
+        "Це одне й те саме"
+      ],
+      "correctIndex": 0,
+      "explanation": "LDM: User має Status. PDM: dim_users(user_id, status, valid_from, …)."
+    },
+    {
+      "id": "T9",
+      "type": "drag_order",
+      "tag": "AE · 9 · Day-1",
+      "title": "Перші дії на роботі",
+      "instruction": "Що робиш у перший тиждень (правильний порядок).",
+      "items": [
+        "Доступи: репо, DWH, BI, доки",
+        "Зрозуміти команду / stakeholders",
+        "Мапа: STG→CORE→MARTS + джерела",
+        "Біль: freshness / дублі / зламані пайплайни",
+        "Quick win на staging (не ламати prod)"
+      ]
+    },
+    {
+      "id": "T10",
+      "type": "match_pairs",
+      "tag": "AE · 10 · стек",
+      "title": "Етап → технологія",
+      "instruction": "Карта DE стеку для співбесіди.",
+      "pairs": [
+        { "left": "Ingestion", "right": "Airbyte / Fivetran / Python API" },
+        { "left": "Orchestration", "right": "Airflow / Dagster" },
+        { "left": "Transform", "right": "dbt + SQL (+ pandas)" },
+        { "left": "Warehouse", "right": "BigQuery / Snowflake" },
+        { "left": "BI", "right": "Tableau / Power BI / Looker" },
+        { "left": "Quality", "right": "dbt tests / Great Expectations" }
+      ]
+    }
+  ]
+}
