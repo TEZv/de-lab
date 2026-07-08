@@ -1,3 +1,4 @@
+const STORAGE_KEY = 'de-lab-interactive-v3';
 const BUILD = '20260708b';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
@@ -253,6 +254,14 @@ function paintChrome() {
   const lede = document.getElementById('hdr-lede');
   if (h1) h1.textContent = t('headerTitle');
   if (lede) lede.textContent = t('headerLede');
+  let build = document.getElementById('build-tag');
+  if (!build) {
+    build = document.createElement('span');
+    build.id = 'build-tag';
+    build.className = 'build-tag';
+    document.querySelector('header')?.appendChild(build);
+  }
+  build.textContent = `build ${BUILD}`;
   const map = [
     ['nav-de-md', 'navDeMd'],
     ['nav-mentorship', 'navMentorship'],
