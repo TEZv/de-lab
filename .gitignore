@@ -8,3 +8,6 @@ python/output/*
 dbt/target/
 dbt/dbt_packages/
 .env
+
+# Firebase local cache
+interactive/.firebase/
