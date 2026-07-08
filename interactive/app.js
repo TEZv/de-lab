@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260708e';
+const BUILD = '20260708f';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
@@ -82,10 +82,22 @@ function saveProgress(p) {
 
 function parseRoute() {
   const h = (location.hash || '#/').replace(/^#\/?/, '');
-  const parts = h.split('/').filter(Boolean);
+  const [pathPart, queryPart] = h.split('?');
+  const parts = pathPart.split('/').filter(Boolean);
+  const q = queryPart ? new URLSearchParams(queryPart).get('q') : null;
   if (!parts.length) return { view: 'home' };
   if (parts[0] === 'block') return { view: 'block', blockId: parts[1], levelId: parts[2] || null };
   if (parts[0] === 'share') return { view: 'share' };
+  if (parts[0] === 'interview') {
+    if (parts[1] === 'task') return { view: 'interview', taskId: parts[2] || null, q };
+    const arch = parts[1];
+  const archetypes = ['universal', 'product', 'market', 'media', 'consult', 'fintech'];
+    return {
+      view: 'interview',
+      archetype: archetypes.includes(arch) ? arch : 'all',
+      q,
+    };
+  }
   return { view: 'home' };
 }
 
@@ -370,8 +382,8 @@ function renderHeroCabin() {
         <p class="hero-tip">${t('heroTip')}</p>
         <div class="skill-orb-row">${orbs}</div>
         <div class="hero-actions">
+          <a class="nav-pill hub-cta" href="#/interview">${t('btnInterviewHub')}</a>
           <button type="button" class="ghost" id="btn-share">${t('btnShare')}</button>
-          <a class="ghost nav-pill" href="${withLang(MENTORSHIP)}" target="_blank" rel="noopener">${t('linkMentorship')}</a>
         </div>
       </div>
     </aside>`;
@@ -756,9 +768,16 @@ async function render() {
   const route = parseRoute();
   if (route.view === 'home') renderHome(root);
   else if (route.view === 'share') renderShare(root);
-  else await renderBlock(root, route.blockId, route.levelId);
+  else if (route.view === 'interview' && window.InterviewHub) {
+    await InterviewHub.render(root, route);
+  } else await renderBlock(root, route.blockId, route.levelId);
 }
 
+window.loadProgress = loadProgress;
+
 window.addEventListener('hashchange', render);
-window.addEventListener('site:langchange', render);
+window.addEventListener('site:langchange', () => {
+  if (window.InterviewHub) InterviewHub.clearCache();
+  render();
+});
 render();

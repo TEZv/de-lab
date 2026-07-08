@@ -1,0 +1,2100 @@
+{
+  "version": 1,
+  "updated": "2026-07-08",
+  "ethics": {
+    "ua": "Без брендів роботодавців і злитих тестів. Лише архетипи галузей + публічні патерни.",
+    "en": "No employer brands or leaked tests. Industry archetypes + public patterns only."
+  },
+  "archetypes": [
+    {
+      "id": "universal",
+      "sigil": "CORE",
+      "color": "#8b9cb3",
+      "glyph": "🧭",
+      "label": {
+        "ua": "Універсальне",
+        "en": "Universal"
+      }
+    },
+    {
+      "id": "product",
+      "sigil": "LTV",
+      "color": "#5b8def",
+      "glyph": "📱",
+      "label": {
+        "ua": "Product / Mobile",
+        "en": "Product / Mobile"
+      }
+    },
+    {
+      "id": "market",
+      "sigil": "JOIN",
+      "color": "#e8a84b",
+      "glyph": "🛒",
+      "label": {
+        "ua": "Marketplace",
+        "en": "Marketplace"
+      }
+    },
+    {
+      "id": "media",
+      "sigil": "CLEAN",
+      "color": "#c77dff",
+      "glyph": "📺",
+      "label": {
+        "ua": "Media / Content",
+        "en": "Media / Content"
+      }
+    },
+    {
+      "id": "consult",
+      "sigil": "LIVE",
+      "color": "#4ecdc4",
+      "glyph": "🔬",
+      "label": {
+        "ua": "Consulting / IoT",
+        "en": "Consulting / IoT"
+      }
+    },
+    {
+      "id": "fintech",
+      "sigil": "DEDUP",
+      "color": "#ff6b6b",
+      "glyph": "💳",
+      "label": {
+        "ua": "Fintech",
+        "en": "Fintech"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "gym-01-window-L1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "01-window",
+      "levelId": "L1",
+      "tag": "L1 · відчуття",
+      "skill": "sql",
+      "difficulty": "easy",
+      "minutes": 8,
+      "title": {
+        "ua": "GROUP BY vs OVER — відчуй різницю",
+        "en": "GROUP BY vs OVER — відчуй різницю"
+      },
+      "prompt": {
+        "ua": "Клікай картки. Це не конспект для зубріння.",
+        "en": "Клікай картки. Це не конспект для зубріння."
+      }
+    },
+    {
+      "id": "gym-01-window-L2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "01-window",
+      "levelId": "L2",
+      "tag": "L2 · місія LAG",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Місія: попередня покупка",
+        "en": "Місія: попередня покупка"
+      },
+      "prompt": {
+        "ua": "Не «заповни бланк» — розкажи бізнес-питання.",
+        "en": "Не «заповни бланк» — розкажи бізнес-питання."
+      }
+    },
+    {
+      "id": "gym-01-window-L3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "01-window",
+      "levelId": "L3",
+      "tag": "L3 · top-1 руками",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перед SQL: хто «переможець» у кімнаті?",
+        "en": "Перед SQL: хто «переможець» у кімнаті?"
+      },
+      "prompt": {
+        "ua": "Уяви ROW_NUMBER без коду.",
+        "en": "Уяви ROW_NUMBER без коду."
+      }
+    },
+    {
+      "id": "gym-01-window-L4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "01-window",
+      "levelId": "L4",
+      "tag": "L4 · швидкий матч",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "Закріпи назви",
+        "en": "Закріпи назви"
+      },
+      "prompt": {
+        "ua": "Швидкий матч після місій — без сухої теорії спереду.",
+        "en": "Швидкий матч після місій — без сухої теорії спереду."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S0",
+      "tag": "SQL · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Перед тренуванням · порядок SQL",
+        "en": "Перед тренуванням · порядок SQL"
+      },
+      "prompt": {
+        "ua": "Сервер виконує не той порядок, який ти пишеш очима.",
+        "en": "Сервер виконує не той порядок, який ти пишеш очима."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S1",
+      "tag": "SQL · 1/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "HAVING vs WHERE",
+        "en": "HAVING vs WHERE"
+      },
+      "prompt": {
+        "ua": "Відділи зі середньою зарплатою > 2000.",
+        "en": "Відділи зі середньою зарплатою > 2000."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S2",
+      "tag": "SQL · 2/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "ROW_NUMBER · top-1 у групі",
+        "en": "ROW_NUMBER · top-1 у групі"
+      },
+      "prompt": {
+        "ua": "Найдешевша паличка для кожної пари code+power.",
+        "en": "Найдешевша паличка для кожної пари code+power."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S3",
+      "tag": "SQL · 3/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Min price у групі (SKU)",
+        "en": "Min price у групі (SKU)"
+      },
+      "prompt": {
+        "ua": "Спочатку місія — потім кістяк. Повний сюжет — блок «Місія: найдешевший SKU».",
+        "en": "Спочатку місія — потім кістяк. Повний сюжет — блок «Місія: найдешевший SKU»."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S4",
+      "tag": "SQL · 4/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "LAG · попередня сесія",
+        "en": "LAG · попередня сесія"
+      },
+      "prompt": {
+        "ua": "Час попередньої сесії того ж юзера.",
+        "en": "Час попередньої сесії того ж юзера."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S5",
+      "tag": "SQL · 5/10 · пастка",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що не так?",
+        "en": "Що не так?"
+      },
+      "prompt": {
+        "ua": "Класична помилка інтернів.",
+        "en": "Класична помилка інтернів."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S6",
+      "tag": "SQL · 6/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "JOIN · дублі рядків",
+        "en": "JOIN · дублі рядків"
+      },
+      "prompt": {
+        "ua": "Критичний Middle-кейс.",
+        "en": "Критичний Middle-кейс."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S7",
+      "tag": "SQL · 7/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "COALESCE · NULL у CORE",
+        "en": "COALESCE · NULL у CORE"
+      },
+      "prompt": {
+        "ua": "NULL у amount → 0 на шарі очищення.",
+        "en": "NULL у amount → 0 на шарі очищення."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S8",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S8",
+      "tag": "SQL · 8/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Дедуплікація",
+        "en": "Дедуплікація"
+      },
+      "prompt": {
+        "ua": "Лишити найсвіжіший рядок на user_id.",
+        "en": "Лишити найсвіжіший рядок на user_id."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S9",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S9",
+      "tag": "SQL · 9/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · віконні vs агрегати",
+        "en": "MATCH · віконні vs агрегати"
+      },
+      "prompt": {
+        "ua": "Зʼєднай інструмент із поведінкою.",
+        "en": "Зʼєднай інструмент із поведінкою."
+      }
+    },
+    {
+      "id": "gym-02-sql-interview-10-S10",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S10",
+      "tag": "SQL · 10/10",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Порядок виконання запиту",
+        "en": "Порядок виконання запиту"
+      },
+      "prompt": {
+        "ua": "Розстав у порядку, як бачить сервер (не як ти пишеш).",
+        "en": "Розстав у порядку, як бачить сервер (не як ти пишеш)."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P0",
+      "tag": "PY · карта",
+      "skill": "python",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Чистий Python vs Pandas",
+        "en": "Чистий Python vs Pandas"
+      },
+      "prompt": {
+        "ua": "На скрінінгу можуть заборонити import pandas — май обидва шаблони.",
+        "en": "На скрінінгу можуть заборонити import pandas — май обидва шаблони."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P1",
+      "tag": "PY · 1/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Паліндром",
+        "en": "Паліндром"
+      },
+      "prompt": {
+        "ua": "Перевірка слова з обох боків.",
+        "en": "Перевірка слова з обох боків."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P2",
+      "tag": "PY · 2/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Лічильник у dict",
+        "en": "Лічильник у dict"
+      },
+      "prompt": {
+        "ua": "Скільки разів зустрічається кожен бренд.",
+        "en": "Скільки разів зустрічається кожен бренд."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P3",
+      "tag": "PY · 3/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Рекурсія · факторіал",
+        "en": "Рекурсія · факторіал"
+      },
+      "prompt": {
+        "ua": "Базовий випадок + виклик себе.",
+        "en": "Базовий випадок + виклик себе."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P4",
+      "tag": "PY · 4/10 · hardcore",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "TypeError: list indices … not set",
+        "en": "TypeError: list indices … not set"
+      },
+      "prompt": {
+        "ua": "Класична пастка live-coding.",
+        "en": "Класична пастка live-coding."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P5",
+      "tag": "PY · 5/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Pandas groupby + mean",
+        "en": "Pandas groupby + mean"
+      },
+      "prompt": {
+        "ua": "Середня зарплата по відділу. Памʼятай: mean ≠ avg.",
+        "en": "Середня зарплата по відділу. Памʼятай: mean ≠ avg."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P6",
+      "tag": "PY · 6/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "pd.merge = LEFT JOIN",
+        "en": "pd.merge = LEFT JOIN"
+      },
+      "prompt": {
+        "ua": "users ⟕ orders по user_id.",
+        "en": "users ⟕ orders по user_id."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P7",
+      "tag": "PY · 7/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що далі з res?",
+        "en": "Що далі з res?"
+      },
+      "prompt": {
+        "ua": "types · counter dict · slices · recursion · pandas · TypeError trap",
+        "en": "types · counter dict · slices · recursion · pandas · TypeError trap"
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P8",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P8",
+      "tag": "PY · 8/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "fillna / dropna без присвоєння",
+        "en": "fillna / dropna без присвоєння"
+      },
+      "prompt": {
+        "ua": "types · counter dict · slices · recursion · pandas · TypeError trap",
+        "en": "types · counter dict · slices · recursion · pandas · TypeError trap"
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P9",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P9",
+      "tag": "PY · 9/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · типи",
+        "en": "MATCH · типи"
+      },
+      "prompt": {
+        "ua": "Що можна юзати як ключ / індекс?",
+        "en": "Що можна юзати як ключ / індекс?"
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P10",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P10",
+      "tag": "PY · 10/10",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Розбір брудного списку (hah trick)",
+        "en": "Розбір брудного списку (hah trick)"
+      },
+      "prompt": {
+        "ua": "Порядок кроків для парсингу mixed types → clean_dict.",
+        "en": "Порядок кроків для парсингу mixed types → clean_dict."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T0",
+      "tag": "AE · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Шари сховища",
+        "en": "Шари сховища"
+      },
+      "prompt": {
+        "ua": "Фраза на інтервʼю: «спочатку map систему, потім quality, потім нове».",
+        "en": "Фраза на інтервʼю: «спочатку map систему, потім quality, потім нове»."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T1",
+      "tag": "AE · 1",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Три шари",
+        "en": "Три шари"
+      },
+      "prompt": {
+        "ua": "ROI-звіт: кліки Ads + платежі.",
+        "en": "ROI-звіт: кліки Ads + платежі."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T2",
+      "tag": "AE · 2",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Star vs Snowflake",
+        "en": "Star vs Snowflake"
+      },
+      "prompt": {
+        "ua": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1",
+        "en": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1"
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T3",
+      "tag": "AE · 3",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "SCD Type 2",
+        "en": "SCD Type 2"
+      },
+      "prompt": {
+        "ua": "Зберегти історію статусу юзера Free→Premium.",
+        "en": "Зберегти історію статусу юзера Free→Premium."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T4",
+      "tag": "AE · 4 · BigQuery",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "SELECT * … LIMIT 10",
+        "en": "SELECT * … LIMIT 10"
+      },
+      "prompt": {
+        "ua": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1",
+        "en": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1"
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T5",
+      "tag": "AE · 5",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Constraints у BigQuery",
+        "en": "Constraints у BigQuery"
+      },
+      "prompt": {
+        "ua": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1",
+        "en": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1"
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T6",
+      "tag": "AE · 6 · DQ",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "Data Quality checks",
+        "en": "Data Quality checks"
+      },
+      "prompt": {
+        "ua": "Зʼєднай перевірку з сенсом.",
+        "en": "Зʼєднай перевірку з сенсом."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T7",
+      "tag": "AE · 7 · A/B",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Гіпотези A/B",
+        "en": "Гіпотези A/B"
+      },
+      "prompt": {
+        "ua": "Мінімум статистики для Analytics Engineer.",
+        "en": "Мінімум статистики для Analytics Engineer."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T8",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T8",
+      "tag": "AE · 8",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Logical vs Physical model",
+        "en": "Logical vs Physical model"
+      },
+      "prompt": {
+        "ua": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1",
+        "en": "STG→CORE→MARTS · Star/Snowflake · SCD · BigQuery · A/B · Quality · Day-1"
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T9",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T9",
+      "tag": "AE · 9 · Day-1",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перші дії на роботі",
+        "en": "Перші дії на роботі"
+      },
+      "prompt": {
+        "ua": "Що робиш у перший тиждень (правильний порядок).",
+        "en": "Що робиш у перший тиждень (правильний порядок)."
+      }
+    },
+    {
+      "id": "gym-04-theory-data-ae-T10",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "04-theory-data-ae",
+      "levelId": "T10",
+      "tag": "AE · 10 · стек",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "Етап → технологія",
+        "en": "Етап → технологія"
+      },
+      "prompt": {
+        "ua": "Карта DE стеку для співбесіди.",
+        "en": "Карта DE стеку для співбесіди."
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A0",
+      "tag": "жваво · 1",
+      "skill": "sql",
+      "difficulty": "easy",
+      "minutes": 8,
+      "title": {
+        "ua": "Карти шарів (клікай)",
+        "en": "Карти шарів (клікай)"
+      },
+      "prompt": {
+        "ua": "Відкрий усі картки — це не зубріння, а асоціації.",
+        "en": "Відкрий усі картки — це не зубріння, а асоціації."
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A1",
+      "tag": "жваво · 2",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Збери дата-конвеєр",
+        "en": "Збери дата-конвеєр"
+      },
+      "prompt": {
+        "ua": "Продуктовий / мобільний день: від джерела до дашборду. Drag на кроки.",
+        "en": "Продуктовий / мобільний день: від джерела до дашборду. Drag на кроки."
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A2",
+      "tag": "жваво · 3",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "День 1 на новій AE-ролі",
+        "en": "День 1 на новій AE-ролі"
+      },
+      "prompt": {
+        "ua": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»",
+        "en": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»"
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A3",
+      "tag": "жваво · 4",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "💸 Маркетолог і LIMIT 10",
+        "en": "💸 Маркетолог і LIMIT 10"
+      },
+      "prompt": {
+        "ua": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»",
+        "en": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»"
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A4",
+      "tag": "жваво · 5",
+      "skill": "sql",
+      "difficulty": "easy",
+      "minutes": 8,
+      "title": {
+        "ua": "A/B на пальцях",
+        "en": "A/B на пальцях"
+      },
+      "prompt": {
+        "ua": "Клікай — збери інтуїцію, не формулу з підручника.",
+        "en": "Клікай — збери інтуїцію, не формулу з підручника."
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A5",
+      "tag": "жваво · 6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "NULL у amount",
+        "en": "NULL у amount"
+      },
+      "prompt": {
+        "ua": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»",
+        "en": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»"
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A6",
+      "tag": "жваво · 7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "SQL-порядок у голові сервера",
+        "en": "SQL-порядок у голові сервера"
+      },
+      "prompt": {
+        "ua": "Не як пишеш — як виконує БД.",
+        "en": "Не як пишеш — як виконує БД."
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A7",
+      "tag": "жваво · 8",
+      "skill": "sql",
+      "difficulty": "easy",
+      "minutes": 8,
+      "title": {
+        "ua": "Стек на емодзі",
+        "en": "Стек на емодзі"
+      },
+      "prompt": {
+        "ua": "Щоб на інтервʼю згадати не сухий список, а картинку.",
+        "en": "Щоб на інтервʼю згадати не сухий список, а картинку."
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A8",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A8",
+      "tag": "жваво · 9",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Чи вистачить Gym на все інтервʼю?",
+        "en": "Чи вистачить Gym на все інтервʼю?"
+      },
+      "prompt": {
+        "ua": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»",
+        "en": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»"
+      }
+    },
+    {
+      "id": "gym-05-alive-ae-A9",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "05-alive-ae",
+      "levelId": "A9",
+      "tag": "жваво · 10",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Мінімальний чекліст до скрінінгу",
+        "en": "Мінімальний чекліст до скрінінгу"
+      },
+      "prompt": {
+        "ua": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»",
+        "en": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»"
+      }
+    },
+    {
+      "id": "gym-10-interview-company-types-C0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "10-interview-company-types",
+      "levelId": "C0",
+      "tag": "Карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 15,
+      "title": {
+        "ua": "5 архетипів, де працює DE / AE",
+        "en": "5 архетипів, де працює DE / AE"
+      },
+      "prompt": {
+        "ua": "П’ять порталів навколо кристала. Кожен має Сигіл і Гачок — запам’ятай їх на вигляд, не читай простині. Клік = відкрити портал.",
+        "en": "П’ять порталів навколо кристала. Кожен має Сигіл і Гачок — запам’ятай їх на вигляд, не читай простині. Клік = відкрити портал."
+      }
+    },
+    {
+      "id": "gym-10-interview-company-types-C1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "10-interview-company-types",
+      "levelId": "C1",
+      "tag": "Матч",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "Який фокус скрінінгу?",
+        "en": "Який фокус скрінінгу?"
+      },
+      "prompt": {
+        "ua": "Не вгадуй: спочатку закріпи пари (як на карті), потім зʼєднай — зʼявляться лінії.",
+        "en": "Не вгадуй: спочатку закріпи пари (як на карті), потім зʼєднай — зʼявляться лінії."
+      }
+    },
+    {
+      "id": "gym-10-interview-company-types-C2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "10-interview-company-types",
+      "levelId": "C2",
+      "tag": "Вибір",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Куди цілитись тобі зараз?",
+        "en": "Куди цілитись тобі зараз?"
+      },
+      "prompt": {
+        "ua": "Спочатку якорі в карті → потім Матч зі стрілами. Не вікторина на вгадування.",
+        "en": "Спочатку якорі в карті → потім Матч зі стрілами. Не вікторина на вгадування."
+      }
+    },
+    {
+      "id": "gym-10-interview-company-types-C3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "10-interview-company-types",
+      "levelId": "C3",
+      "tag": "Чесно",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Що Gym покриває / не покриває",
+        "en": "Що Gym покриває / не покриває"
+      },
+      "prompt": {
+        "ua": "Спочатку якорі в карті → потім Матч зі стрілами. Не вікторина на вгадування.",
+        "en": "Спочатку якорі в карті → потім Матч зі стрілами. Не вікторина на вгадування."
+      }
+    },
+    {
+      "id": "gym-11-interview-skills-universal-U1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "11-interview-skills-universal",
+      "levelId": "U1",
+      "tag": "SQL",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "HAVING на живих рядках",
+        "en": "HAVING на живих рядках"
+      },
+      "prompt": {
+        "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+        "en": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями."
+      }
+    },
+    {
+      "id": "gym-11-interview-skills-universal-U2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "11-interview-skills-universal",
+      "levelId": "U2",
+      "tag": "AE",
+      "skill": "sql",
+      "difficulty": "easy",
+      "minutes": 8,
+      "title": {
+        "ua": "Шари на картках",
+        "en": "Шари на картках"
+      },
+      "prompt": {
+        "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+        "en": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями."
+      }
+    },
+    {
+      "id": "gym-11-interview-skills-universal-U3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "11-interview-skills-universal",
+      "levelId": "U3",
+      "tag": "Python",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Pandas mean (не avg!)",
+        "en": "Pandas mean (не avg!)"
+      },
+      "prompt": {
+        "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+        "en": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями."
+      }
+    },
+    {
+      "id": "gym-11-interview-skills-universal-U4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "11-interview-skills-universal",
+      "levelId": "U4",
+      "tag": "soft",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Паперовий блокнот",
+        "en": "Паперовий блокнот"
+      },
+      "prompt": {
+        "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+        "en": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями."
+      }
+    },
+    {
+      "id": "gym-12-sku-minprice-mission-K1",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "12-sku-minprice-mission",
+      "levelId": "K1",
+      "tag": "1 · умова",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Двозначне ТЗ",
+        "en": "Двозначне ТЗ"
+      },
+      "prompt": {
+        "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
+        "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+      }
+    },
+    {
+      "id": "gym-12-sku-minprice-mission-K2",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "12-sku-minprice-mission",
+      "levelId": "K2",
+      "tag": "2 · таблиця",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Обери рядки руками",
+        "en": "Обери рядки руками"
+      },
+      "prompt": {
+        "ua": "Каталог постачальників. is_active=0 — не беремо. У парі (power, age) — найдешевша.",
+        "en": "Каталог постачальників. is_active=0 — не беремо. У парі (power, age) — найдешевша."
+      }
+    },
+    {
+      "id": "gym-12-sku-minprice-mission-K3",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "12-sku-minprice-mission",
+      "levelId": "K3",
+      "tag": "3 · CSV",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Порахуй з CSV",
+        "en": "Порахуй з CSV"
+      },
+      "prompt": {
+        "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
+        "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+      }
+    },
+    {
+      "id": "gym-12-sku-minprice-mission-K4",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "12-sku-minprice-mission",
+      "levelId": "K4",
+      "tag": "4 · SQL",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Запиши кістяк",
+        "en": "Запиши кістяк"
+      },
+      "prompt": {
+        "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
+        "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+      }
+    },
+    {
+      "id": "gym-12-sku-minprice-mission-K5",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "12-sku-minprice-mission",
+      "levelId": "K5",
+      "tag": "5 · SQL lab",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Run SQL по data",
+        "en": "Run SQL по data"
+      },
+      "prompt": {
+        "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
+        "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+      }
+    },
+    {
+      "id": "gym-20-sim-product-mobile-P1",
+      "archetype": "product",
+      "kind": "gym",
+      "blockId": "20-sim-product-mobile",
+      "levelId": "P1",
+      "tag": "день",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Збери денний конвеєр",
+        "en": "Збери денний конвеєр"
+      },
+      "prompt": {
+        "ua": "Від сирих івентів до вітрини retention.",
+        "en": "Від сирих івентів до вітрини retention."
+      }
+    },
+    {
+      "id": "gym-20-sim-product-mobile-P2",
+      "archetype": "product",
+      "kind": "gym",
+      "blockId": "20-sim-product-mobile",
+      "levelId": "P2",
+      "tag": "CSV",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "D1 retention з таблиці",
+        "en": "D1 retention з таблиці"
+      },
+      "prompt": {
+        "ua": "Типова зміна: події апки, підписки, UA spend. CSV як у таску.",
+        "en": "Типова зміна: події апки, підписки, UA spend. CSV як у таску."
+      }
+    },
+    {
+      "id": "gym-20-sim-product-mobile-P3",
+      "archetype": "product",
+      "kind": "gym",
+      "blockId": "20-sim-product-mobile",
+      "levelId": "P3",
+      "tag": "SQL",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "SQL: активні підписники",
+        "en": "SQL: активні підписники"
+      },
+      "prompt": {
+        "ua": "Типова зміна: події апки, підписки, UA spend. CSV як у таску.",
+        "en": "Типова зміна: події апки, підписки, UA spend. CSV як у таску."
+      }
+    },
+    {
+      "id": "gym-20-sim-product-mobile-P4",
+      "archetype": "product",
+      "kind": "gym",
+      "blockId": "20-sim-product-mobile",
+      "levelId": "P4",
+      "tag": "ownership",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Білий кард від UA",
+        "en": "Білий кард від UA"
+      },
+      "prompt": {
+        "ua": "Типова зміна: події апки, підписки, UA spend. CSV як у таску.",
+        "en": "Типова зміна: події апки, підписки, UA spend. CSV як у таску."
+      }
+    },
+    {
+      "id": "gym-21-sim-marketplace-M1",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "21-sim-marketplace",
+      "levelId": "M1",
+      "tag": "CSV",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Скільки рядків після LEFT JOIN?",
+        "en": "Скільки рядків після LEFT JOIN?"
+      },
+      "prompt": {
+        "ua": "Замовлення, статуси, 1:N джойн — класика.",
+        "en": "Замовлення, статуси, 1:N джойн — класика."
+      }
+    },
+    {
+      "id": "gym-21-sim-marketplace-M2",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "21-sim-marketplace",
+      "levelId": "M2",
+      "tag": "статус",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Актуальний статус замовлення (SCD2 руками)",
+        "en": "Актуальний статус замовлення (SCD2 руками)"
+      },
+      "prompt": {
+        "ua": "Замовлення, статуси, 1:N джойн — класика.",
+        "en": "Замовлення, статуси, 1:N джойн — класика."
+      }
+    },
+    {
+      "id": "gym-21-sim-marketplace-M3",
+      "archetype": "market",
+      "kind": "gym",
+      "blockId": "21-sim-marketplace",
+      "levelId": "M3",
+      "tag": "SQL",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "GMV delivered",
+        "en": "GMV delivered"
+      },
+      "prompt": {
+        "ua": "Замовлення, статуси, 1:N джойн — класика.",
+        "en": "Замовлення, статуси, 1:N джойн — класика."
+      }
+    },
+    {
+      "id": "gym-22-sim-media-E1",
+      "archetype": "media",
+      "kind": "gym",
+      "blockId": "22-sim-media",
+      "levelId": "E1",
+      "tag": "DQ",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Скільки валідних переглядів?",
+        "en": "Скільки валідних переглядів?"
+      },
+      "prompt": {
+        "ua": "Очистка логів переглядів і звіт для редакції.",
+        "en": "Очистка логів переглядів і звіт для редакції."
+      }
+    },
+    {
+      "id": "gym-22-sim-media-E2",
+      "archetype": "media",
+      "kind": "gym",
+      "blockId": "22-sim-media",
+      "levelId": "E2",
+      "tag": "SQL",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "COALESCE для NULL seconds",
+        "en": "COALESCE для NULL seconds"
+      },
+      "prompt": {
+        "ua": "Очистка логів переглядів і звіт для редакції.",
+        "en": "Очистка логів переглядів і звіт для редакції."
+      }
+    },
+    {
+      "id": "gym-22-sim-media-E3",
+      "archetype": "media",
+      "kind": "gym",
+      "blockId": "22-sim-media",
+      "levelId": "E3",
+      "tag": "звіт",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Редакція хоче «вчора»",
+        "en": "Редакція хоче «вчора»"
+      },
+      "prompt": {
+        "ua": "Очистка логів переглядів і звіт для редакції.",
+        "en": "Очистка логів переглядів і звіт для редакції."
+      }
+    },
+    {
+      "id": "gym-23-sim-iot-consulting-I1",
+      "archetype": "consult",
+      "kind": "gym",
+      "blockId": "23-sim-iot-consulting",
+      "levelId": "I1",
+      "tag": "PoC",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Від сенсора до фічі",
+        "en": "Від сенсора до фічі"
+      },
+      "prompt": {
+        "ua": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день.",
+        "en": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день."
+      }
+    },
+    {
+      "id": "gym-23-sim-iot-consulting-I2",
+      "archetype": "consult",
+      "kind": "gym",
+      "blockId": "23-sim-iot-consulting",
+      "levelId": "I2",
+      "tag": "CSV",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Аномалії температури",
+        "en": "Аномалії температури"
+      },
+      "prompt": {
+        "ua": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день.",
+        "en": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день."
+      }
+    },
+    {
+      "id": "gym-23-sim-iot-consulting-I3",
+      "archetype": "consult",
+      "kind": "gym",
+      "blockId": "23-sim-iot-consulting",
+      "levelId": "I3",
+      "tag": "умова",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Клиент дав двозначне ТЗ",
+        "en": "Клиент дав двозначне ТЗ"
+      },
+      "prompt": {
+        "ua": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день.",
+        "en": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день."
+      }
+    },
+    {
+      "id": "gym-24-sim-fintech-F1",
+      "archetype": "fintech",
+      "kind": "gym",
+      "blockId": "24-sim-fintech",
+      "levelId": "F1",
+      "tag": "dedup",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Скільки унікальних payment_id?",
+        "en": "Скільки унікальних payment_id?"
+      },
+      "prompt": {
+        "ua": "Ідемпотентність і дедуп платежів.",
+        "en": "Ідемпотентність і дедуп платежів."
+      }
+    },
+    {
+      "id": "gym-24-sim-fintech-F2",
+      "archetype": "fintech",
+      "kind": "gym",
+      "blockId": "24-sim-fintech",
+      "levelId": "F2",
+      "tag": "SQL",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Кістяк дедупа",
+        "en": "Кістяк дедупа"
+      },
+      "prompt": {
+        "ua": "Ідемпотентність і дедуп платежів.",
+        "en": "Ідемпотентність і дедуп платежів."
+      }
+    },
+    {
+      "id": "gym-24-sim-fintech-F3",
+      "archetype": "fintech",
+      "kind": "gym",
+      "blockId": "24-sim-fintech",
+      "levelId": "F3",
+      "tag": "risk",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Повторний прогін DAG",
+        "en": "Повторний прогін DAG"
+      },
+      "prompt": {
+        "ua": "Ідемпотентність і дедуп платежів.",
+        "en": "Ідемпотентність і дедуп платежів."
+      }
+    },
+    {
+      "id": "gym-30-unique-plays-X1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "30-unique-plays",
+      "levelId": "X1",
+      "tag": "стріла · 1",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Цілишся в тип компанії",
+        "en": "Цілишся в тип компанії"
+      },
+      "prompt": {
+        "ua": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+        "en": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест."
+      }
+    },
+    {
+      "id": "gym-30-unique-plays-X2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "30-unique-plays",
+      "levelId": "X2",
+      "tag": "стріла · 2",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Куди цілити SQL-час на скрінінгу?",
+        "en": "Куди цілити SQL-час на скрінінгу?"
+      },
+      "prompt": {
+        "ua": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+        "en": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест."
+      }
+    },
+    {
+      "id": "gym-30-unique-plays-X3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "30-unique-plays",
+      "levelId": "X3",
+      "tag": "туман · 3",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Ліхтарик у сирому логу",
+        "en": "Ліхтарик у сирому логу"
+      },
+      "prompt": {
+        "ua": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+        "en": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест."
+      }
+    },
+    {
+      "id": "gym-30-unique-plays-X4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "30-unique-plays",
+      "levelId": "X4",
+      "tag": "сузірʼя · 4",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Намалюй потік зірками",
+        "en": "Намалюй потік зірками"
+      },
+      "prompt": {
+        "ua": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+        "en": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест."
+      }
+    },
+    {
+      "id": "gym-30-unique-plays-X5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "30-unique-plays",
+      "levelId": "X5",
+      "tag": "туман · 5",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Fintech fog: дубль платежу",
+        "en": "Fintech fog: дубль платежу"
+      },
+      "prompt": {
+        "ua": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+        "en": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест."
+      }
+    },
+    {
+      "id": "gym-30-unique-plays-X6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "30-unique-plays",
+      "levelId": "X6",
+      "tag": "сузірʼя · 6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Порядок SQL у небі",
+        "en": "Порядок SQL у небі"
+      },
+      "prompt": {
+        "ua": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+        "en": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест."
+      }
+    },
+    {
+      "id": "sprint-sql-d1",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "easy",
+      "minutes": 45,
+      "sprintDay": 1,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 1",
+        "en": "Sprint SQL · Day 1"
+      },
+      "prompt": {
+        "ua": "5× Easy SELECT, WHERE, ORDER BY",
+        "en": "5× Easy SELECT, WHERE, ORDER BY"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d8",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 60,
+      "sprintDay": 8,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 8",
+        "en": "Sprint SQL · Day 8"
+      },
+      "prompt": {
+        "ua": "ROW_NUMBER, RANK — 3 Medium",
+        "en": "ROW_NUMBER, RANK — 3 Medium"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d15",
+      "archetype": "fintech",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 45,
+      "sprintDay": 15,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 15",
+        "en": "Sprint SQL · Day 15"
+      },
+      "prompt": {
+        "ua": "Duplicate detection (ROW_NUMBER)",
+        "en": "Duplicate detection (ROW_NUMBER)"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d17",
+      "archetype": "product",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "hard",
+      "minutes": 60,
+      "sprintDay": 17,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 17",
+        "en": "Sprint SQL · Day 17"
+      },
+      "prompt": {
+        "ua": "Retention / active users (7-day)",
+        "en": "Retention / active users (7-day)"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d18",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 60,
+      "sprintDay": 18,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 18",
+        "en": "Sprint SQL · Day 18"
+      },
+      "prompt": {
+        "ua": "Revenue by month, YoY",
+        "en": "Revenue by month, YoY"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d19",
+      "archetype": "product",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "hard",
+      "minutes": 60,
+      "sprintDay": 19,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 19",
+        "en": "Sprint SQL · Day 19"
+      },
+      "prompt": {
+        "ua": "Funnel: signup → purchase",
+        "en": "Funnel: signup → purchase"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d20",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "hard",
+      "minutes": 60,
+      "sprintDay": 20,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 20",
+        "en": "Sprint SQL · Day 20"
+      },
+      "prompt": {
+        "ua": "Sessionization (30 min gap)",
+        "en": "Sessionization (30 min gap)"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-sql-d28",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "sql",
+      "difficulty": "hard",
+      "minutes": 90,
+      "sprintDay": 28,
+      "source": "interview-sprint/01-SQL-Sprint-30.md",
+      "title": {
+        "ua": "Sprint SQL · День 28",
+        "en": "Sprint SQL · Day 28"
+      },
+      "prompt": {
+        "ua": "Final mock 90 min",
+        "en": "Final mock 90 min"
+      },
+      "resources": [
+        {
+          "label": "DataLemur SQL",
+          "url": "https://datalemur.com/questions"
+        },
+        {
+          "label": "HackerRank SQL",
+          "url": "https://www.hackerrank.com/domains/sql"
+        }
+      ]
+    },
+    {
+      "id": "sprint-py-A1",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 45,
+      "source": "interview-sprint/02-Python-LiveCoding.md",
+      "title": {
+        "ua": "Python Live · A1",
+        "en": "Python Live · A1"
+      },
+      "prompt": {
+        "ua": "FizzBuzz + hints",
+        "en": "FizzBuzz + hints"
+      }
+    },
+    {
+      "id": "sprint-py-A2",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 45,
+      "source": "interview-sprint/02-Python-LiveCoding.md",
+      "title": {
+        "ua": "Python Live · A2",
+        "en": "Python Live · A2"
+      },
+      "prompt": {
+        "ua": "Parse key=value",
+        "en": "Parse key=value"
+      }
+    },
+    {
+      "id": "sprint-py-B2",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 45,
+      "source": "interview-sprint/02-Python-LiveCoding.md",
+      "title": {
+        "ua": "Python Live · B2",
+        "en": "Python Live · B2"
+      },
+      "prompt": {
+        "ua": "Dedupe DF latest",
+        "en": "Dedupe DF latest"
+      }
+    },
+    {
+      "id": "sprint-py-B4",
+      "archetype": "universal",
+      "kind": "stub",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 45,
+      "source": "interview-sprint/02-Python-LiveCoding.md",
+      "title": {
+        "ua": "Python Live · B4",
+        "en": "Python Live · B4"
+      },
+      "prompt": {
+        "ua": "Schema validate",
+        "en": "Schema validate"
+      }
+    },
+    {
+      "id": "sprint-py-C1",
+      "archetype": "consult",
+      "kind": "stub",
+      "skill": "python",
+      "difficulty": "hard",
+      "minutes": 45,
+      "source": "interview-sprint/02-Python-LiveCoding.md",
+      "title": {
+        "ua": "Python Live · C1",
+        "en": "Python Live · C1"
+      },
+      "prompt": {
+        "ua": "ETL 2 CSV→parquet",
+        "en": "ETL 2 CSV→parquet"
+      }
+    },
+    {
+      "id": "sprint-py-C5",
+      "archetype": "consult",
+      "kind": "stub",
+      "skill": "python",
+      "difficulty": "hard",
+      "minutes": 45,
+      "source": "interview-sprint/02-Python-LiveCoding.md",
+      "title": {
+        "ua": "Python Live · C5",
+        "en": "Python Live · C5"
+      },
+      "prompt": {
+        "ua": "45 min mock B1+B2",
+        "en": "45 min mock B1+B2"
+      }
+    },
+    {
+      "id": "pat-topn-region",
+      "archetype": "market",
+      "topic": "top-n",
+      "difficulty": "medium",
+      "minutes": 25,
+      "title": {
+        "ua": "Top-N у кожній групі (регіон / категорія)",
+        "en": "Top-N per group (region / category)"
+      },
+      "prompt": {
+        "ua": "ROW_NUMBER() OVER (PARTITION BY region ORDER BY revenue DESC) = 1. Поясни вголос grain і ties.",
+        "en": "ROW_NUMBER() OVER (PARTITION BY region ORDER BY revenue DESC) = 1. State grain and ties aloud."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-gap-island",
+      "archetype": "fintech",
+      "topic": "gaps",
+      "difficulty": "hard",
+      "minutes": 35,
+      "title": {
+        "ua": "Gaps & Islands у датах транзакцій",
+        "en": "Gaps & islands in transaction dates"
+      },
+      "prompt": {
+        "ua": "Знайди розриви в щоденних платежах клієнта. LAG + дата-арифметика.",
+        "en": "Find gaps in daily payment streaks. LAG + date math."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-currency",
+      "archetype": "fintech",
+      "topic": "precision",
+      "difficulty": "hard",
+      "minutes": 30,
+      "title": {
+        "ua": "Валюта + округлення (не втрати копійки)",
+        "en": "Currency + rounding (no penny loss)"
+      },
+      "prompt": {
+        "ua": "Конвертація + SUM: фільтруй ДО агрегації чи після? Обґрунтуй.",
+        "en": "FX + SUM: filter before or after aggregate? Justify."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-log-clean",
+      "archetype": "media",
+      "topic": "cleaning",
+      "difficulty": "medium",
+      "minutes": 30,
+      "title": {
+        "ua": "Парсинг nested JSON логів → flat table",
+        "en": "Parse nested JSON logs → flat table"
+      },
+      "prompt": {
+        "ua": "Python: json.loads, нормалізація, dtype, null policy.",
+        "en": "Python: json.loads, normalize, dtypes, null policy."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-live-read",
+      "archetype": "consult",
+      "topic": "live",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Live: перефразуй умову інтервʼюера",
+        "en": "Live: restate the interviewer prompt"
+      },
+      "prompt": {
+        "ua": "Перед SQL — 3 речення: grain, метрика, edge cases.",
+        "en": "Before SQL — 3 sentences: grain, metric, edge cases."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-metric-def",
+      "archetype": "product",
+      "topic": "metrics",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "Поясни метрику: DAU vs WAU vs sticky",
+        "en": "Explain metric: DAU vs WAU vs sticky"
+      },
+      "prompt": {
+        "ua": "Без формул спочатку — бізнес-сенс, потім SQL skeleton.",
+        "en": "Business meaning first, then SQL skeleton."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-star-draw",
+      "archetype": "universal",
+      "topic": "modeling",
+      "difficulty": "medium",
+      "minutes": 25,
+      "title": {
+        "ua": "Намалюй star: 1 fact + 2 dim на дошці",
+        "en": "Draw star: 1 fact + 2 dims on paper"
+      },
+      "prompt": {
+        "ua": "Grain fact table, keys, SCD type для dim.",
+        "en": "Fact grain, keys, SCD type for dims."
+      },
+      "kind": "stub",
+      "skill": "modeling",
+      "source": "public-patterns"
+    },
+    {
+      "id": "pat-anti-join",
+      "archetype": "market",
+      "topic": "joins",
+      "difficulty": "medium",
+      "minutes": 20,
+      "title": {
+        "ua": "ANTI JOIN: хто не купив",
+        "en": "ANTI JOIN: who never purchased"
+      },
+      "prompt": {
+        "ua": "LEFT JOIN + WHERE right IS NULL vs NOT EXISTS — коли що.",
+        "en": "LEFT JOIN + WHERE right IS NULL vs NOT EXISTS — when which."
+      },
+      "kind": "stub",
+      "skill": "sql",
+      "source": "public-patterns"
+    }
+  ]
+}
