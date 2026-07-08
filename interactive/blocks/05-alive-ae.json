@@ -23,7 +23,7 @@
       "type": "pipeline_build",
       "tag": "жваво · 2",
       "title": "Збери дата-конвеєр",
-      "instruction": "FitMe / DataObrii-вайб: від джерела до дашборду. Drag на кроки.",
+      "instruction": "Продуктовий / мобільний день: від джерела до дашборду. Drag на кроки.",
       "stages": [
         { "label": "Source API", "hint": "звідки" },
         { "label": "Ingest", "hint": "завантажити" },
@@ -48,7 +48,7 @@
       "id": "A2",
       "type": "scenario",
       "tag": "жваво · 3",
-      "title": "День 1 у DataObrii",
+      "title": "День 1 на новій AE-ролі",
       "emoji": "🚀",
       "scene": "Тобі дали доступ до BigQuery і кажуть: «великий проєкт через 1–3 місяці». Що робиш ПЕРШИМ?",
       "bestIndex": 1,

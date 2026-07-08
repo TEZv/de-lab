@@ -713,9 +713,174 @@
       case 'multi_choice':
         mountMultiChoice(body, level, onComplete);
         break;
+      case 'csv_lab':
+        mountCsvLab(body, level, onComplete);
+        break;
+      case 'company_map':
+        mountCompanyMap(body, level, onComplete);
+        break;
       default:
         body.textContent = 'Невідомий тип рівня.';
     }
+  }
+
+  function parseCsv(text) {
+    const lines = String(text || '').trim().split(/\r?\n/).filter(Boolean);
+    if (!lines.length) return { headers: [], rows: [] };
+    const headers = lines[0].split(',').map((h) => h.trim());
+    const rows = lines.slice(1).map((line) => {
+      const cells = line.split(',').map((c) => c.trim());
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = cells[i]; });
+      return obj;
+    });
+    return { headers, rows };
+  }
+
+  function mountCsvLab(root, level, onComplete) {
+    mountMissionBrief(root, level);
+    const { headers, rows } = parseCsv(level.csv);
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-csv-lab';
+
+    const frame = document.createElement('div');
+    frame.className = 'pl-csv-frame';
+    frame.innerHTML = `<div class="pl-csv-bar">📄 ${escapeHtml(level.fileName || 'sample.csv')} · ${rows.length} rows</div>`;
+    const table = document.createElement('table');
+    table.className = 'pl-mini-table';
+    table.innerHTML = `<thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>`;
+    const tbody = document.createElement('tbody');
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = headers.map((h) => `<td>${escapeHtml(r[h])}</td>`).join('');
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    frame.appendChild(table);
+    wrap.appendChild(frame);
+
+    const q = document.createElement('p');
+    q.className = 'pl-mission-ask';
+    q.textContent = level.question || 'Порахуй за таблицею.';
+    wrap.appendChild(q);
+
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+
+    if (level.mode === 'sql' && global.alasql) {
+      const tip = document.createElement('p');
+      tip.className = 'pl-tip';
+      tip.textContent = 'Напиши SQL до таблиці data (як у DataCamp-лабі). Приклад: SELECT COUNT(*) FROM data';
+      const ta = document.createElement('textarea');
+      ta.className = 'pl-sql-input';
+      ta.rows = 5;
+      ta.placeholder = level.sqlPlaceholder || 'SELECT ... FROM data';
+      const run = document.createElement('button');
+      run.type = 'button';
+      run.textContent = 'Run SQL';
+      const out = document.createElement('pre');
+      out.className = 'pl-sql-out';
+      run.addEventListener('click', () => {
+        try {
+          global.alasql('DROP TABLE IF EXISTS data');
+          global.alasql(`CREATE TABLE data (${headers.map((h) => `[${h}] STRING`).join(',')})`);
+          rows.forEach((r) => {
+            global.alasql('INSERT INTO data VALUES (' + headers.map((h) => JSON.stringify(r[h] ?? '')).join(',') + ')');
+          });
+          const res = global.alasql(ta.value);
+          out.textContent = JSON.stringify(res, null, 2);
+          const expected = level.expectedJson ? JSON.parse(level.expectedJson) : level.expected;
+          let ok = false;
+          if (typeof expected === 'number' || typeof expected === 'string') {
+            const first = Array.isArray(res) && res[0] ? Object.values(res[0])[0] : null;
+            ok = String(first) === String(expected);
+          } else if (Array.isArray(expected)) {
+            ok = JSON.stringify(res) === JSON.stringify(expected);
+          }
+          if (level.check === 'rowcount') {
+            ok = Array.isArray(res) && res.length === Number(level.expected);
+          }
+          feedback.textContent = ok ? `✅ ${level.success || 'Вибірка вірна!'}` : '❌ Результат ще не той — порівняй з питанням.';
+          if (ok) {
+            toast(root, 'CSV lab passed', true);
+            if (onComplete) onComplete(level.id);
+          }
+        } catch (err) {
+          out.textContent = String(err.message || err);
+          feedback.textContent = '⚠️ SQL error — прав синтаксис.';
+        }
+      });
+      wrap.append(tip, ta, run, out, feedback);
+    } else {
+      const input = document.createElement('input');
+      input.className = 'pl-answer-input';
+      input.placeholder = level.answerPlaceholder || 'Твоя відповідь';
+      const check = document.createElement('button');
+      check.type = 'button';
+      check.textContent = 'Перевірити';
+      check.addEventListener('click', () => {
+        const val = input.value.trim();
+        const ok = String(val) === String(level.expected);
+        feedback.textContent = ok
+          ? `✅ ${level.success || 'Так!'}`
+          : `❌ Немає. ${level.hintOnFail || 'Перерахуй по таблиці ще раз.'}`;
+        if (ok) {
+          toast(root, 'OK', true);
+          if (onComplete) onComplete(level.id);
+        }
+      });
+      wrap.append(input, check, feedback);
+    }
+    root.appendChild(wrap);
+  }
+
+  function mountCompanyMap(root, level, onComplete) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-company-map';
+    if (level.intro) {
+      const p = document.createElement('p');
+      p.className = 'pl-tip';
+      p.textContent = level.intro;
+      wrap.appendChild(p);
+    }
+    const grid = document.createElement('div');
+    grid.className = 'pl-type-grid';
+    let opened = 0;
+    const cards = level.types || [];
+    cards.forEach((t) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'pl-type-card';
+      card.innerHTML = `<strong>${escapeHtml(t.name)}</strong><span class="muted">${escapeHtml(t.oneLiner || '')}</span>`;
+      const detail = document.createElement('div');
+      detail.className = 'pl-type-detail hidden';
+      detail.innerHTML = `
+        <p><b>Типовий день DE:</b> ${escapeHtml(t.day || '')}</p>
+        <p><b>На скрінінгу частіше:</b> ${escapeHtml(t.interview || '')}</p>
+        <p><b>Стек-сигнали:</b> ${escapeHtml(t.stack || '')}</p>`;
+      card.addEventListener('click', () => {
+        const was = !detail.classList.contains('hidden');
+        detail.classList.toggle('hidden', was);
+        if (!was && !card.dataset.seen) {
+          card.dataset.seen = '1';
+          opened += 1;
+          card.classList.add('seen');
+          if (opened >= cards.length) {
+            toast(root, 'Карта типів відкрита', true);
+            if (onComplete) onComplete(level.id);
+          }
+        }
+      });
+      const cell = document.createElement('div');
+      cell.append(card, detail);
+      grid.appendChild(cell);
+    });
+    wrap.appendChild(grid);
+    const tip = document.createElement('p');
+    tip.className = 'pl-feedback';
+    tip.textContent = 'Відкрий усі типи компаній (клік по картці), щоб зарахувати рівень.';
+    wrap.appendChild(tip);
+    root.appendChild(wrap);
   }
 
   global.PrepLevelsEngine = { renderLevel, escapeHtml };

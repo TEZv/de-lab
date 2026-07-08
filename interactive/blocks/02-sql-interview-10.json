@@ -1,7 +1,7 @@
 {
   "id": "02-sql-interview-10",
   "title": "SQL Interview · 10 задач",
-  "subtitle": "HAVING · windows · JOIN traps · Harry Potter · LAG · SCD · DQ",
+  "subtitle": "HAVING · windows · JOIN traps · min-in-group · LAG · DQ",
   "levels": [
     {
       "id": "S0",
@@ -45,22 +45,22 @@
       "id": "S3",
       "type": "fill_blanks",
       "tag": "SQL · 3/10",
-      "title": "Harry Potter · канон (power, age)",
-      "instruction": "Спочатку місія — потім кістяк.",
+      "title": "Min price у групі (SKU)",
+      "instruction": "Спочатку місія — потім кістяк. Повний сюжет — блок «Місія: найдешевший SKU».",
       "mission": {
-        "emoji": "🪄",
-        "title": "Ollivander / HackerRank",
-        "brief": "Non-evil only. Для кожної пари (power, age) — найдешевша паличка. Сортування: power↓ age↓.",
-        "ask": "Повний сюжет — у блоці «Ollivander Mission». Тут короткий каркас."
+        "emoji": "🏷️",
+        "title": "Каталог / прайс",
+        "brief": "Серед активних: для кожної пари (power, age) — мінімальна price. Сортування: power↓ age↓.",
+        "ask": "Короткий каркас нижче."
       },
       "why": "Не починай з ____ у вакуумі: спочатку скажи логіку вголос.",
-      "template": "WITH ranked AS (\n  SELECT w.id, wp.age, w.coins_needed, w.power,\n         ROW_NUMBER() OVER(\n           PARTITION BY w.____, wp.____\n           ORDER BY w.coins_needed ____\n         ) AS rn\n  FROM Wands w\n  JOIN Wands_Property wp ON w.code = wp.code\n  WHERE wp.is_evil = ____\n)\nSELECT id, age, coins_needed, power FROM ranked\nWHERE rn = 1\nORDER BY power ____, age DESC;",
-      "answers": ["power", "age", "ASC", "0", "DESC"],
-      "wordBank": ["power", "age", "code", "ASC", "DESC", "0", "1"],
+      "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n         ROW_NUMBER() OVER(\n           PARTITION BY ____, ____\n           ORDER BY price ____\n         ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price FROM ranked\nWHERE rn = 1\nORDER BY power ____, age DESC;",
+      "answers": ["power", "age", "ASC", "1", "DESC"],
+      "wordBank": ["power", "age", "sku_id", "ASC", "DESC", "0", "1"],
       "hints": [
-        "Канон HackerRank: PARTITION BY power, age.",
-        "is_evil = 0 означає не-зли.",
-        "Фінальний ORDER: power DESC, age DESC."
+        "PARTITION BY power, age.",
+        "Активні → is_active = 1.",
+        "Фінальний ORDER: power DESC."
       ],
       "revealOnFail": false,
       "controlTip": "Місія вище. Нижче — тільки синтаксис."

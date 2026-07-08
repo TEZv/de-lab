@@ -1,0 +1,47 @@
+{
+  "id": "24-sim-fintech",
+  "title": "Work sim · Fintech / Payments",
+  "subtitle": "Ідемпотентність і дедуп платежів.",
+  "levels": [
+    {
+      "id": "F1",
+      "type": "csv_lab",
+      "tag": "dedup",
+      "title": "Скільки унікальних payment_id?",
+      "fileName": "payments_raw.csv",
+      "csv": "payment_id,amount,updated_at\np1,10,10:00\np1,10,10:05\np2,20,10:01\np3,15,10:02\np3,15,10:03",
+      "question": "Унікальних payment_id?",
+      "expected": "3",
+      "success": "Dedup ключ = payment_id; далі ROW_NUMBER по updated_at DESC."
+    },
+    {
+      "id": "F2",
+      "type": "fill_blanks",
+      "tag": "SQL",
+      "title": "Кістяк дедупа",
+      "template": "WITH r AS (\n  SELECT *,\n    ROW_NUMBER() OVER(PARTITION BY ____ ORDER BY ____ DESC) rn\n  FROM staging.payments\n)\nSELECT * FROM r WHERE rn = ____;",
+      "answers": ["payment_id", "updated_at", "1"],
+      "wordBank": ["payment_id", "updated_at", "1", "amount", "0"],
+      "hints": ["Ключ платежу.", "Найсвіжіший апдейт."]
+    },
+    {
+      "id": "F3",
+      "type": "scenario",
+      "tag": "risk",
+      "title": "Повторний прогін DAG",
+      "emoji": "🏦",
+      "scene": "DAG упав і перезапустився. Як уникнути подвійного зарахування сум?",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Ідемпотентний load: merge/dedup по payment_id, не append всліпу",
+          "feedback": "Fintech 101."
+        },
+        {
+          "label": "Просто INSERT ще раз усі рядки",
+          "feedback": "Подвійний GMV / розʼїзд reconciliation."
+        }
+      ]
+    }
+  ]
+}

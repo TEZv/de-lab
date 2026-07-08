@@ -1,0 +1,48 @@
+{
+  "id": "22-sim-media",
+  "title": "Work sim · Media / Content",
+  "subtitle": "Очистка логів переглядів і звіт для редакції.",
+  "levels": [
+    {
+      "id": "E1",
+      "type": "csv_lab",
+      "tag": "DQ",
+      "title": "Скільки валідних переглядів?",
+      "fileName": "views_raw.csv",
+      "csv": "view_id,seconds,bot\n1,30,0\n2,2,0\n3,45,1\n4,60,0\n5,,0\n6,90,0",
+      "question": "Правило: seconds>=5 і bot=0 і seconds не порожнє. Скільки рядків лишиться?",
+      "expected": "3",
+      "hintOnFail": "1,4,6 валідні. 2 закороткий, 3 бот, 5 NULL.",
+      "success": "3 валідні → на CORE відфільтруєш перед mart."
+    },
+    {
+      "id": "E2",
+      "type": "fill_blanks",
+      "tag": "SQL",
+      "title": "COALESCE для NULL seconds",
+      "template": "SELECT view_id, ____(seconds, ____) AS seconds_clean\nFROM staging.views;",
+      "answers": ["COALESCE", "0"],
+      "wordBank": ["COALESCE", "0", "NULL", "AVG", "HAVING"],
+      "hints": ["Перше не-NULL.", "Паралельно ticket джерелу."]
+    },
+    {
+      "id": "E3",
+      "type": "scenario",
+      "tag": "звіт",
+      "title": "Редакція хоче «вчора»",
+      "emoji": "📰",
+      "scene": "Дашборд порожній: STG свіжий, mart ні. Що перевіряєш першим?",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Freshness mart + чи впав DAG transform + логи оркестратора",
+          "feedback": "Типовий media/AE інцидент-день."
+        },
+        {
+          "label": "Переписати весь DWH з нуля сьогодні",
+          "feedback": "Overkill. Спочатку локалізуй точку розриву."
+        }
+      ]
+    }
+  ]
+}

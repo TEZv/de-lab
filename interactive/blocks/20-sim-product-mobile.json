@@ -1,0 +1,73 @@
+{
+  "id": "20-sim-product-mobile",
+  "title": "Work sim · Product / Mobile",
+  "subtitle": "Типова зміна: події апки, підписки, UA spend. CSV як у таску.",
+  "levels": [
+    {
+      "id": "P1",
+      "type": "pipeline_build",
+      "tag": "день",
+      "title": "Збери денний конвеєр",
+      "instruction": "Від сирих івентів до вітрини retention.",
+      "stages": [
+        { "label": "App events", "hint": "source" },
+        { "label": "Ingest→STG", "hint": "load" },
+        { "label": "CORE sessions", "hint": "clean" },
+        { "label": "mart_retention", "hint": "mart" },
+        { "label": "Looker ping", "hint": "BI" }
+      ],
+      "pool": ["App events", "Ingest→STG", "CORE sessions", "mart_retention", "Looker ping", "Photoshop"],
+      "success": "Класичний product analytics loop."
+    },
+    {
+      "id": "P2",
+      "type": "csv_lab",
+      "tag": "CSV",
+      "title": "D1 retention з таблиці",
+      "fileName": "cohort_day1.csv",
+      "mission": {
+        "emoji": "📱",
+        "title": "Таск від product",
+        "brief": "Когорта install_date. D1 = повернулись наступного дня.",
+        "ask": "Який D1 retention % для когорти 2026-07-01? (ціле число)"
+      },
+      "csv": "user_id,install_date,returned_d1\nu1,2026-07-01,1\nu2,2026-07-01,0\nu3,2026-07-01,1\nu4,2026-07-01,1\nu5,2026-07-01,0\nu6,2026-07-02,1",
+      "question": "D1 % для 2026-07-01 (серед 5 юзерів цієї дати).",
+      "expected": "60",
+      "hintOnFail": "3 з 5 повернулись → 60%.",
+      "success": "60%. На SQL: AVG(returned_d1)*100 по фільтру дати."
+    },
+    {
+      "id": "P3",
+      "type": "csv_lab",
+      "tag": "SQL",
+      "mode": "sql",
+      "title": "SQL: активні підписники",
+      "fileName": "subs.csv",
+      "csv": "user_id,status,mrr\na,active,10\nb,churned,0\nc,active,15\nd,active,10\ne,paused,5",
+      "question": "Сума mrr лише active. Напиши SQL; очікуємо одне число 35 у результаті.",
+      "sqlPlaceholder": "SELECT SUM(CAST(mrr AS INT)) AS s FROM data WHERE status='active'",
+      "expected": "35",
+      "success": "MRR active = 35."
+    },
+    {
+      "id": "P4",
+      "type": "scenario",
+      "tag": "ownership",
+      "title": "Білий кард від UA",
+      "emoji": "📣",
+      "scene": "UA: «У Meta cost і AppsFlyer installs не бʼються». Перший крок?",
+      "bestIndex": 1,
+      "choices": [
+        {
+          "label": "Одразу звинувачую Meta API",
+          "feedback": "Рано. Спочатку timezone, currency, attribution window, duplicates."
+        },
+        {
+          "label": "Перевіряю freshness/ключа зіставлення (campaign id), валюту, вікно атрибуції, потім фікс на CORE",
+          "feedback": "Типовий AE-день у продукті."
+        }
+      ]
+    }
+  ]
+}

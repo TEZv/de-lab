@@ -1,0 +1,66 @@
+{
+  "id": "11-interview-skills-universal",
+  "title": "Універсальні мʼязи скрінінгу",
+  "subtitle": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+  "levels": [
+    {
+      "id": "U1",
+      "type": "csv_lab",
+      "tag": "SQL",
+      "title": "HAVING на живих рядках",
+      "fileName": "employees.csv",
+      "csv": "department,salary\nIT,3000\nIT,3500\nHR,1500\nHR,1800\nMarketing,2000",
+      "question": "Скільки відділів мають AVG(salary) > 2000?",
+      "expected": "1",
+      "hintOnFail": "IT avg=3250; HR=1650; Marketing=2000 (не >).",
+      "success": "Лише IT. На SQL це HAVING AVG(salary) > 2000."
+    },
+    {
+      "id": "U2",
+      "type": "flip_cards",
+      "tag": "AE",
+      "title": "Шари на картках",
+      "cards": [
+        { "front": "STAGING", "back": "Сирі копії, мінімум логіки" },
+        { "front": "CORE", "back": "Dedup, факти/виміри, SCD" },
+        { "front": "MARTS", "back": "Вітрини під BI/ML" },
+        { "front": "Star", "back": "Мало JOIN — любить колоночний DWH" }
+      ]
+    },
+    {
+      "id": "U3",
+      "type": "fill_blanks",
+      "tag": "Python",
+      "title": "Pandas mean (не avg!)",
+      "mission": {
+        "emoji": "🐍",
+        "title": "Пастка скрінінгу",
+        "brief": "SQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.",
+        "ask": "Збери рядок."
+      },
+      "template": "res = df.____('department').____(avg_sal=('salary','____')).____()",
+      "answers": ["groupby", "agg", "mean", "reset_index"],
+      "wordBank": ["groupby", "agg", "mean", "avg", "reset_index", "merge"],
+      "hints": ["Не 'avg'.", "Після groupby ключ стає індексом."]
+    },
+    {
+      "id": "U4",
+      "type": "scenario",
+      "tag": "soft",
+      "title": "Паперовий блокнот",
+      "emoji": "📝",
+      "scene": "Live-coding, шерять увесь екран. Чи можна тримати блокнот з кістяками на столі?",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Так — сказати «зафіксую логіку на папері» і малювати таблицю; телефон під столом — ні",
+          "feedback": "Так виглядає зріло. Екранні шпаргалки палять."
+        },
+        {
+          "label": "Підглядати в телефон при камері",
+          "feedback": "Ризик і гірший осад, ніж помилка в SQL."
+        }
+      ]
+    }
+  ]
+}

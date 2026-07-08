@@ -147,6 +147,7 @@ button {
 button.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
 .pl-pair { font-size: 14px; color: var(--muted); }
 .pl-tip { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+button { margin-right: 6px; margin-top: 6px; }
 .pl-note { color: var(--accent2); font-size: 14px; }
 .pl-tag {
   display: inline-block;
@@ -356,3 +357,67 @@ button.marked { background: var(--good); }
   text-align: center;
   color: var(--accent2);
 }
+.pl-csv-lab { margin-top: 8px; }
+.pl-csv-frame {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: #0d1117;
+}
+.pl-csv-bar {
+  padding: 8px 12px;
+  background: #243044;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+.pl-csv-frame .pl-mini-table { margin: 0; }
+.pl-sql-input, .pl-answer-input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #0d1117;
+  color: var(--ink);
+  font: inherit;
+}
+.pl-sql-input { font-family: ui-monospace, monospace; }
+.pl-sql-out {
+  background: #0d1117;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  max-height: 180px;
+  overflow: auto;
+  font-size: 12px;
+}
+.pl-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+.pl-type-card {
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #243044;
+  color: var(--ink);
+  cursor: pointer;
+}
+.pl-type-card .muted { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.pl-type-card.seen { border-color: var(--good); }
+.pl-type-detail {
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(61,154,106,.1);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--muted);
+}
+.pl-type-detail.hidden { display: none; }
+.pl-type-detail p { margin: 0 0 6px; }

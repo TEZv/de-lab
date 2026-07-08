@@ -1,0 +1,52 @@
+{
+  "id": "23-sim-iot-consulting",
+  "title": "Work sim · Consulting / IoT analytics",
+  "subtitle": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день.",
+  "levels": [
+    {
+      "id": "I1",
+      "type": "pipeline_build",
+      "tag": "PoC",
+      "title": "Від сенсора до фічі",
+      "stages": [
+        { "label": "Device stream", "hint": "1" },
+        { "label": "STG raw", "hint": "2" },
+        { "label": "CORE clean", "hint": "3" },
+        { "label": "mart_features", "hint": "4" },
+        { "label": "DS notebook", "hint": "5" }
+      ],
+      "pool": ["Device stream", "STG raw", "CORE clean", "mart_features", "DS notebook", "Keynote"],
+      "success": "AE часто годує DS вітриною фіч."
+    },
+    {
+      "id": "I2",
+      "type": "csv_lab",
+      "tag": "CSV",
+      "title": "Аномалії температури",
+      "fileName": "sensors.csv",
+      "csv": "device_id,temp_c\nd1,21\nd2,85\nd3,22\nd4,19\nd5,90",
+      "question": "Скільки девайсів з temp_c > 80 (кандидат у alert)?",
+      "expected": "2",
+      "success": "2 аномалії. Далі — пайплайн алерту, не разовий SELECT."
+    },
+    {
+      "id": "I3",
+      "type": "scenario",
+      "tag": "умова",
+      "title": "Клиент дав двозначне ТЗ",
+      "emoji": "🧩",
+      "scene": "«Покажи найкращі пристрої за power і age». Що робиш на демо/інтервʼю?",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Фіксую 2 трактування вголос і питаю критерій до коду",
+          "feedback": "Консалтингова гігієна + плюс на скрінінгу."
+        },
+        {
+          "label": "Мовчки гадаю 30 хвилин",
+          "feedback": "Марна трата часу клієнта й твого."
+        }
+      ]
+    }
+  ]
+}

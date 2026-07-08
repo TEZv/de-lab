@@ -1,0 +1,60 @@
+{
+  "id": "21-sim-marketplace",
+  "title": "Work sim · Marketplace / E-com",
+  "subtitle": "Замовлення, статуси, 1:N джойн — класика.",
+  "levels": [
+    {
+      "id": "M1",
+      "type": "csv_lab",
+      "tag": "CSV",
+      "title": "Скільки рядків після LEFT JOIN?",
+      "fileName": "users_orders (логічна таблиця)",
+      "mission": {
+        "emoji": "📦",
+        "title": "Пастка cardinality",
+        "brief": "3 users. У user 1 — два orders. LEFT JOIN users→orders.",
+        "ask": "Скільки рядків у результаті?"
+      },
+      "csv": "side,key,extra\nuser,1,\nuser,2,\nuser,3,\norder,1,o100\norder,1,o101\norder,3,o200",
+      "question": "Рядків після LEFT JOIN users to orders?",
+      "expected": "4",
+      "hintOnFail": "u1→2, u2→1 (NULL order), u3→1 = 4.",
+      "success": "4. User без замовлення лишається з NULL; user з 2 orders дублюється."
+    },
+    {
+      "id": "M2",
+      "type": "pick_rows",
+      "tag": "статус",
+      "title": "Актуальний статус замовлення (SCD2 руками)",
+      "mission": {
+        "emoji": "📜",
+        "title": "Історія статусів",
+        "brief": "Лишаємо лише is_current=1 для кожного order_id.",
+        "ask": "Клікни актуальні рядки."
+      },
+      "headers": ["order_id", "status", "is_current"],
+      "rows": [
+        { "id": "1a", "order_id": "100", "status": "created", "is_current": "0", "correct": false },
+        { "id": "1b", "order_id": "100", "status": "shipped", "is_current": "1", "correct": true },
+        { "id": "2a", "order_id": "200", "status": "created", "is_current": "1", "correct": true },
+        { "id": "3a", "order_id": "300", "status": "cancelled", "is_current": "0", "correct": false },
+        { "id": "3b", "order_id": "300", "status": "created", "is_current": "0", "correct": false },
+        { "id": "3c", "order_id": "300", "status": "delivered", "is_current": "1", "correct": true }
+      ],
+      "success": "Як WHERE is_current = 1 у dim/ status history."
+    },
+    {
+      "id": "M3",
+      "type": "csv_lab",
+      "tag": "SQL",
+      "mode": "sql",
+      "title": "GMV delivered",
+      "fileName": "orders.csv",
+      "csv": "order_id,status,gmv\n1,delivered,100\n2,cancelled,50\n3,delivered,80\n4,shipped,40",
+      "question": "Сума gmv тільки delivered → 180",
+      "expected": "180",
+      "sqlPlaceholder": "SELECT SUM(CAST(gmv AS INT)) FROM data WHERE status='delivered'",
+      "success": "GMV delivered = 180"
+    }
+  ]
+}
