@@ -3,6 +3,14 @@ const STORAGE_KEY = 'de-lab-interactive-v2';
 /** Two roads: interview map + day-in-life sims. No real employer branding. */
 const ROADS = [
   {
+    id: 'unique',
+    title: '✦ Унікальні формати',
+    blurb: 'Стріла в ціль · ліхтарик у тумані CSV · сузірʼя потоку даних. Жестове навчання, не «читай і тисни OK».',
+    blocks: [
+      { id: '30-unique-plays', title: 'Стріли / туман / сузірʼя', ready: true },
+    ],
+  },
+  {
     id: 'interview',
     title: '🎯 Техінтервʼю · як потрапити',
     blurb: 'Чим відрізняється відбір у різних типах компаній + універсальні навички. Без назв роботодавців.',

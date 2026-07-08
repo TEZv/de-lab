@@ -421,3 +421,65 @@ button.marked { background: var(--good); }
 }
 .pl-type-detail.hidden { display: none; }
 .pl-type-detail p { margin: 0 0 6px; }
+
+/* Aim range */
+.pl-aim-arena {
+  max-width: 360px;
+  margin: 12px auto;
+}
+.pl-aim-arena.shake { animation: pl-shake .28s ease; }
+@keyframes pl-shake {
+  0%,100% { transform: translateX(0); }
+  30% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+}
+.pl-aim-svg { width: 100%; height: auto; display: block; }
+.pl-aim-sector { fill: #243044; stroke: #2d3a4f; stroke-width: 1; }
+.pl-aim-sector.hit { fill: rgba(61,154,106,.55); }
+.pl-aim-sector.miss { fill: rgba(212,93,93,.4); }
+.pl-aim-label { fill: #e8eef5; font-size: 11px; pointer-events: none; }
+.pl-aim-arrow { stroke: #e8a84b; stroke-width: 3; stroke-linecap: round; }
+.pl-aim-head { fill: #e8a84b; }
+.pl-aim-dial { width: 100%; max-width: 360px; display: block; margin: 8px auto; }
+.pl-aim-legend { color: var(--muted); font-size: 13px; }
+
+/* Fog probe */
+.pl-fog-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  max-height: 320px;
+  overflow: auto;
+  touch-action: none;
+}
+.pl-fog-table { margin: 0; filter: none; }
+.pl-fog-mask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 70px at var(--mx, 50%) var(--my, 50%),
+    transparent 0,
+    transparent 40%,
+    rgba(5,8,14,.92) 70%
+  );
+}
+.pl-fog-table td.found {
+  background: rgba(61,154,106,.45) !important;
+  outline: 2px solid var(--good);
+}
+.pl-fog-table td.false-hit {
+  background: rgba(212,93,93,.25) !important;
+}
+
+/* Constellation */
+.pl-const-canvas {
+  width: 100%;
+  max-width: 560px;
+  display: block;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  cursor: crosshair;
+  background: #0b1220;
+}

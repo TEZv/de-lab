@@ -1,0 +1,110 @@
+{
+  "id": "30-unique-plays",
+  "title": "✦ Унікальні формати · стріли / туман / сузірʼя",
+  "subtitle": "Не кнопки з текстом — приціл, ліхтарик у тумані даних, зірки потоку. Навчання через жест.",
+  "levels": [
+    {
+      "id": "X1",
+      "type": "aim_range",
+      "tag": "стріла · 1",
+      "title": "Цілишся в тип компанії",
+      "brief": "Покрути коліщатко кута й вистріли в сектор, який найкраще бʼється з AE / engineering analytics (метрики продукту, вітрини, SQL+pandas).",
+      "correctIndex": 0,
+      "legend": true,
+      "hitText": "Product / Mobile — твій основний приціл зараз. Інші сектори — побочні треки.",
+      "missText": "Можна пізніше, але не як main quest цього місяця.",
+      "sectors": [
+        { "label": "Product", "meaning": "Підписки, UA, cohorts, LTV — AE-дім." },
+        { "label": "Market", "meaning": "Marketplace — JOIN/статуси; корисно, не primary." },
+        { "label": "Media", "meaning": "Медіа-логи — твій бекграунд плюс, як доповнення." },
+        { "label": "IoT/Cons", "meaning": "Consulting/IoT — live+уважність; другий мʼяз." },
+        { "label": "Fintech", "meaning": "Payments — точність/dedup; інший пріоритет зараз." },
+        { "label": "Random", "meaning": "Стріляти навмання без карти — програш стратегії." }
+      ]
+    },
+    {
+      "id": "X2",
+      "type": "aim_range",
+      "tag": "стріла · 2",
+      "title": "Куди цілити SQL-час на скрінінгу?",
+      "brief": "1.5 год. Куди вкласти увагу першою чергою?",
+      "correctIndex": 1,
+      "legend": true,
+      "hitText": "Windows + уважність до умови — ядро live SQL.",
+      "sectors": [
+        { "label": "K8s", "meaning": "Занадто deep infra для AE-скрінінгу зараз." },
+        { "label": "Windows", "meaning": "ROW_NUMBER / LAG / HAVING — must." },
+        { "label": "Spark", "meaning": "Nice later, рідко на першому скрінінгу AE." },
+        { "label": "Memes", "meaning": "Ні." },
+        { "label": "Only theory", "meaning": "Без таблиць — нудьга й дірка в live." }
+      ]
+    },
+    {
+      "id": "X3",
+      "type": "fog_probe",
+      "tag": "туман · 3",
+      "title": "Ліхтарик у сирому логу",
+      "brief": "Веди курсор — круг світла. Знайди й клікни усі «брудні» клітинки (bot=1 або порожній seconds).",
+      "headers": ["view_id", "seconds", "bot"],
+      "rows": [
+        { "view_id": "1", "seconds": "30", "bot": "0" },
+        { "view_id": "2", "seconds": "2", "bot": "0" },
+        { "view_id": "3", "seconds": "45", "bot": "1" },
+        { "view_id": "4", "seconds": "60", "bot": "0" },
+        { "view_id": "5", "seconds": "", "bot": "0" },
+        { "view_id": "6", "seconds": "90", "bot": "0" }
+      ],
+      "anomalies": ["2,bot", "4,seconds"],
+      "success": "Ти вмієш «світити» в бруд — так шукають DQ на живих таблицеах."
+    },
+    {
+      "id": "X4",
+      "type": "constellation",
+      "tag": "сузірʼя · 4",
+      "title": "Намалюй потік зірками",
+      "brief": "Клікай зірки СТРОГО за порядком денного пайплайна product analytics. Помилка — шлях гасне.",
+      "success": "Сузірʼя STG→…→BI зібрано. Це карта, яку можна малювати на папері на співбесіді.",
+      "nodes": [
+        { "id": "a", "label": "App events", "x": 60, "y": 160 },
+        { "id": "b", "label": "Ingest/STG", "x": 160, "y": 80 },
+        { "id": "c", "label": "CORE", "x": 280, "y": 200 },
+        { "id": "d", "label": "mart_retention", "x": 400, "y": 90 },
+        { "id": "e", "label": "Looker", "x": 500, "y": 180 }
+      ],
+      "order": ["a", "b", "c", "d", "e"]
+    },
+    {
+      "id": "X5",
+      "type": "fog_probe",
+      "tag": "туман · 5",
+      "title": "Fintech fog: дубль платежу",
+      "brief": "У тумані два рядки з тим самим payment_id — клікни ОБИДВА дублікати (колонка payment_id).",
+      "headers": ["payment_id", "amount", "updated_at"],
+      "rows": [
+        { "payment_id": "p1", "amount": "10", "updated_at": "10:00" },
+        { "payment_id": "p1", "amount": "10", "updated_at": "10:05" },
+        { "payment_id": "p2", "amount": "20", "updated_at": "10:01" },
+        { "payment_id": "p3", "amount": "15", "updated_at": "10:02" }
+      ],
+      "anomalies": ["0,payment_id", "1,payment_id"],
+      "success": "Дублі побачені — далі ROW_NUMBER у голові."
+    },
+    {
+      "id": "X6",
+      "type": "constellation",
+      "tag": "сузірʼя · 6",
+      "title": "Порядок SQL у небі",
+      "brief": "Зʼєднай етапи так, як бачить сервер (не як ти пишеш зверху вниз).",
+      "nodes": [
+        { "id": "f", "label": "FROM", "x": 70, "y": 200 },
+        { "id": "w", "label": "WHERE", "x": 150, "y": 80 },
+        { "id": "g", "label": "GROUP BY", "x": 250, "y": 220 },
+        { "id": "h", "label": "HAVING", "x": 350, "y": 70 },
+        { "id": "s", "label": "SELECT", "x": 450, "y": 200 },
+        { "id": "o", "label": "ORDER BY", "x": 530, "y": 100 }
+      ],
+      "order": ["f", "w", "g", "h", "s", "o"],
+      "success": "Тепер WHERE MAX(...) фізично болить — він до HAVING."
+    }
+  ]
+}

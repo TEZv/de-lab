@@ -719,9 +719,321 @@
       case 'company_map':
         mountCompanyMap(body, level, onComplete);
         break;
+      case 'aim_range':
+        mountAimRange(body, level, onComplete);
+        break;
+      case 'fog_probe':
+        mountFogProbe(body, level, onComplete);
+        break;
+      case 'constellation':
+        mountConstellation(body, level, onComplete);
+        break;
       default:
         body.textContent = 'Невідомий тип рівня.';
     }
+  }
+
+  function mountAimRange(root, level, onComplete) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-aim';
+    const story = document.createElement('p');
+    story.className = 'pl-tip';
+    story.textContent = level.brief || 'Наведи кут і вистріли в правильний сектор.';
+    const arena = document.createElement('div');
+    arena.className = 'pl-aim-arena';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 320 320');
+    svg.classList.add('pl-aim-svg');
+
+    const cx = 160;
+    const cy = 160;
+    const sectors = level.sectors || [];
+    const n = Math.max(sectors.length, 1);
+    const slice = 360 / n;
+
+    sectors.forEach((s, i) => {
+      const a0 = ((i * slice - 90) * Math.PI) / 180;
+      const a1 = (((i + 1) * slice - 90) * Math.PI) / 180;
+      const r = 130;
+      const d = [
+        `M ${cx} ${cy}`,
+        `L ${cx + r * Math.cos(a0)} ${cy + r * Math.sin(a0)}`,
+        `A ${r} ${r} 0 0 1 ${cx + r * Math.cos(a1)} ${cy + r * Math.sin(a1)}`,
+        'Z',
+      ].join(' ');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', 'pl-aim-sector');
+      path.dataset.i = String(i);
+      svg.appendChild(path);
+      const mid = ((i + 0.5) * slice - 90) * Math.PI / 180;
+      const tx = cx + 88 * Math.cos(mid);
+      const ty = cy + 88 * Math.sin(mid);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', String(tx));
+      text.setAttribute('y', String(ty));
+      text.setAttribute('class', 'pl-aim-label');
+      text.setAttribute('text-anchor', 'middle');
+      text.textContent = s.label;
+      svg.appendChild(text);
+    });
+
+    const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    arrow.setAttribute('x1', String(cx));
+    arrow.setAttribute('y1', String(cy));
+    arrow.setAttribute('x2', String(cx));
+    arrow.setAttribute('y2', String(cy - 118));
+    arrow.setAttribute('class', 'pl-aim-arrow');
+    svg.appendChild(arrow);
+    const tip = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    tip.setAttribute('points', `${cx - 6},${cy - 108} ${cx + 6},${cy - 108} ${cx},${cy - 124}`);
+    tip.setAttribute('class', 'pl-aim-head');
+    svg.appendChild(tip);
+
+    arena.appendChild(svg);
+    const dial = document.createElement('input');
+    dial.type = 'range';
+    dial.min = '0';
+    dial.max = '359';
+    dial.value = '0';
+    dial.className = 'pl-aim-dial';
+    const angleRead = document.createElement('p');
+    angleRead.className = 'pl-feedback';
+    angleRead.textContent = 'Кут: 0° · сектор: —';
+
+    function setAngle(deg) {
+      const rad = ((deg - 90) * Math.PI) / 180;
+      const x2 = cx + 118 * Math.cos(rad);
+      const y2 = cy + 118 * Math.sin(rad);
+      arrow.setAttribute('x2', String(x2));
+      arrow.setAttribute('y2', String(y2));
+      const hx = cx + 124 * Math.cos(rad);
+      const hy = cy + 124 * Math.sin(rad);
+      const px = 6 * Math.cos(rad + Math.PI / 2);
+      const py = 6 * Math.sin(rad + Math.PI / 2);
+      tip.setAttribute('points', `${hx},${hy} ${x2 - px},${y2 - py} ${x2 + px},${y2 + py}`);
+      const idx = Math.floor((((deg % 360) + 360) % 360) / slice) % n;
+      angleRead.textContent = `Кут: ${deg}° · сектор: ${sectors[idx]?.label || '—'}`;
+      return idx;
+    }
+
+    dial.addEventListener('input', () => setAngle(Number(dial.value)));
+    setAngle(0);
+
+    const fire = document.createElement('button');
+    fire.type = 'button';
+    fire.textContent = '🏹 Вистріл';
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+    let shots = 0;
+
+    fire.addEventListener('click', () => {
+      shots += 1;
+      const idx = setAngle(Number(dial.value));
+      svg.querySelectorAll('.pl-aim-sector').forEach((p) => p.classList.remove('hit', 'miss'));
+      const path = svg.querySelector(`.pl-aim-sector[data-i="${idx}"]`);
+      const ok = idx === level.correctIndex;
+      if (path) path.classList.add(ok ? 'hit' : 'miss');
+      arena.classList.add('shake');
+      setTimeout(() => arena.classList.remove('shake'), 280);
+      if (ok) {
+        feedback.textContent = `✅ ${level.hitText || sectors[idx]?.meaning || 'Влучання!'}`;
+        toast(root, 'Влучний постріл', true);
+        if (onComplete) onComplete(level.id);
+      } else {
+        feedback.textContent = `❌ ${level.missText || sectors[idx]?.meaning || 'Не той сектор.'} Спроба ${shots}.`;
+        toast(root, 'Мимо', false);
+      }
+    });
+
+    wrap.append(story, arena, dial, angleRead, fire, feedback);
+    if (level.legend) {
+      const leg = document.createElement('ul');
+      leg.className = 'pl-aim-legend';
+      sectors.forEach((s) => {
+        const li = document.createElement('li');
+        li.textContent = `${s.label}: ${s.meaning || ''}`;
+        leg.appendChild(li);
+      });
+      wrap.appendChild(leg);
+    }
+    root.appendChild(wrap);
+  }
+
+  function mountFogProbe(root, level, onComplete) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-fog';
+    const tip = document.createElement('p');
+    tip.className = 'pl-tip';
+    tip.textContent = level.brief || 'Веди «ліхтарик» мишкою. Знайди й клацни підозрілі клітинки.';
+    const stage = document.createElement('div');
+    stage.className = 'pl-fog-stage';
+    const table = document.createElement('table');
+    table.className = 'pl-mini-table pl-fog-table';
+    const headers = level.headers || [];
+    table.innerHTML = `<thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>`;
+    const tbody = document.createElement('tbody');
+    const need = new Set((level.anomalies || []).map(String));
+    const found = new Set();
+
+    (level.rows || []).forEach((row, ri) => {
+      const tr = document.createElement('tr');
+      headers.forEach((h, ci) => {
+        const td = document.createElement('td');
+        td.textContent = row[h];
+        td.dataset.key = `${ri}:${ci}`;
+        if (need.has(`${ri}:${ci}`) || need.has(`${ri},${h}`)) {
+          td.dataset.anom = '1';
+          td.dataset.key = need.has(`${ri},${h}`) ? `${ri},${h}` : `${ri}:${ci}`;
+        }
+        td.addEventListener('click', () => {
+          if (td.dataset.anom === '1') {
+            td.classList.add('found');
+            found.add(td.dataset.key);
+            feedback.textContent = `Знайдено ${found.size}/${need.size}`;
+            if (found.size >= need.size) {
+              feedback.textContent = `✅ ${level.success || 'Усі аномалії спіймано ліхтариком!'}`;
+              toast(root, 'Fog cleared', true);
+              if (onComplete) onComplete(level.id);
+            }
+          } else {
+            td.classList.add('false-hit');
+            feedback.textContent = 'Це чиста клітинка — шукай outlier / NULL / bot.';
+          }
+        });
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    const fog = document.createElement('div');
+    fog.className = 'pl-fog-mask';
+    stage.append(table, fog);
+    stage.addEventListener('pointermove', (e) => {
+      const rect = stage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      fog.style.setProperty('--mx', `${x}px`);
+      fog.style.setProperty('--my', `${y}px`);
+    });
+
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+    feedback.textContent = `Знайдено 0/${need.size}`;
+    wrap.append(tip, stage, feedback);
+    root.appendChild(wrap);
+  }
+
+  function mountConstellation(root, level, onComplete) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-constellation';
+    const tip = document.createElement('p');
+    tip.className = 'pl-tip';
+    tip.textContent = level.brief || 'Зʼєднай зірки в правильному порядку — як потік даних.';
+    const canvas = document.createElement('canvas');
+    canvas.width = 560;
+    canvas.height = 320;
+    canvas.className = 'pl-const-canvas';
+    const ctx = canvas.getContext('2d');
+    const nodes = level.nodes || [];
+    const order = level.order || nodes.map((n) => n.id);
+    const picked = [];
+    let hover = null;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0b1220';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < 40; i += 1) {
+        ctx.fillStyle = 'rgba(255,255,255,.15)';
+        ctx.beginPath();
+        ctx.arc((i * 97) % canvas.width, (i * 53) % canvas.height, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (picked.length > 1) {
+        ctx.strokeStyle = '#3d9a6a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        picked.forEach((id, i) => {
+          const n = nodes.find((x) => x.id === id);
+          if (!n) return;
+          if (i === 0) ctx.moveTo(n.x, n.y);
+          else ctx.lineTo(n.x, n.y);
+        });
+        ctx.stroke();
+      }
+      nodes.forEach((n) => {
+        const active = picked.includes(n.id);
+        const isHover = hover === n.id;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, active ? 11 : 8, 0, Math.PI * 2);
+        ctx.fillStyle = active ? '#3d9a6a' : (isHover ? '#e8a84b' : '#8b9cb3');
+        ctx.fill();
+        ctx.fillStyle = '#e8eef5';
+        ctx.font = '12px Segoe UI, sans-serif';
+        ctx.fillText(n.label, n.x + 12, n.y + 4);
+      });
+    }
+
+    function nearest(x, y) {
+      let best = null;
+      let dist = 22;
+      nodes.forEach((n) => {
+        const d = Math.hypot(n.x - x, n.y - y);
+        if (d < dist) {
+          dist = d;
+          best = n.id;
+        }
+      });
+      return best;
+    }
+
+    canvas.addEventListener('pointermove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+      hover = nearest(x, y);
+      draw();
+    });
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+      const id = nearest(x, y);
+      if (!id) return;
+      const expect = order[picked.length];
+      if (id === expect) {
+        picked.push(id);
+        feedback.textContent = `Шлях: ${picked.map((p) => nodes.find((n) => n.id === p)?.label).join(' → ')}`;
+        draw();
+        if (picked.length === order.length) {
+          feedback.textContent = `✅ ${level.success || 'Сузірʼя зібрано — потік даних правильний!'}`;
+          toast(root, 'Constellation lock', true);
+          if (onComplete) onComplete(level.id);
+        }
+      } else {
+        picked.length = 0;
+        feedback.textContent = 'Потік зірвався — почни знову з першої зірки.';
+        toast(root, 'Reset path', false);
+        draw();
+      }
+    });
+
+    const reset = document.createElement('button');
+    reset.type = 'button';
+    reset.className = 'ghost';
+    reset.textContent = 'Скинути шлях';
+    reset.addEventListener('click', () => {
+      picked.length = 0;
+      feedback.textContent = '';
+      draw();
+    });
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+    draw();
+    wrap.append(tip, canvas, reset, feedback);
+    root.appendChild(wrap);
   }
 
   function parseCsv(text) {
