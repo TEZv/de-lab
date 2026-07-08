@@ -483,3 +483,115 @@ button.marked { background: var(--good); }
   cursor: crosshair;
   background: #0b1220;
 }
+
+/* —— Hero cabin / skill orbs —— */
+.hero-cabin {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  align-items: center;
+  background: linear-gradient(135deg, #121a28 0%, #1a2332 55%, #152018 100%);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 0 40px rgba(61, 154, 106, 0.08);
+}
+@media (max-width: 640px) {
+  .hero-cabin { grid-template-columns: 1fr; text-align: center; }
+  .hero-actions { justify-content: center; }
+  .skill-orb-row { justify-content: center; }
+}
+.hero-svg { width: 180px; height: auto; display: block; margin: 0 auto; }
+.hero-eyebrow { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+.hero-rank { margin: 4px 0 8px; font-size: 1.45rem; color: var(--accent2); }
+.hero-tip { margin: 0 0 14px; color: var(--muted); font-size: 14px; max-width: 42ch; }
+.skill-orb-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.skill-orb-row.compact { margin: 0; gap: 8px; }
+.skill-orb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--orb) 40%, var(--line));
+  background: #0d1117;
+  color: var(--ink);
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  padding: 0;
+  opacity: .45;
+  transition: opacity .25s, box-shadow .25s, transform .2s;
+}
+.skill-orb.on {
+  opacity: 1;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--orb) 55%, transparent);
+  border-color: var(--orb);
+}
+.skill-orb .orb-glow {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--orb) 35%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.skill-orb .orb-label { position: relative; font-weight: 600; z-index: 1; }
+.skill-orb .orb-pct { position: relative; color: var(--muted); font-size: 10px; z-index: 1; }
+.skill-orb-row.compact .skill-orb {
+  width: 22px;
+  height: 22px;
+  font-size: 0;
+  border-width: 2px;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-actions .ghost, .nav-pill {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+.hero-actions button:not(.ghost), #btn-dl {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+.hero-mini {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px dashed var(--line);
+  background: rgba(26, 35, 50, 0.6);
+}
+.hero-mini .hero-svg { width: 72px; }
+.pl-track-label {
+  display: inline-block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent2);
+  margin-bottom: 4px;
+}
+.road-theory { border-color: color-mix(in srgb, var(--accent2) 35%, var(--line)); }
+.road-practice { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+#share-canvas {
+  width: 100%;
+  max-width: 720px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  display: block;
+}
