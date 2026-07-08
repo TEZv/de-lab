@@ -254,7 +254,6 @@ function paintChrome() {
   if (h1) h1.textContent = t('headerTitle');
   if (lede) lede.textContent = t('headerLede');
   const map = [
-    ['nav-de-gym', 'navDeGym'],
     ['nav-de-md', 'navDeMd'],
     ['nav-mentorship', 'navMentorship'],
     ['nav-repo', 'navRepo'],
@@ -314,8 +313,6 @@ function renderHeroCabin() {
         <div class="skill-orb-row">${orbs}</div>
         <div class="hero-actions">
           <button type="button" class="ghost" id="btn-share">${t('btnShare')}</button>
-          <a class="ghost nav-pill" href="#/">${t('linkDeGym')}</a>
-          <a class="ghost nav-pill" href="${DE_QUEST_MD}" target="_blank" rel="noopener">${t('linkDeMd')}</a>
           <a class="ghost nav-pill" href="${withLang(MENTORSHIP)}" target="_blank" rel="noopener">${t('linkMentorship')}</a>
         </div>
       </div>
@@ -504,6 +501,8 @@ function renderShare(root) {
         <button type="button" id="btn-dl">${t('btnDl')}</button>
         <button type="button" class="share-li" id="btn-li">${t('btnLi')}</button>
         <button type="button" class="share-ig" id="btn-ig">${t('btnIg')}</button>
+        <button type="button" class="share-x" id="btn-x">${t('btnX')}</button>
+        <button type="button" class="share-th" id="btn-th">${t('btnThreads')}</button>
         <button type="button" class="ghost" id="btn-copy">${t('btnCopy')}</button>
         <button type="button" class="ghost" id="btn-native" hidden>${t('btnNative')}</button>
       </div>
@@ -532,6 +531,7 @@ function renderShare(root) {
 
   root.querySelector('#btn-li').addEventListener('click', async () => {
     await copyText(getCaption());
+    // LinkedIn feed share only accepts URL; body text must be pasted (API restriction).
     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(GYM_URL)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     setHint(t('hintLi'));
@@ -542,6 +542,22 @@ function renderShare(root) {
     downloadCanvasPng(canvas, `de-mage-${rank.tier}.png`);
     window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
     setHint(t('hintIg'));
+  });
+
+  root.querySelector('#btn-x').addEventListener('click', async () => {
+    const text = getCaption();
+    await copyText(text);
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setHint(t('hintX'));
+  });
+
+  root.querySelector('#btn-th').addEventListener('click', async () => {
+    const text = getCaption();
+    await copyText(text);
+    // Threads has no stable compose autofill URL from web; open + paste.
+    window.open('https://www.threads.net/', '_blank', 'noopener,noreferrer');
+    setHint(t('hintThreads'));
   });
 
   const nativeBtn = root.querySelector('#btn-native');
