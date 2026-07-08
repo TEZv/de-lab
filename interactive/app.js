@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'de-lab-interactive-v3';
+const BUILD = '20260708b';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
