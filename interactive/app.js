@@ -288,8 +288,44 @@ function downloadCanvasPng(canvas, filename) {
   a.click();
 }
 
+function careerTier() {
+  return (window.LabLadder && LabLadder.getCareerTier('de')) || [];
+}
+function currentCareer() {
+  return (window.LabLadder && LabLadder.loadCareerTier()) || { id: 'intern', deLabel: 'Intern', recommendLayers: [1, 2] };
+}
+function langIsEn() {
+  return window.DeLabI18n && DeLabI18n.getLang() === 'en';
+}
+function careerBlurb(tier) {
+  if (!tier) return '';
+  return langIsEn() ? (tier.blurbEn || '') : (tier.blurbUa || '');
+}
+function layerTitle(layer) {
+  if (!layer) return '';
+  return langIsEn() ? (layer.titleEn || layer.title) : (layer.titleUa || layer.title);
+}
+function layerProgress(layer) {
+  const all = loadProgress();
+  let doneLevels = 0;
+  let totalLevels = 0;
+  let blocksTouched = 0;
+  (layer.blocks || []).forEach((id) => {
+    const p = all[id] || {};
+    const n = countDone(p);
+    if (n > 0) blocksTouched += 1;
+    doneLevels += n;
+    totalLevels += Math.max(n, 1);
+  });
+  const pct = layer.blocks.length
+    ? Math.round((blocksTouched / layer.blocks.length) * 100)
+    : 0;
+  return { pct, blocksTouched, total: layer.blocks.length, doneLevels };
+}
+
 function renderHeroCabin() {
   const rank = mageRank();
+  const career = currentCareer();
   const scores = skillScores();
   const orbs = SKILLS.map((s) => {
     const sc = scores[s.id];
@@ -309,6 +345,7 @@ function renderHeroCabin() {
       <div class="hero-meta">
         <p class="hero-eyebrow">${t('heroEyebrow')}</p>
         <h2 class="hero-rank">${rank.title}</h2>
+        <p class="hero-aim">${t('aimingAt', career.deLabel || career.label || '')}</p>
         <p class="hero-tip">${t('heroTip')}</p>
         <div class="skill-orb-row">${orbs}</div>
         <div class="hero-actions">
@@ -317,6 +354,82 @@ function renderHeroCabin() {
         </div>
       </div>
     </aside>`;
+}
+
+function renderCareerPicker() {
+  const tiers = careerTier();
+  const cur = currentCareer();
+  return `
+    <section class="pl-card career-card">
+      <h2>${t('careerTitle')}</h2>
+      <p style="color:var(--muted)">${t('careerLede')}</p>
+      <div class="career-tier-row" role="listbox" aria-label="${t('careerTitle')}">
+        ${tiers.map((c) => `
+          <button type="button" class="career-tier-btn ${c.id === cur.id ? 'active' : ''}" data-career="${c.id}" title="${careerBlurb(c)}">
+            <span class="career-tier-label">${c.label || c.deLabel}</span>
+          </button>`).join('')}
+      </div>
+      <p class="career-blurb" id="career-blurb">${careerBlurb(cur)}</p>
+    </section>`;
+}
+
+function renderStaircase() {
+  const layers = (window.LabLadder && LabLadder.DE_SKILL_LAYERS) || [];
+  const career = currentCareer();
+  const steps = layers.slice().reverse().map((layer) => {
+    const prog = layerProgress(layer);
+    const rec = LabLadder.isLayerRecommended(layer.n, career);
+    const accent = LabLadder.isLayerAccent(layer.n, career);
+    const cls = [
+      'stair-step',
+      rec ? 'recommended' : '',
+      accent ? 'accent' : '',
+      prog.pct >= 100 ? 'complete' : prog.pct > 0 ? 'started' : '',
+    ].filter(Boolean).join(' ');
+    return `
+      <div class="${cls}" data-layer="${layer.id}" style="--step:${layer.n}">
+        <button type="button" class="stair-platform" data-expand="${layer.id}" aria-expanded="false">
+          <span class="stair-icon">${layer.icon}</span>
+          <span class="stair-meta">
+            <strong>${layer.n}. ${layerTitle(layer)}</strong>
+            <span class="stair-pct">${prog.pct}% · ${prog.blocksTouched}/${prog.total}</span>
+          </span>
+          ${rec ? `<span class="stair-badge">${t('recommended')}</span>` : ''}
+        </button>
+        <div class="stair-missions" id="missions-${layer.id}" hidden>
+          <p class="stair-mode">${t('layerMode', layer.mode)}</p>
+          <div class="stair-mission-grid">
+            ${(layer.blocks || []).map((id) => {
+              const done = countDone(loadProgress()[id] || {});
+              return `
+                <button type="button" class="pl-block-btn" data-block="${id}">
+                  <span class="pl-track-label">${layer.skill || ''}</span>
+                  <strong>${blockTitle(id)}</strong><br>
+                  <span style="color:var(--muted);font-size:13px">${t('progress', done)}</span>
+                </button>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <section class="pl-card stair-card">
+      <div class="stair-header">
+        <div>
+          <h2>${t('stairTitle')}</h2>
+          <p style="color:var(--muted)">${t('stairLede')}</p>
+        </div>
+        <div class="stair-trophy" aria-hidden="true">🏆</div>
+      </div>
+      <div class="stair-layout">
+        <div class="stair-mage-dock">${mageSvg(mageRank().tier)}</div>
+        <div class="stair-column">
+          ${steps}
+          <div class="stair-base">${t('stairBase')}</div>
+        </div>
+      </div>
+    </section>`;
 }
 
 function wireHero(root) {
@@ -332,30 +445,64 @@ function renderHome(root) {
     .replace('{mDash}', withLang(MENTORSHIP_DASH));
   root.innerHTML = `
     ${renderHeroCabin()}
+    ${renderCareerPicker()}
+    ${renderStaircase()}
     <section class="pl-card">
       <h2>${t('homeTitle')}</h2>
       <p style="color:var(--muted)">${homeBody}</p>
-    </section>
-    ${ROADS.map((road) => `
-      <section class="pl-card road-${road.id}">
-        <h3>${t(road.titleKey)}</h3>
-        <p style="color:var(--muted)">${t(road.blurbKey)}</p>
-        <div class="pl-block-grid">
-          ${road.blocks.map((b) => {
-            const prog = loadProgress()[b.id] || {};
-            const done = countDone(prog);
-            return `
-              <button type="button" class="pl-block-btn" data-block="${b.id}" ${b.ready ? '' : 'disabled'}>
-                <span class="pl-track-label">${b.skill || ''}</span>
-                <strong>${blockTitle(b.id)}</strong><br>
-                <span style="color:var(--muted);font-size:13px">${b.ready ? t('progress', done) : t('soon')}</span>
-              </button>`;
-          }).join('')}
-        </div>
-      </section>
-    `).join('')}`;
+      <details class="archive-roads">
+        <summary>${t('archiveRoads')}</summary>
+        ${ROADS.map((road) => `
+          <div class="road-${road.id}" style="margin-top:12px">
+            <h3>${t(road.titleKey)}</h3>
+            <p style="color:var(--muted)">${t(road.blurbKey)}</p>
+            <div class="pl-block-grid">
+              ${road.blocks.map((b) => {
+                const prog = loadProgress()[b.id] || {};
+                const done = countDone(prog);
+                return `
+                  <button type="button" class="pl-block-btn" data-block="${b.id}" ${b.ready ? '' : 'disabled'}>
+                    <span class="pl-track-label">${b.skill || ''}</span>
+                    <strong>${blockTitle(b.id)}</strong><br>
+                    <span style="color:var(--muted);font-size:13px">${b.ready ? t('progress', done) : t('soon')}</span>
+                  </button>`;
+              }).join('')}
+            </div>
+          </div>`).join('')}
+      </details>
+    </section>`;
 
   wireHero(root);
+  root.querySelectorAll('[data-career]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (window.LabLadder) LabLadder.saveCareerTier(btn.dataset.career);
+      render();
+    });
+  });
+  root.querySelectorAll('[data-expand]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.expand;
+      const panel = root.querySelector(`#missions-${id}`);
+      if (!panel) return;
+      const open = panel.hasAttribute('hidden');
+      panel.toggleAttribute('hidden', !open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+  // Auto-open first recommended unfinished layer
+  const career = currentCareer();
+  const layers = (window.LabLadder && LabLadder.DE_SKILL_LAYERS) || [];
+  const firstRec = layers.find((l) => LabLadder.isLayerRecommended(l.n, career) && layerProgress(l).pct < 100)
+    || layers.find((l) => LabLadder.isLayerRecommended(l.n, career))
+    || layers[0];
+  if (firstRec) {
+    const panel = root.querySelector(`#missions-${firstRec.id}`);
+    const btn = root.querySelector(`[data-expand="${firstRec.id}"]`);
+    if (panel && btn) {
+      panel.removeAttribute('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  }
   root.querySelectorAll('[data-block]').forEach((btn) => {
     btn.addEventListener('click', () => { location.hash = `#/block/${btn.dataset.block}`; });
   });
