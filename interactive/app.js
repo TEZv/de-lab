@@ -1,9 +1,10 @@
 const STORAGE_KEY = 'de-lab-interactive-v1';
 const BLOCKS = [
+  { id: '05-alive-ae', title: 'AE Living Lab · не нудно', track: 'Start here', ready: true },
   { id: '01-window-functions', title: 'Віконні функції (intro)', track: 'SQL', ready: true },
   { id: '02-sql-interview-10', title: 'SQL Interview · 10', track: 'SQL', ready: true },
   { id: '03-python-interview-10', title: 'Python Interview · 10', track: 'Python', ready: true },
-  { id: '04-theory-data-ae', title: 'Theory · AE / Modeling', track: 'Theory', ready: true },
+  { id: '04-theory-data-ae', title: 'Theory · AE (опорна)', track: 'Theory', ready: true },
 ];
 
 function loadProgress() {
@@ -26,7 +27,7 @@ async function loadBlock(id) {
   return res.json();
 }
 
-function countDone(blockMeta, prog) {
+function countDone(prog) {
   return Object.keys(prog || {}).filter((k) => prog[k]).length;
 }
 
@@ -34,17 +35,18 @@ function renderHome(root) {
   root.innerHTML = `
     <section class="pl-card">
       <h2>Interview Gym · DE Lab</h2>
-      <p style="color:var(--muted)">Формати: теорія · drag у ____ · «що не так» · match · порядок кроків.
-      Краще за «просто клікнути по слову» — можна <strong>перетягувати</strong> чіпи у заглушки.</p>
+      <p style="color:var(--muted)">Це <strong>карта AE-скрінінгу</strong>, не вся карʼєра DE.
+      Почни з <em>Living Lab</em> (сценарії + картки), потім SQL/Python мʼязи.</p>
       <div class="pl-tracks">
+        <span class="pl-pill">Living · scenarios</span>
         <span class="pl-pill">SQL</span>
         <span class="pl-pill">Python</span>
-        <span class="pl-pill">Theory / AE</span>
+        <span class="pl-pill">Theory</span>
       </div>
       <div class="pl-block-grid">
         ${BLOCKS.map((b) => {
           const prog = loadProgress()[b.id] || {};
-          const done = countDone(b, prog);
+          const done = countDone(prog);
           return `
             <button type="button" class="pl-block-btn" data-block="${b.id}">
               <span class="pl-track-label">${b.track}</span>
@@ -55,12 +57,11 @@ function renderHome(root) {
       </div>
     </section>
     <section class="pl-card pl-howto">
-      <h3>Як тренуватися перед скрінінгом</h3>
+      <h3>Чесна планка</h3>
       <ol>
-        <li>Theory AE — 15 хв (шари, Star, SCD, BQ cost)</li>
-        <li>SQL · 10 — уважно S3 (Harry Potter) і S5 (whats wrong)</li>
-        <li>Python · 10 — пастка TypeError + pandas mean/reset_index</li>
-        <li>Повторюй fail-кейси з підказками, не підглядай відповіді одразу</li>
+        <li><strong>Покриває:</strong> windows/HAVING/JOIN, pandas, STG→CORE→MARTS, SCD2, BQ cost, DQ, A/B base, day-1</li>
+        <li><strong>Не покриває саме по собі:</strong> стрес live 1.5 год, їхню паличку без репетиції вголос, глибокий Spark/K8s</li>
+        <li>Після «Зрозуміло» вкладка зеленіє; лічильник «Збережено X/Y» оновлюється одразу</li>
       </ol>
     </section>`;
   root.querySelectorAll('[data-block]').forEach((btn) => {
@@ -84,6 +85,7 @@ async function renderBlock(root, blockId, levelId) {
       <button type="button" class="ghost" id="pl-back">← Блоки</button>
       <h2>${PrepLevelsEngine.escapeHtml(block.title)}</h2>
       <p style="color:var(--muted)">${PrepLevelsEngine.escapeHtml(block.subtitle || '')}</p>
+      <p class="pl-progress-line" id="pl-prog">Збережено: ${countDone(prog)} / ${block.levels.length}</p>
       <div class="pl-level-tabs" id="pl-tabs"></div>
       <div id="pl-level-body"></div>
     </section>`;
@@ -92,10 +94,21 @@ async function renderBlock(root, blockId, levelId) {
 
   const tabs = root.querySelector('#pl-tabs');
   const body = root.querySelector('#pl-level-body');
+  const progLine = root.querySelector('#pl-prog');
+
+  function paintTabs(allProg) {
+    const p = allProg[blockId] || {};
+    tabs.querySelectorAll('.pl-level-tab').forEach((tab) => {
+      const lid = tab.dataset.lid;
+      tab.classList.toggle('done', !!p[lid]);
+    });
+    progLine.textContent = `Збережено: ${countDone(p)} / ${block.levels.length}`;
+  }
 
   block.levels.forEach((level) => {
     const tab = document.createElement('button');
     tab.type = 'button';
+    tab.dataset.lid = level.id;
     tab.className = `pl-level-tab ${level.id === currentId ? 'active' : ''} ${prog[level.id] ? 'done' : ''}`;
     tab.textContent = level.tag || level.id;
     tab.title = level.title;
@@ -109,11 +122,7 @@ async function renderBlock(root, blockId, levelId) {
     const all = loadProgress();
     all[blockId] = { ...(all[blockId] || {}), [lid]: true };
     saveProgress(all);
-    // refresh tabs only
-    tabs.querySelectorAll('.pl-level-tab').forEach((tab, i) => {
-      const lid2 = block.levels[i].id;
-      if (all[blockId][lid2]) tab.classList.add('done');
-    });
+    paintTabs(all);
   });
 }
 

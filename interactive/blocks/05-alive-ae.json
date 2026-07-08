@@ -1,0 +1,209 @@
+{
+  "id": "05-alive-ae",
+  "title": "AE Living Lab · не нудна теорія",
+  "subtitle": "Сценарії · flip-картки · збірка пайплайна · рішення «як на роботі»",
+  "levels": [
+    {
+      "id": "A0",
+      "type": "flip_cards",
+      "tag": "жваво · 1",
+      "title": "Карти шарів (клікай)",
+      "instruction": "Відкрий усі картки — це не зубріння, а асоціації.",
+      "cards": [
+        { "front": "📦 STAGING", "back": "Сирі копії «як прийшло». Не рахуй бізнес-метрики тут." },
+        { "front": "🧽 CORE", "back": "Dedup, COALESCE, facts+dims, SCD. Тут народжується правда." },
+        { "front": "🏪 MARTS", "back": "Вітрина під BI/ML. Tableau тягне вже звідси." },
+        { "front": "⭐ STAR", "back": "1 JOIN = швидко. Для BigQuery — улюблений патерн." },
+        { "front": "❄️ SNOWFLAKE schema", "back": "Багато JOIN. Красиво в теорії, дорого в аналітиці." },
+        { "front": "📜 SCD2", "back": "Новий рядок історії: valid_from / valid_to / is_current." }
+      ]
+    },
+    {
+      "id": "A1",
+      "type": "pipeline_build",
+      "tag": "жваво · 2",
+      "title": "Збери дата-конвеєр",
+      "instruction": "FitMe / DataObrii-вайб: від джерела до дашборду. Drag на кроки.",
+      "stages": [
+        { "label": "Source API", "hint": "звідки" },
+        { "label": "Ingest", "hint": "завантажити" },
+        { "label": "Staging", "hint": "сирі" },
+        { "label": "Transform CORE", "hint": "чистка" },
+        { "label": "Mart + DQ", "hint": "вітрина+чеки" },
+        { "label": "Tableau", "hint": "споживач" }
+      ],
+      "pool": [
+        "Source API",
+        "Ingest",
+        "Staging",
+        "Transform CORE",
+        "Mart + DQ",
+        "Tableau",
+        "Redis cache",
+        "Excel вручну"
+      ],
+      "success": "Так збирають аналітичний стек на скрінінгу."
+    },
+    {
+      "id": "A2",
+      "type": "scenario",
+      "tag": "жваво · 3",
+      "title": "День 1 у DataObrii",
+      "emoji": "🚀",
+      "scene": "Тобі дали доступ до BigQuery і кажуть: «великий проєкт через 1–3 місяці». Що робиш ПЕРШИМ?",
+      "bestIndex": 1,
+      "choices": [
+        {
+          "label": "Одразу пишу новий ETL у prod і «покращую» чужі таблиці",
+          "feedback": "Ні. Без map і ownership легко зламати чужий звіт. На інтервʼю це мінус."
+        },
+        {
+          "label": "Доступи → мапа STG/CORE/MARTS → де болить freshness/дублі → маленький quick win на staging",
+          "feedback": "Саме так. Покажеш ownership + обережність + швидкий value."
+        },
+        {
+          "label": "Тиждень лише читаю Medium і чекаю задачу",
+          "feedback": "Пасивно. Краще просити walkthrough і карту систем.",
+          "stillPass": false
+        }
+      ]
+    },
+    {
+      "id": "A3",
+      "type": "scenario",
+      "tag": "жваво · 4",
+      "title": "💸 Маркетолог і LIMIT 10",
+      "emoji": "🧾",
+      "scene": "Колега: «SELECT * … LIMIT 10 — майже безкоштовно ж?» Твоя реакція на 1:1.",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Пояснюю: BQ платить за колонки; LIMIT ріже ВИВІД після скану. Краще конкретні колонки / Preview.",
+          "feedback": "Middle-відповідь з інженерною грамотністю."
+        },
+        {
+          "label": "Сміюся і кажу «ну майже» — хай робить",
+          "feedback": "Дружньо, але чек прилетить команді. Краще навчити."
+        },
+        {
+          "label": "Блокую йому BigQuery назавжди",
+          "feedback": "Toxic overkill. Навчи + дай готові вітрини."
+        }
+      ]
+    },
+    {
+      "id": "A4",
+      "type": "flip_cards",
+      "tag": "жваво · 5",
+      "title": "A/B на пальцях",
+      "instruction": "Клікай — збери інтуїцію, не формулу з підручника.",
+      "cards": [
+        { "front": "H0", "back": "Різниці немає. Все може бути шумом." },
+        { "front": "H1", "back": "Різниця є — тест справді кращий/гірший." },
+        { "front": "p < 0.05", "back": "Такий шум рідко випадковий → відхиляємо H0." },
+        { "front": "Type I", "back": "False + : «побачили ефект», якого нема." },
+        { "front": "Type II", "back": "False − : проґавили реальний ефект." },
+        { "front": "Practical sig.", "back": "Стат. значуще ≠ варто rollout (мікроефект)." }
+      ]
+    },
+    {
+      "id": "A5",
+      "type": "scenario",
+      "tag": "жваво · 6",
+      "title": "NULL у amount",
+      "emoji": "🕳️",
+      "scene": "У staging.orders 3% рядків з amount = NULL. Пайплайн падає чи ні — залежить від тебе.",
+      "bestIndex": 2,
+      "choices": [
+        {
+          "label": "Падаємо з exception і чекаємо бекенд три дні",
+          "feedback": "Крихко. BI стоїть. Краще fail soft + alert."
+        },
+        {
+          "label": "Тихо підставляємо NULL → null назавжди без alert",
+          "feedback": "Приховаєш проблему. Якість попливе."
+        },
+        {
+          "label": "CORE: COALESCE(amount,0) + alert Slack + ticket бекенду на джерело",
+          "feedback": "Класика AE: не ламаємо, не ховаємо, фіксимо джерело."
+        }
+      ]
+    },
+    {
+      "id": "A6",
+      "type": "pipeline_build",
+      "tag": "жваво · 7",
+      "title": "SQL-порядок у голові сервера",
+      "instruction": "Не як пишеш — як виконує БД.",
+      "stages": [
+        { "label": "FROM", "hint": "1" },
+        { "label": "WHERE", "hint": "2" },
+        { "label": "GROUP BY", "hint": "3" },
+        { "label": "HAVING", "hint": "4" },
+        { "label": "SELECT", "hint": "5" },
+        { "label": "ORDER BY", "hint": "6" }
+      ],
+      "pool": ["FROM", "WHERE", "GROUP BY", "HAVING", "SELECT", "ORDER BY", "LIMIT first"],
+      "success": "Тепер WHERE MAX(...) звучить як червона лампа."
+    },
+    {
+      "id": "A7",
+      "type": "flip_cards",
+      "tag": "жваво · 8",
+      "title": "Стек на емодзі",
+      "instruction": "Щоб на інтервʼю згадати не сухий список, а картинку.",
+      "cards": [
+        { "front": "🌀 Orchestration", "back": "Airflow / Dagster — КОЛИ і в якому порядку." },
+        { "front": "🧹 Transform", "back": "dbt + SQL (+ pandas для бруду)." },
+        { "front": "🏔️ Warehouse", "back": "BigQuery / Snowflake / Redshift." },
+        { "front": "📡 Ingest", "back": "Fivetran / Airbyte / Python API scripts." },
+        { "front": "📊 BI", "back": "Tableau / Power BI / Looker Studio." },
+        { "front": "🩺 Quality", "back": "dbt tests / freshness / volume / duplicates." }
+      ]
+    },
+    {
+      "id": "A8",
+      "type": "scenario",
+      "tag": "жваво · 9",
+      "title": "Чи вистачить Gym на все інтервʼю?",
+      "emoji": "🪞",
+      "scene": "Чесна відповідь собі: цей Gym = карта AE-скрінінгу, не Senior DE encyclopedia.",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Так і скажу: Gym покриває SQL windows, pandas, modeling, DQ, A/B-base, day-1. Далі — live-coding стрес + їхня задача про палички + практика вголос.",
+          "feedback": "Правильна планка. Не ідеалізуй і не знецінюй себе."
+        },
+        {
+          "label": "Після Gym я вже Senior і можу все",
+          "feedback": "Ні. Це небезпечна ілюзія перед live-coding."
+        },
+        {
+          "label": "Gym нічого не дає, краще тільки YouTube",
+          "feedback": "Пасивне — гірше. Gym є тренажером мислення під їхній формат."
+        }
+      ]
+    },
+    {
+      "id": "A9",
+      "type": "theory",
+      "tag": "жваво · 10",
+      "title": "Мінімальний чекліст до скрінінгу",
+      "storyEmoji": "🎒",
+      "story": "Не вчи «все під сонцем». Візьми це як рюкзак на 1.5 год.",
+      "flow": [
+        { "title": "SQL", "desc": "HAVING, ROW_NUMBER, LAG, JOIN-дублі" },
+        { "title": "Python", "desc": "dict counter, [::-1], groupby mean" },
+        { "title": "Model", "desc": "STG→CORE→MARTS, Star, SCD2" },
+        { "title": "Soft", "desc": "думаєш вголос, уточнюєш умову" }
+      ],
+      "bullets": [
+        "Палички: уточни power+age vs code+power",
+        "Блокнот паперовий — легально",
+        "Не мовчи 5 хв — озвучуй логіку",
+        "Gym ≠ усе; це карта + репетиція"
+      ],
+      "note": "Після цього блоку повертайся в SQL/Python×10 — там мʼязи live-coding."
+    }
+  ]
+}

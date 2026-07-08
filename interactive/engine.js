@@ -1,4 +1,4 @@
-/* Prep Levels Engine — fill blanks (drag), drag-order, match, theory, whats_wrong */
+/* Prep Levels Engine — fill blanks (drag), flip cards, pipeline build, scenario, … */
 (function initPrepLevelsEngine(global) {
   function escapeHtml(value) {
     return String(value ?? '')
@@ -17,15 +17,50 @@
     return copy;
   }
 
-  function mountTheory(root, level) {
+  function toast(root, text, ok = true) {
+    const el = document.createElement('div');
+    el.className = `pl-toast ${ok ? 'ok' : 'bad'}`;
+    el.textContent = text;
+    root.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  }
+
+  function mountTheory(root, level, onComplete) {
     const wrap = document.createElement('div');
     wrap.className = 'pl-theory';
+
+    if (level.story) {
+      const story = document.createElement('div');
+      story.className = 'pl-story';
+      story.innerHTML = `<span class="pl-story-emoji">${escapeHtml(level.storyEmoji || '🎭')}</span><p>${escapeHtml(level.story)}</p>`;
+      wrap.appendChild(story);
+    }
+
     if (level.diagram) {
       const pre = document.createElement('pre');
-      pre.className = 'pl-diagram';
+      pre.className = 'pl-diagram pl-diagram-alive';
       pre.textContent = level.diagram;
       wrap.appendChild(pre);
     }
+
+    if (level.flow?.length) {
+      const flow = document.createElement('div');
+      flow.className = 'pl-flow';
+      level.flow.forEach((step, i) => {
+        const chip = document.createElement('div');
+        chip.className = 'pl-flow-step';
+        chip.innerHTML = `<strong>${escapeHtml(step.title)}</strong><span>${escapeHtml(step.desc || '')}</span>`;
+        flow.appendChild(chip);
+        if (i < level.flow.length - 1) {
+          const arrow = document.createElement('div');
+          arrow.className = 'pl-flow-arrow';
+          arrow.textContent = '→';
+          flow.appendChild(arrow);
+        }
+      });
+      wrap.appendChild(flow);
+    }
+
     if (level.bullets?.length) {
       const ul = document.createElement('ul');
       level.bullets.forEach((b) => {
@@ -35,6 +70,7 @@
       });
       wrap.appendChild(ul);
     }
+
     if (level.pairs?.length) {
       level.pairs.forEach((pair) => {
         const [a, b] = Array.isArray(pair) ? pair : [pair.left, pair.right];
@@ -44,12 +80,177 @@
         wrap.appendChild(row);
       });
     }
+
     if (level.note) {
       const note = document.createElement('p');
       note.className = 'pl-note';
       note.textContent = level.note;
       wrap.appendChild(note);
     }
+
+    const actions = document.createElement('div');
+    actions.className = 'pl-actions';
+    const mark = document.createElement('button');
+    mark.type = 'button';
+    mark.textContent = 'Зрозуміло — далі ✓';
+    mark.addEventListener('click', () => {
+      mark.disabled = true;
+      mark.textContent = '✓ Зафіксовано в прогресі';
+      mark.classList.add('marked');
+      toast(root, 'Прогрес збережено', true);
+      if (onComplete) onComplete(level.id);
+    });
+    actions.appendChild(mark);
+    wrap.appendChild(actions);
+    root.appendChild(wrap);
+  }
+
+  function mountFlipCards(root, level, onComplete) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-flip-grid';
+    let opened = 0;
+    const need = (level.cards || []).length;
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+    feedback.textContent = 'Клікай картки — відкрий усі сторони.';
+
+    (level.cards || []).forEach((card) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'pl-flip-card';
+      el.innerHTML = `<span class="front">${escapeHtml(card.front)}</span><span class="back">${escapeHtml(card.back)}</span>`;
+      el.addEventListener('click', () => {
+        if (el.classList.contains('flipped')) return;
+        el.classList.add('flipped');
+        opened += 1;
+        feedback.textContent = `Відкрито ${opened}/${need}`;
+        if (opened === need) {
+          feedback.textContent = '✅ Усі картки відкриті — блок зараховано!';
+          toast(root, 'Картки пройдено', true);
+          if (onComplete) onComplete(level.id);
+        }
+      });
+      wrap.appendChild(el);
+    });
+    root.append(wrap, feedback);
+  }
+
+  function mountPipelineBuild(root, level, onComplete) {
+    const stages = level.stages || [];
+    const pool = shuffle([...(level.pool || stages.map((s) => s.label))]);
+    const placed = stages.map(() => '');
+
+    const board = document.createElement('div');
+    board.className = 'pl-pipeline';
+    const bank = document.createElement('div');
+    bank.className = 'pl-word-bank';
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+    const tip = document.createElement('p');
+    tip.className = 'pl-tip';
+    tip.textContent = level.instruction || 'Перетягни етапи на конвеєр зліва → направо.';
+
+    function renderBoard() {
+      board.innerHTML = '';
+      stages.forEach((stage, i) => {
+        const slot = document.createElement('div');
+        slot.className = `pl-pipe-slot ${placed[i] ? 'filled' : ''}`;
+        slot.dataset.i = String(i);
+        slot.innerHTML = `<small>${escapeHtml(stage.hint || `Крок ${i + 1}`)}</small><strong>${escapeHtml(placed[i] || '____')}</strong>`;
+        slot.addEventListener('dragover', (e) => e.preventDefault());
+        slot.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const word = e.dataTransfer.getData('text/plain');
+          if (word) {
+            placed[i] = word;
+            renderBoard();
+          }
+        });
+        slot.addEventListener('click', () => {
+          if (placed[i]) {
+            placed[i] = '';
+            renderBoard();
+          }
+        });
+        board.appendChild(slot);
+        if (i < stages.length - 1) {
+          const a = document.createElement('div');
+          a.className = 'pl-flow-arrow';
+          a.textContent = '→';
+          board.appendChild(a);
+        }
+      });
+    }
+
+    bank.innerHTML = '';
+    pool.forEach((word) => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'pl-chip';
+      chip.draggable = true;
+      chip.textContent = word;
+      chip.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', word));
+      chip.addEventListener('click', () => {
+        const idx = placed.findIndex((p) => !p);
+        if (idx >= 0) {
+          placed[idx] = word;
+          renderBoard();
+        }
+      });
+      bank.appendChild(chip);
+    });
+
+    const check = document.createElement('button');
+    check.type = 'button';
+    check.textContent = 'Перевірити конвеєр';
+    check.addEventListener('click', () => {
+      const ok = stages.every((s, i) => placed[i] === s.label);
+      feedback.textContent = ok
+        ? `✅ ${level.success || 'Конвеєр зібрано правильно!'}`
+        : '❌ Ще не той порядок / етап. Клік по слоту — очистити.';
+      if (ok) {
+        toast(root, 'Пайплайн ОК', true);
+        if (onComplete) onComplete(level.id);
+      }
+    });
+
+    renderBoard();
+    root.append(tip, board, bank, check, feedback);
+  }
+
+  function mountScenario(root, level, onComplete) {
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-scenario';
+    const scene = document.createElement('div');
+    scene.className = 'pl-story';
+    scene.innerHTML = `<span class="pl-story-emoji">${escapeHtml(level.emoji || '🧭')}</span><p>${escapeHtml(level.scene)}</p>`;
+    const opts = document.createElement('div');
+    opts.className = 'pl-options';
+    const feedback = document.createElement('p');
+    feedback.className = 'pl-feedback';
+
+    (level.choices || []).forEach((choice, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pl-option-btn';
+      btn.textContent = choice.label;
+      btn.addEventListener('click', () => {
+        opts.querySelectorAll('.pl-option-btn').forEach((b) => { b.disabled = true; });
+        const best = idx === level.bestIndex;
+        btn.classList.add(best ? 'ok' : 'bad');
+        feedback.textContent = `${best ? '✅' : '⚠️'} ${choice.feedback}`;
+        if (best) {
+          toast(root, 'Сильне рішення', true);
+          if (onComplete) onComplete(level.id);
+        } else if (choice.stillPass) {
+          toast(root, 'Можна краще, але зараховано', true);
+          if (onComplete) onComplete(level.id);
+        }
+      });
+      opts.appendChild(btn);
+    });
+
+    wrap.append(scene, opts, feedback);
     root.appendChild(wrap);
   }
 
@@ -65,7 +266,7 @@
     feedback.className = 'pl-feedback';
     const tip = document.createElement('p');
     tip.className = 'pl-tip';
-    tip.textContent = 'Перетягни чіп у ____ або клікни слот → потім слово. Повторний клік по слоту — очистити.';
+    tip.textContent = 'Перетягни чіп у ____ або клікни слот → потім слово.';
 
     function nextEmpty(from = 0) {
       for (let i = from; i < answers.length; i += 1) if (!filled[i]) return i;
@@ -160,7 +361,10 @@
         : (level.revealOnFail === false
           ? '❌ Ще не так — спробуй ще або візьми підказку.'
           : `❌ Перевір порядок. Орієнтир: ${answers.join(', ')}`);
-      if (ok && onComplete) onComplete(level.id);
+      if (ok) {
+        toast(root, 'Зараховано', true);
+        if (onComplete) onComplete(level.id);
+      }
     });
     reset.addEventListener('click', () => {
       filled.fill('');
@@ -173,7 +377,7 @@
         feedback.textContent = `💡 ${hints[hintsUsed]}`;
         hintsUsed += 1;
       } else {
-        feedback.textContent = '💡 Підказки закінчились — думай архітектурно.';
+        feedback.textContent = '💡 Підказки закінчились.';
       }
     });
 
@@ -214,7 +418,10 @@
       const current = [...list.children].map((n) => n.dataset.value);
       const ok = current.every((v, i) => v === level.items[i]);
       feedback.textContent = ok ? '✅ Порядок вірний!' : '❌ Ще не так — подумай про логіку кроків.';
-      if (ok && onComplete) onComplete(level.id);
+      if (ok) {
+        toast(root, 'Порядок OK', true);
+        if (onComplete) onComplete(level.id);
+      }
     });
     root.append(list, check, feedback);
   }
@@ -259,6 +466,7 @@
           matched += 1;
           if (matched === level.pairs.length) {
             feedback.textContent = '✅ Усі пари зібрано!';
+            toast(root, 'Match complete', true);
             if (onComplete) onComplete(level.id);
           }
         } else {
@@ -277,24 +485,20 @@
   function mountWhatsWrong(root, level, onComplete) {
     const wrap = document.createElement('div');
     wrap.className = 'pl-whats-wrong';
-
     if (level.diagram) {
       const pre = document.createElement('pre');
       pre.className = 'pl-diagram';
       pre.textContent = level.diagram;
       wrap.appendChild(pre);
     }
-
     const code = document.createElement('pre');
     code.className = 'pl-code-buggy';
     code.textContent = level.buggyCode || '';
     wrap.appendChild(code);
-
     const prompt = document.createElement('p');
     prompt.className = 'pl-tip';
-    prompt.textContent = level.prompt || 'Що тут не так? Обери правильний діагноз.';
+    prompt.textContent = level.prompt || 'Що тут не так?';
     wrap.appendChild(prompt);
-
     const opts = document.createElement('div');
     opts.className = 'pl-options';
     const feedback = document.createElement('p');
@@ -312,7 +516,10 @@
         feedback.textContent = ok
           ? `✅ ${level.explainOk || 'Так!'}`
           : `❌ ${level.explainFail || 'Не той діагноз.'} ${level.explanation || ''}`;
-        if (ok && onComplete) onComplete(level.id);
+        if (ok) {
+          toast(root, 'Діагноз вірний', true);
+          if (onComplete) onComplete(level.id);
+        }
       });
       opts.appendChild(btn);
     });
@@ -348,7 +555,10 @@
         feedback.textContent = ok
           ? `✅ ${level.explanation || 'Вірно!'}`
           : `❌ ${level.explanation || 'Невірно.'}`;
-        if (ok && onComplete) onComplete(level.id);
+        if (ok) {
+          toast(root, 'OK', true);
+          if (onComplete) onComplete(level.id);
+        }
       });
       opts.appendChild(btn);
     });
@@ -366,7 +576,16 @@
 
     switch (level.type) {
       case 'theory':
-        mountTheory(body, level);
+        mountTheory(body, level, onComplete);
+        break;
+      case 'flip_cards':
+        mountFlipCards(body, level, onComplete);
+        break;
+      case 'pipeline_build':
+        mountPipelineBuild(body, level, onComplete);
+        break;
+      case 'scenario':
+        mountScenario(body, level, onComplete);
         break;
       case 'fill_blanks':
         mountFillBlanks(body, level, onComplete);
@@ -385,14 +604,6 @@
         break;
       default:
         body.textContent = 'Невідомий тип рівня.';
-    }
-
-    if (level.type === 'theory') {
-      const mark = document.createElement('button');
-      mark.type = 'button';
-      mark.textContent = 'Прочитано ✓';
-      mark.addEventListener('click', () => onComplete && onComplete(level.id));
-      body.appendChild(mark);
     }
   }
 
