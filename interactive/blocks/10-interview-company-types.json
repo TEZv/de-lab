@@ -1,18 +1,20 @@
 {
   "id": "10-interview-company-types",
   "title": "Типи компаній і відмінності техінтервʼю",
-  "subtitle": "Узагальнені архетипи ринку (не конкретні бренди). Відкрий картки → зрозумій, куди цілишся.",
+  "subtitle": "Спочатку якорі в карті → потім матч зі стрілами. Не вікторина на вгадування.",
   "levels": [
     {
       "id": "C0",
       "type": "company_map",
       "tag": "карта",
       "title": "5 архетипів, де працює DE / AE",
-      "intro": "Це не «рейтинг компаній», а карта очікувань на скрінінгу. Відкрий усі типи.",
+      "intro": "Відкрий кожен тип. Помаранчевий «якір» — це те, що матч перевірить наступним. Прочитай якір вголос.",
+      "completeHint": "Усі якорі відкриті. Іди на «матч»: там спочатку study-екран із тими ж стрілками, потім зʼєднання з лініями.",
       "types": [
         {
           "name": "📱 Product / Mobile apps",
           "oneLiner": "Підписки, UA, cohorts, LTV",
+          "focusChip": "Метрики продукту + SQL/pandas",
           "day": "ETL маркетингу/білінгу, вітрини для product/UA, data quality подій.",
           "interview": "SQL windows + pandas; кейс «поясни метрику»; інколи Airflow/dbt на словах.",
           "stack": "BQ/Snowflake, dbt, Airflow, Amplitude/AppsFlyer, Tableau/Looker"
@@ -20,6 +22,7 @@
         {
           "name": "🛒 Marketplace / E-com",
           "oneLiner": "Каталог, orders, sellers, logistics",
+          "focusChip": "JOIN cardinality + статуси замовлень",
           "day": "Факти замовлень, статуси доставок, SEO/ads spend, антифрод-зрізи.",
           "interview": "JOIN-пастки 1:N, дедуп, SCD «статус замовлення», SQL на уважність.",
           "stack": "Postgres/BQ, Kafka інколи, dbt, BI"
@@ -27,6 +30,7 @@
         {
           "name": "📺 Media / Content",
           "oneLiner": "Контент, охоплення, рекламний інвентар",
+          "focusChip": "Cleaning великих датасетів + reporting",
           "day": "Парсинг/очистка великих логів, дашборди перформансу, reproducible reporting.",
           "interview": "Python cleaning, SQL агрегації, інколи «поясни пайплайн звіту».",
           "stack": "Python, SQL, Power BI/Looker, Sheets/Apps Script"
@@ -34,6 +38,7 @@
         {
           "name": "🔬 Analytics consulting / IoT data",
           "oneLiner": "Клієнтські PoC → prod, сенсори/моделі поруч",
+          "focusChip": "Live coding + уважність до умови",
           "day": "Швидкі пайплайни під клієнта, DQ, фічі для DS, доки.",
           "interview": "Live SQL/Python + modeling + логіка; інколи stats/A-B base; уважність до формулювань.",
           "stack": "Python, SQL, DWH, Tableau, інколи stream"
@@ -41,6 +46,7 @@
         {
           "name": "💳 Fintech / Payments",
           "oneLiner": "Транзакції, ризик, reconciliation",
+          "focusChip": "Точність, дедуп, ідемпотентність",
           "day": "Ідемпотентність, дедуп платежів, reconciliation, аудит слідів.",
           "interview": "SQL точність, edge cases, інколи soft на ownership/compliance.",
           "stack": "SQL, Python, DWH, моніторинг, строгий DQ"
@@ -52,7 +58,11 @@
       "type": "match_pairs",
       "tag": "матч",
       "title": "Який фокус скрінінгу?",
-      "instruction": "Зʼєднай тип компанії з тим, що частіше перевіряють першим.",
+      "instruction": "Не вгадуй: спочатку закріпи пари (як на карті), потім зʼєднай — зʼявляться лінії.",
+      "studyFirst": true,
+      "studyIntro": "<strong>Крок 1 · закріпи якорі.</strong> Ті самі стрілки, що «🎯» на карті. Прочитай кожен рядок. Потім — матч із лініями.",
+      "studyCta": "Закарбувала · почати матч зі стрілами",
+      "matchTip": "Ліворуч тип компанії → праворуч фокус. Вірна пара фарбується й малюється лінія. Помилка не скидає лівий вибір.",
       "pairs": [
         { "left": "Product / Mobile", "right": "Метрики продукту + SQL/pandas" },
         { "left": "Marketplace", "right": "JOIN cardinality + статуси замовлень" },

@@ -535,59 +535,183 @@
   }
 
   function mountMatch(root, level, onComplete) {
-    const leftItems = level.pairs.map((p) => p.left);
-    const rightItems = shuffle(level.pairs.map((p) => p.right));
-    let selected = null;
-    let matched = 0;
-    const feedback = document.createElement('p');
-    feedback.className = 'pl-feedback';
-    const grid = document.createElement('div');
-    grid.className = 'pl-match-grid';
-    const leftCol = document.createElement('div');
-    const rightCol = document.createElement('div');
+    const PAIR_COLORS = ['#3d9a6a', '#e8a84b', '#5b8def', '#c77dff', '#4ecdc4', '#ff6b6b'];
+    const wrap = document.createElement('div');
+    wrap.className = 'pl-match-wrap';
 
-    leftItems.forEach((text) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'pl-match-btn';
-      btn.textContent = text;
-      btn.addEventListener('click', () => {
-        leftCol.querySelectorAll('.pl-match-btn').forEach((b) => b.classList.remove('sel'));
-        btn.classList.add('sel');
-        selected = text;
+    const startMatch = () => {
+      wrap.innerHTML = '';
+      const tip = document.createElement('p');
+      tip.className = 'pl-tip';
+      tip.textContent = level.matchTip
+        || 'Спочатку клікни ЛІВОРУЧ (тип), потім ПРАВОРУЧ (фокус). Вірна пара — лінія + колір.';
+      wrap.appendChild(tip);
+
+      const arena = document.createElement('div');
+      arena.className = 'pl-match-arena';
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.classList.add('pl-match-svg');
+      svg.setAttribute('aria-hidden', 'true');
+
+      const grid = document.createElement('div');
+      grid.className = 'pl-match-grid';
+      const leftCol = document.createElement('div');
+      leftCol.className = 'pl-match-col';
+      const rightCol = document.createElement('div');
+      rightCol.className = 'pl-match-col';
+
+      const leftItems = level.pairs.map((p) => p.left);
+      const rightItems = shuffle(level.pairs.map((p) => p.right));
+      let selectedLeft = null;
+      let matched = 0;
+      const links = []; // { leftBtn, rightBtn, color }
+
+      const feedback = document.createElement('p');
+      feedback.className = 'pl-feedback';
+
+      function paintLines() {
+        const ar = arena.getBoundingClientRect();
+        svg.setAttribute('width', String(ar.width));
+        svg.setAttribute('height', String(ar.height));
+        svg.style.width = `${ar.width}px`;
+        svg.style.height = `${ar.height}px`;
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        links.forEach(({ leftBtn, rightBtn, color }) => {
+          const a = leftBtn.getBoundingClientRect();
+          const b = rightBtn.getBoundingClientRect();
+          const x1 = a.right - ar.left;
+          const y1 = a.top + a.height / 2 - ar.top;
+          const x2 = b.left - ar.left;
+          const y2 = b.top + b.height / 2 - ar.top;
+          const mid = (x1 + x2) / 2;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`);
+          path.setAttribute('stroke', color);
+          path.setAttribute('stroke-width', '3');
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke-linecap', 'round');
+          path.setAttribute('opacity', '0.9');
+          svg.appendChild(path);
+          const dotL = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          dotL.setAttribute('cx', String(x1));
+          dotL.setAttribute('cy', String(y1));
+          dotL.setAttribute('r', '4');
+          dotL.setAttribute('fill', color);
+          svg.appendChild(dotL);
+          const dotR = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          dotR.setAttribute('cx', String(x2));
+          dotR.setAttribute('cy', String(y2));
+          dotR.setAttribute('r', '4');
+          dotR.setAttribute('fill', color);
+          svg.appendChild(dotR);
+        });
+      }
+
+      leftItems.forEach((text) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pl-match-btn';
+        btn.dataset.side = 'left';
+        btn.dataset.value = text;
+        btn.textContent = text;
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('done')) return;
+          leftCol.querySelectorAll('.pl-match-btn:not(.done)').forEach((b) => b.classList.remove('sel'));
+          btn.classList.add('sel');
+          selectedLeft = text;
+          feedback.textContent = 'Тепер обери фокус скрінінгу праворуч →';
+        });
+        leftCol.appendChild(btn);
       });
-      leftCol.appendChild(btn);
-    });
 
-    rightItems.forEach((text) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'pl-match-btn';
-      btn.textContent = text;
-      btn.addEventListener('click', () => {
-        if (!selected) return;
-        const pair = level.pairs.find((p) => p.left === selected && p.right === text);
-        if (pair) {
-          btn.classList.add('done');
-          leftCol.querySelector('.sel')?.classList.add('done');
-          selected = null;
-          matched += 1;
-          if (matched === level.pairs.length) {
-            feedback.textContent = '✅ Усі пари зібрано!';
-            toast(root, 'Match complete', true);
-            if (onComplete) onComplete(level.id);
+      rightItems.forEach((text) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pl-match-btn';
+        btn.dataset.side = 'right';
+        btn.dataset.value = text;
+        btn.textContent = text;
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('done')) return;
+          if (!selectedLeft) {
+            feedback.textContent = 'Спочатку обери тип компанії зліва.';
+            return;
           }
-        } else {
-          feedback.textContent = '❌ Не та пара.';
-          selected = null;
-          leftCol.querySelectorAll('.pl-match-btn').forEach((b) => b.classList.remove('sel'));
-        }
+          const pair = level.pairs.find((p) => p.left === selectedLeft && p.right === text);
+          const leftBtn = [...leftCol.querySelectorAll('.pl-match-btn')].find((b) => b.dataset.value === selectedLeft);
+          if (pair && leftBtn) {
+            const color = PAIR_COLORS[matched % PAIR_COLORS.length];
+            btn.classList.add('done');
+            leftBtn.classList.add('done');
+            leftBtn.classList.remove('sel');
+            btn.style.borderColor = color;
+            leftBtn.style.borderColor = color;
+            btn.style.boxShadow = `inset 0 0 0 2px ${color}`;
+            leftBtn.style.boxShadow = `inset 0 0 0 2px ${color}`;
+            links.push({ leftBtn, rightBtn: btn, color });
+            selectedLeft = null;
+            matched += 1;
+            paintLines();
+            feedback.textContent = matched === level.pairs.length
+              ? '✅ Усі пари зібрано — лінії показують звʼязки.'
+              : `✅ Пара закріплена (${matched}/${level.pairs.length}).`;
+            if (matched === level.pairs.length) {
+              toast(root, 'Match complete', true);
+              if (onComplete) onComplete(level.id);
+            }
+          } else {
+            feedback.textContent = '❌ Не та пара. Згадай картку з study / карту типів — лівий вибір лишається.';
+            btn.classList.add('miss');
+            setTimeout(() => btn.classList.remove('miss'), 450);
+          }
+        });
+        rightCol.appendChild(btn);
       });
-      rightCol.appendChild(btn);
-    });
 
-    grid.append(leftCol, rightCol);
-    root.append(grid, feedback);
+      grid.append(leftCol, rightCol);
+      arena.append(svg, grid);
+      wrap.append(arena, feedback);
+      requestAnimationFrame(paintLines);
+      window.addEventListener('resize', paintLines, { passive: true });
+    };
+
+    const studyFirst = level.studyFirst !== false;
+    if (studyFirst) {
+      const study = document.createElement('div');
+      study.className = 'pl-match-study';
+      const h = document.createElement('p');
+      h.className = 'pl-tip';
+      h.innerHTML = level.studyIntro
+        || '<strong>Крок 1 · закріпи.</strong> Прочитай кожну пару вголос (тип → фокус). Потім матч без вгадування.';
+      study.appendChild(h);
+      const list = document.createElement('div');
+      list.className = 'pl-study-list';
+      (level.pairs || []).forEach((p, i) => {
+        const row = document.createElement('div');
+        row.className = 'pl-study-row';
+        row.style.setProperty('--pair', PAIR_COLORS[i % PAIR_COLORS.length]);
+        row.innerHTML = `
+          <span class="pl-study-left">${escapeHtml(p.left)}</span>
+          <span class="pl-study-arrow" aria-hidden="true">⟶</span>
+          <span class="pl-study-right">${escapeHtml(p.right)}</span>`;
+        list.appendChild(row);
+      });
+      study.appendChild(list);
+      const go = document.createElement('button');
+      go.type = 'button';
+      go.textContent = level.studyCta || 'Закарбувала · почати матч зі стрілами';
+      go.addEventListener('click', startMatch);
+      study.appendChild(go);
+      const skipHint = document.createElement('p');
+      skipHint.className = 'pl-feedback';
+      skipHint.textContent = 'Порада: повернись на вкладку «карта», якщо рядок не чіпляється.';
+      study.appendChild(skipHint);
+      wrap.appendChild(study);
+    } else {
+      startMatch();
+    }
+
+    root.appendChild(wrap);
   }
 
   function mountWhatsWrong(root, level, onComplete) {
@@ -1163,12 +1287,16 @@
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'pl-type-card';
-      card.innerHTML = `<strong>${escapeHtml(t.name)}</strong><span class="muted">${escapeHtml(t.oneLiner || '')}</span>`;
+      const chip = t.focusChip
+        ? `<span class="pl-focus-chip">🎯 ${escapeHtml(t.focusChip)}</span>`
+        : '';
+      card.innerHTML = `<strong>${escapeHtml(t.name)}</strong><span class="muted">${escapeHtml(t.oneLiner || '')}</span>${chip}`;
       const detail = document.createElement('div');
       detail.className = 'pl-type-detail hidden';
       detail.innerHTML = `
         <p><b>Типовий день DE:</b> ${escapeHtml(t.day || '')}</p>
         <p><b>На скрінінгу частіше:</b> ${escapeHtml(t.interview || '')}</p>
+        ${t.focusChip ? `<p class="pl-anchor"><b>Якір для матчу:</b> ${escapeHtml(t.focusChip)}</p>` : ''}
         <p><b>Стек-сигнали:</b> ${escapeHtml(t.stack || '')}</p>`;
       card.addEventListener('click', () => {
         const was = !detail.classList.contains('hidden');
@@ -1190,7 +1318,8 @@
     wrap.appendChild(grid);
     const tip = document.createElement('p');
     tip.className = 'pl-feedback';
-    tip.textContent = 'Відкрий усі типи компаній (клік по картці), щоб зарахувати рівень.';
+    tip.textContent = level.completeHint
+      || 'Відкрий усі типи. Запамʼятай «якір для матчу» — наступний рівень перевірить саме його, не вікторину на удачу.';
     wrap.appendChild(tip);
     root.appendChild(wrap);
   }
