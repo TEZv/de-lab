@@ -1,4 +1,6 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
+const GYM_URL = 'https://de-lab-interview-gym.web.app';
+const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
 const MENTORSHIP_QUEST = 'https://sphere-mentorship-hub.vercel.app/quest.html#T';
 const MENTORSHIP_DASH = 'https://sphere-mentorship-hub.vercel.app/dashboard.html';
@@ -108,23 +110,28 @@ function mageRank() {
   return { title: 'Novice Caster', tier: 0 };
 }
 
+function mageGlow(tier) {
+  return ['#4a5568', '#3d9a6a', '#e8a84b', '#c77dff'][tier] || '#4a5568';
+}
+
 function mageSvg(tier) {
-  const glow = ['#4a5568', '#3d9a6a', '#e8a84b', '#c77dff'][tier] || '#4a5568';
+  const glow = mageGlow(tier);
+  const uid = `m${tier}-${Math.random().toString(36).slice(2, 7)}`;
   return `
   <svg class="hero-svg" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <radialGradient id="aura" cx="50%" cy="40%" r="50%">
+      <radialGradient id="aura-${uid}" cx="50%" cy="40%" r="50%">
         <stop offset="0%" stop-color="${glow}" stop-opacity="0.55"/>
         <stop offset="100%" stop-color="${glow}" stop-opacity="0"/>
       </radialGradient>
-      <linearGradient id="robe" x1="0" y1="0" x2="1" y2="1">
+      <linearGradient id="robe-${uid}" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#1a2332"/>
         <stop offset="100%" stop-color="#0d1520"/>
       </linearGradient>
     </defs>
-    <circle cx="100" cy="95" r="88" fill="url(#aura)"/>
+    <circle cx="100" cy="95" r="88" fill="url(#aura-${uid})"/>
     <ellipse cx="100" cy="175" rx="46" ry="14" fill="#0a1018" opacity=".55"/>
-    <path d="M55 110 Q100 200 145 110 L145 190 Q100 210 55 190 Z" fill="url(#robe)" stroke="${glow}" stroke-width="2"/>
+    <path d="M55 110 Q100 200 145 110 L145 190 Q100 210 55 190 Z" fill="url(#robe-${uid})" stroke="${glow}" stroke-width="2"/>
     <circle cx="100" cy="78" r="28" fill="#d4b896"/>
     <path d="M72 70 Q100 40 128 70 L120 78 Q100 58 80 78 Z" fill="#1a1525" stroke="${glow}" stroke-width="1.5"/>
     <path d="M88 82 Q100 90 112 82" fill="none" stroke="#2a2030" stroke-width="2"/>
@@ -134,6 +141,118 @@ function mageSvg(tier) {
     <circle cx="148" cy="42" r="10" fill="${glow}" opacity=".85"/>
     <text x="100" y="214" text-anchor="middle" fill="#8b9cb3" font-size="11" font-family="Segoe UI,sans-serif">DE Mage</text>
   </svg>`;
+}
+
+/** Draw the same mage onto share canvas (right side). Coordinates in mage local space 0..200. */
+function drawMageOnCanvas(ctx, ox, oy, scale, tier) {
+  const glow = mageGlow(tier);
+  ctx.save();
+  ctx.translate(ox, oy);
+  ctx.scale(scale, scale);
+
+  const aura = ctx.createRadialGradient(100, 95, 10, 100, 95, 88);
+  aura.addColorStop(0, glow + '8c');
+  aura.addColorStop(1, glow + '00');
+  ctx.fillStyle = aura;
+  ctx.beginPath();
+  ctx.arc(100, 95, 88, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(10,16,24,.55)';
+  ctx.beginPath();
+  ctx.ellipse(100, 175, 46, 14, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  const robe = ctx.createLinearGradient(55, 110, 145, 200);
+  robe.addColorStop(0, '#1a2332');
+  robe.addColorStop(1, '#0d1520');
+  ctx.fillStyle = robe;
+  ctx.strokeStyle = glow;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(55, 110);
+  ctx.quadraticCurveTo(100, 200, 145, 110);
+  ctx.lineTo(145, 190);
+  ctx.quadraticCurveTo(100, 210, 55, 190);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#d4b896';
+  ctx.beginPath();
+  ctx.arc(100, 78, 28, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#1a1525';
+  ctx.strokeStyle = glow;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(72, 70);
+  ctx.quadraticCurveTo(100, 40, 128, 70);
+  ctx.lineTo(120, 78);
+  ctx.quadraticCurveTo(100, 58, 80, 78);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.strokeStyle = '#2a2030';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(88, 82);
+  ctx.quadraticCurveTo(100, 90, 112, 82);
+  ctx.stroke();
+
+  ctx.fillStyle = '#1a1525';
+  ctx.beginPath();
+  ctx.arc(90, 76, 3, 0, Math.PI * 2);
+  ctx.arc(110, 76, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = glow;
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(148, 50);
+  ctx.lineTo(148, 170);
+  ctx.stroke();
+  ctx.fillStyle = glow;
+  ctx.globalAlpha = 0.85;
+  ctx.beginPath();
+  ctx.arc(148, 42, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = '#8b9cb3';
+  ctx.font = '11px Segoe UI, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('DE Mage', 100, 214);
+  ctx.restore();
+}
+
+function shareCaption(rank, scores) {
+  const skills = SKILLS.map((s) => `${s.label} ${scores[s.id].done}/${scores[s.id].total}`).join(' · ');
+  return `I claimed ${rank.title} in DE Lab Interview Gym ✨\n${skills}\n\nPlay / train: ${GYM_URL}\nMarkdown DE quest: ${DE_QUEST_MD}`;
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    try {
+      prompt('Скопіюй вручну:', text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+function downloadCanvasPng(canvas, filename) {
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
 }
 
 function renderHeroCabin() {
@@ -161,6 +280,8 @@ function renderHeroCabin() {
         <div class="skill-orb-row">${orbs}</div>
         <div class="hero-actions">
           <button type="button" class="ghost" id="btn-share">🪪 Забери героя · share</button>
+          <a class="ghost nav-pill" href="#/">DE Quest · цей Gym</a>
+          <a class="ghost nav-pill" href="${DE_QUEST_MD}" target="_blank" rel="noopener">DE Quest · markdown</a>
           <a class="ghost nav-pill" href="${MENTORSHIP}" target="_blank" rel="noopener">Mentorship hub</a>
         </div>
       </div>
@@ -178,9 +299,10 @@ function renderHome(root) {
     ${renderHeroCabin()}
     <section class="pl-card">
       <h2>DE Lab · кабінет мага</h2>
-      <p style="color:var(--muted)">Два великі світи: <strong>Теорія</strong> і <strong>Практика</strong>.
-      Практикуй як місії з таблицями й ____ · жести · work-sim.
-      Mentorship — двері квестів: <a href="${MENTORSHIP_QUEST}" target="_blank" rel="noopener">Quest · Technology</a>
+      <p style="color:var(--muted)">Два світи: <strong>Теорія</strong> і <strong>Практика</strong> нижче — це і є <strong>DE Quest</strong> (інтерактив).
+      Повний markdown-квест: <a href="${DE_QUEST_MD}" target="_blank" rel="noopener">CHALLENGES.md</a>.
+      Mentorship — окремий хаб SPHERE (Science/E/Technology), не заміна DE-лаби:
+      <a href="${MENTORSHIP_QUEST}" target="_blank" rel="noopener">Quest · Technology</a>
       · <a href="${MENTORSHIP_DASH}" target="_blank" rel="noopener">Dashboard</a>.</p>
     </section>
     ${ROADS.map((road) => `
@@ -283,71 +405,131 @@ async function renderBlock(root, blockId, levelId) {
   });
 }
 
+function paintShareCard(canvas, rank, scores) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  const grd = ctx.createLinearGradient(0, 0, W, H);
+  grd.addColorStop(0, '#0f1419');
+  grd.addColorStop(0.55, '#1a2332');
+  grd.addColorStop(1, '#152018');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+
+  // soft divider
+  ctx.fillStyle = 'rgba(45,58,79,.45)';
+  ctx.fillRect(W * 0.58, 24, 1, H - 48);
+
+  ctx.fillStyle = '#e8a84b';
+  ctx.font = 'bold 26px Segoe UI, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('DE Lab · Mage Claim', 40, 52);
+  ctx.fillStyle = '#e8eef5';
+  ctx.font = 'bold 34px Segoe UI, sans-serif';
+  ctx.fillText(rank.title, 40, 100);
+  ctx.fillStyle = '#8b9cb3';
+  ctx.font = '15px Segoe UI, sans-serif';
+  ctx.fillText('Skills lit:', 40, 138);
+
+  let y = 172;
+  SKILLS.forEach((s) => {
+    const sc = scores[s.id];
+    ctx.fillStyle = sc.done > 0 ? s.color : '#2d3a4f';
+    ctx.beginPath();
+    ctx.arc(54, y - 5, 9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e8eef5';
+    ctx.font = '17px Segoe UI, sans-serif';
+    ctx.fillText(`${s.label}  ${sc.done}/${sc.total}`, 76, y);
+    y += 34;
+  });
+
+  ctx.fillStyle = '#8b9cb3';
+  ctx.font = '13px Segoe UI, sans-serif';
+  ctx.fillText('de-lab-interview-gym.web.app', 40, H - 28);
+
+  // Hero on the right
+  drawMageOnCanvas(ctx, W - 250, 48, 1.05, rank.tier);
+}
+
 function renderShare(root) {
   const rank = mageRank();
   const scores = skillScores();
+  const caption = shareCaption(rank, scores);
   root.innerHTML = `
     ${renderHeroCabin()}
     <section class="pl-card">
       <button type="button" class="ghost" id="pl-back">← Кабінет</button>
       <h2>Забери DE-мага</h2>
-      <p style="color:var(--muted)">Картка для скріна / шеру. Дані лише в твоєму браузері (localStorage).</p>
+      <p style="color:var(--muted)">Картка з героєм справа. Текст шеру автозаповнюється в буфер — ти лише вставляєш / підтверджуєш у мережі. Дані лише в браузері.</p>
       <canvas id="share-canvas" width="720" height="420"></canvas>
-      <div class="hero-actions" style="margin-top:12px">
+      <label class="share-caption-label" for="share-caption">Текст для шеру (можна правити)</label>
+      <textarea id="share-caption" class="share-caption" rows="5"></textarea>
+      <div class="hero-actions share-bar" style="margin-top:12px">
         <button type="button" id="btn-dl">⬇️ Download PNG</button>
-        <button type="button" class="ghost" id="btn-copy">Copy rank text</button>
+        <button type="button" class="share-li" id="btn-li">in LinkedIn</button>
+        <button type="button" class="share-ig" id="btn-ig">Instagram</button>
+        <button type="button" class="ghost" id="btn-copy">Copy text</button>
+        <button type="button" class="ghost" id="btn-native" hidden>Share…</button>
       </div>
+      <p class="share-hint" id="share-hint" style="color:var(--muted);font-size:13px;margin:10px 0 0"></p>
     </section>`;
   wireHero(root);
   root.querySelector('#pl-back').addEventListener('click', () => { location.hash = '#/'; });
 
   const canvas = root.querySelector('#share-canvas');
-  const ctx = canvas.getContext('2d');
-  const grd = ctx.createLinearGradient(0, 0, 720, 420);
-  grd.addColorStop(0, '#0f1419');
-  grd.addColorStop(1, '#1a2332');
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, 720, 420);
-  ctx.fillStyle = '#e8a84b';
-  ctx.font = 'bold 28px Segoe UI, sans-serif';
-  ctx.fillText('DE Lab · Mage Claim', 40, 56);
-  ctx.fillStyle = '#e8eef5';
-  ctx.font = 'bold 36px Segoe UI, sans-serif';
-  ctx.fillText(rank.title, 40, 110);
-  ctx.fillStyle = '#8b9cb3';
-  ctx.font = '16px Segoe UI, sans-serif';
-  ctx.fillText('Skills lit:', 40, 150);
-  let y = 185;
-  SKILLS.forEach((s) => {
-    const sc = scores[s.id];
-    ctx.fillStyle = sc.done > 0 ? s.color : '#2d3a4f';
-    ctx.beginPath();
-    ctx.arc(55, y - 5, 10, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#e8eef5';
-    ctx.font = '18px Segoe UI, sans-serif';
-    ctx.fillText(`${s.label}  ${sc.done}/${sc.total}`, 80, y);
-    y += 36;
-  });
-  ctx.fillStyle = '#8b9cb3';
-  ctx.font = '14px Segoe UI, sans-serif';
-  ctx.fillText('de-lab-interview-gym.web.app · Mentorship: sphere-mentorship-hub', 40, 390);
+  paintShareCard(canvas, rank, scores);
+  const ta = root.querySelector('#share-caption');
+  ta.value = caption;
+  const hint = root.querySelector('#share-hint');
+  const getCaption = () => ta.value.trim();
+  const setHint = (msg) => { hint.textContent = msg; };
 
   root.querySelector('#btn-dl').addEventListener('click', () => {
-    const a = document.createElement('a');
-    a.download = `de-mage-${rank.tier}.png`;
-    a.href = canvas.toDataURL('image/png');
-    a.click();
+    downloadCanvasPng(canvas, `de-mage-${rank.tier}.png`);
+    setHint('PNG завантажено.');
   });
+
   root.querySelector('#btn-copy').addEventListener('click', async () => {
-    const text = `I claimed ${rank.title} in DE Lab ✨ ${SKILLS.map((s) => `${s.label}:${scores[s.id].done}`).join(' · ')} → ${location.origin || 'https://de-lab-interview-gym.web.app'}`;
-    try {
-      await navigator.clipboard.writeText(text);
-      alert('Скопійовано!');
-    } catch {
-      prompt('Скопіюй:', text);
-    }
+    const ok = await copyText(getCaption());
+    setHint(ok ? 'Текст скопійовано.' : 'Не вдалось скопіювати — виділи поле вручну.');
   });
+
+  root.querySelector('#btn-li').addEventListener('click', async () => {
+    await copyText(getCaption());
+    // LinkedIn share UI takes URL; caption already in clipboard for paste into post
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(GYM_URL)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setHint('LinkedIn відкрито · текст уже в буфері — вставь у пост (Ctrl+V / Cmd+V). PNG можна додати з Download.');
+  });
+
+  root.querySelector('#btn-ig').addEventListener('click', async () => {
+    await copyText(getCaption());
+    downloadCanvasPng(canvas, `de-mage-${rank.tier}.png`);
+    window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+    setHint('Instagram не вміє автотекст з браузера: PNG завантажено + підпис у буфері. Створи пост / Stories → встав зображення й Ctrl+V підпис.');
+  });
+
+  const nativeBtn = root.querySelector('#btn-native');
+  if (navigator.share) {
+    nativeBtn.hidden = false;
+    nativeBtn.addEventListener('click', async () => {
+      try {
+        const blob = await (await fetch(canvas.toDataURL('image/png'))).blob();
+        const file = new File([blob], `de-mage-${rank.tier}.png`, { type: 'image/png' });
+        const data = { title: `DE Lab · ${rank.title}`, text: getCaption(), url: GYM_URL };
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ ...data, files: [file] });
+        } else {
+          await navigator.share(data);
+        }
+        setHint('Системний Share відкрито.');
+      } catch (e) {
+        if (e && e.name === 'AbortError') setHint('Share скасовано.');
+        else setHint('Share недоступний — скористайся LinkedIn / Instagram кнопками.');
+      }
+    });
+  }
 }
 
 async function render() {

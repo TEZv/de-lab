@@ -595,3 +595,38 @@ button.marked { background: var(--good); }
   border: 1px solid var(--line);
   display: block;
 }
+.share-caption-label {
+  display: block;
+  margin: 14px 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.share-caption {
+  width: 100%;
+  max-width: 720px;
+  background: #0d1117;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: 14px/1.45 Consolas, "Segoe UI", monospace;
+  resize: vertical;
+}
+.share-bar .share-li {
+  background: #0a66c2 !important;
+  color: #fff !important;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.share-bar .share-ig {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888) !important;
+  color: #fff !important;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
