@@ -69,10 +69,10 @@
   ],
   "tasks": [
     {
-      "id": "gym-01-window-L1",
-      "archetype": "universal",
+      "id": "gym-01-window-functions-L1",
+      "archetype": "product",
       "kind": "gym",
-      "blockId": "01-window",
+      "blockId": "01-window-functions",
       "levelId": "L1",
       "tag": "L1 · відчуття",
       "skill": "sql",
@@ -88,10 +88,10 @@
       }
     },
     {
-      "id": "gym-01-window-L2",
-      "archetype": "universal",
+      "id": "gym-01-window-functions-L2",
+      "archetype": "product",
       "kind": "gym",
-      "blockId": "01-window",
+      "blockId": "01-window-functions",
       "levelId": "L2",
       "tag": "L2 · місія LAG",
       "skill": "sql",
@@ -107,10 +107,10 @@
       }
     },
     {
-      "id": "gym-01-window-L3",
-      "archetype": "universal",
+      "id": "gym-01-window-functions-L3",
+      "archetype": "product",
       "kind": "gym",
-      "blockId": "01-window",
+      "blockId": "01-window-functions",
       "levelId": "L3",
       "tag": "L3 · top-1 руками",
       "skill": "sql",
@@ -126,10 +126,10 @@
       }
     },
     {
-      "id": "gym-01-window-L4",
-      "archetype": "universal",
+      "id": "gym-01-window-functions-L4",
+      "archetype": "product",
       "kind": "gym",
-      "blockId": "01-window",
+      "blockId": "01-window-functions",
       "levelId": "L4",
       "tag": "L4 · швидкий матч",
       "skill": "sql",

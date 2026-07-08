@@ -8,6 +8,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const blocksDir = path.join(__dirname, '..', 'blocks');
 const outPath = path.join(__dirname, '..', 'data', 'interview-bank.json');
 
+/** Legacy JSON id → file stem (fetch path). */
+const BLOCK_FILE_ALIASES = {
+  '01-window': '01-window-functions',
+};
+
+function resolveBlockFile(id) {
+  return BLOCK_FILE_ALIASES[id] || id;
+}
+
 const ARCHETYPE_BY_BLOCK = {
   '10-interview-company-types': 'universal',
   '04-theory-data-ae': 'universal',
@@ -38,14 +47,15 @@ function gymTasks() {
   const tasks = [];
   const files = fs.readdirSync(blocksDir).filter((f) => f.endsWith('.json') && !f.endsWith('.en.json'));
   for (const file of files) {
+    const fileId = file.replace(/\.json$/, '');
     const block = JSON.parse(fs.readFileSync(path.join(blocksDir, file), 'utf8'));
-    const archetype = ARCHETYPE_BY_BLOCK[block.id] || 'universal';
+    const archetype = ARCHETYPE_BY_BLOCK[fileId] || ARCHETYPE_BY_BLOCK[block.id] || 'universal';
     for (const level of block.levels || []) {
       tasks.push({
-        id: `gym-${block.id}-${level.id}`,
+        id: `gym-${fileId}-${level.id}`,
         archetype,
         kind: 'gym',
-        blockId: block.id,
+        blockId: fileId,
         levelId: level.id,
         tag: level.tag || level.id,
         skill: inferSkill(level.type, block.id),
@@ -174,4 +184,13 @@ const bank = {
 
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, `${JSON.stringify(bank, null, 2)}\n`);
+
+const stems = new Set(
+  fs.readdirSync(blocksDir).filter((f) => f.endsWith('.json') && !f.endsWith('.en.json')).map((f) => f.replace(/\.json$/, '')),
+);
+const bad = bank.tasks.filter((t) => t.kind === 'gym' && !stems.has(t.blockId));
+if (bad.length) {
+  console.error('INVALID blockId in bank:', bad.map((t) => t.blockId));
+  process.exit(1);
+}
 console.log(`Wrote ${bank.tasks.length} tasks → ${outPath}`);

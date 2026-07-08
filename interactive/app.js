@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260708g';
+const BUILD = '20260708h';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
@@ -67,13 +67,18 @@ const SKILLS = [
 function loadProgress() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    let p = raw ? JSON.parse(raw) : {};
     const legacy = localStorage.getItem('de-lab-interactive-v2');
-    if (legacy) {
+    if (!raw && legacy) {
+      p = JSON.parse(legacy);
       localStorage.setItem(STORAGE_KEY, legacy);
-      return JSON.parse(legacy);
     }
-    return {};
+    if (p['01-window'] && !p['01-window-functions']) {
+      p['01-window-functions'] = p['01-window'];
+      delete p['01-window'];
+      saveProgress(p);
+    }
+    return p;
   } catch { return {}; }
 }
 function saveProgress(p) {
@@ -102,16 +107,22 @@ function parseRoute() {
 }
 
 async function loadBlock(id) {
+  const fileId = resolveBlockFile(id);
   const lang = (window.DeLabI18n && DeLabI18n.getLang()) || 'ua';
   if (lang === 'en') {
     try {
-      const enRes = await fetch(`blocks/${id}.en.json`);
+      const enRes = await fetch(`blocks/${fileId}.en.json`);
       if (enRes.ok) return enRes.json();
     } catch { /* fallback to UA */ }
   }
-  const res = await fetch(`blocks/${id}.json`);
-  if (!res.ok) throw new Error('block not found');
+  const res = await fetch(`blocks/${fileId}.json`);
+  if (!res.ok) throw new Error(`block not found: ${fileId}`);
   return res.json();
+}
+
+function resolveBlockFile(id) {
+  const aliases = { '01-window': '01-window-functions' };
+  return aliases[id] || id;
 }
 
 function countDone(prog) {
