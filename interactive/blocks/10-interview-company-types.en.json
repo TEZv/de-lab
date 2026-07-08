@@ -1,0 +1,136 @@
+{
+  "id": "10-interview-company-types",
+  "title": "Company types & interview differences",
+  "subtitle": "Anchors on the Map first → then Match with lines. Not a blind quiz.",
+  "levels": [
+    {
+      "id": "C0",
+      "type": "company_map",
+      "tag": "Map",
+      "title": "5 archetypes where DE / AE work",
+      "intro": "Five portals around the crystal. Each has a Sigil and a Hook — memorize the look, do not read walls of text. Click = open portal.",
+      "completeHint": "All Sigils lit. On Match — same colors and arrows.",
+      "types": [
+        {
+          "themeId": "product",
+          "orbit": 0,
+          "name": "Product / Mobile",
+          "sigil": "LTV",
+          "hook": "Subscription → Cohort → LTV",
+          "oneLiner": "Subscriptions, UA, Cohorts",
+          "focusChip": "Product metrics + SQL/Pandas",
+          "day": "Marketing/billing ETL, marts for Product/UA, event data quality.",
+          "interview": "SQL windows + Pandas; “explain the metric” case; sometimes Airflow/dbt in conversation.",
+          "stack": "BQ/Snowflake, dbt, Airflow, Amplitude/AppsFlyer, Tableau/Looker"
+        },
+        {
+          "themeId": "market",
+          "orbit": 1,
+          "name": "Marketplace",
+          "sigil": "JOIN",
+          "hook": "1 order → N rows",
+          "oneLiner": "Catalog, Sellers, Logistics",
+          "focusChip": "JOIN cardinality + order statuses",
+          "day": "Order facts, delivery statuses, SEO/ads spend, antifraud slices.",
+          "interview": "JOIN traps 1:N, dedup, SCD “order status”, attention SQL.",
+          "stack": "Postgres/BQ, Kafka sometimes, dbt, BI"
+        },
+        {
+          "themeId": "media",
+          "orbit": 2,
+          "name": "Media / Content",
+          "sigil": "CLEAN",
+          "hook": "Dirty logs → clean report",
+          "oneLiner": "Reach, Ad inventory",
+          "focusChip": "Cleaning large datasets + Reporting",
+          "day": "Parsing/cleaning huge logs, performance dashboards, reproducible Reporting.",
+          "interview": "Python Cleaning, SQL aggregates, sometimes “explain the report pipeline”.",
+          "stack": "Python, SQL, Power BI/Looker, Sheets/Apps Script"
+        },
+        {
+          "themeId": "consult",
+          "orbit": 3,
+          "name": "Consulting / IoT",
+          "sigil": "LIVE",
+          "hook": "Problem wording = half the answer",
+          "oneLiner": "PoC → Prod, sensors nearby",
+          "focusChip": "Live coding + read the prompt carefully",
+          "day": "Fast client pipelines, DQ, features for DS, docs.",
+          "interview": "Live SQL/Python + modeling + logic; sometimes stats/A-B base; watch wording.",
+          "stack": "Python, SQL, DWH, Tableau, sometimes stream"
+        },
+        {
+          "themeId": "fintech",
+          "orbit": 4,
+          "name": "Fintech",
+          "sigil": "DEDUP",
+          "hook": "Same payment twice = trouble",
+          "oneLiner": "Transactions, Risk, Reconciliation",
+          "focusChip": "Accuracy, dedup, idempotency",
+          "day": "Idempotency, payment dedup, Reconciliation, audit trails.",
+          "interview": "SQL precision, edge cases, sometimes soft on ownership/compliance.",
+          "stack": "SQL, Python, DWH, monitoring, strict DQ"
+        }
+      ]
+    },
+    {
+      "id": "C1",
+      "type": "match_pairs",
+      "tag": "Match",
+      "title": "What does screening focus on?",
+      "instruction": "Do not guess: lock pairs first (like on the Map), then connect — lines appear.",
+      "studyFirst": true,
+      "studyIntro": "<strong>Step 1 · Sigils.</strong> Same colors and hooks as on the atlas. Say each row aloud — then Match with lines.",
+      "studyCta": "Locked in · start Match with lines",
+      "matchTip": "Left = company type → right = focus. Correct pair gets color and a line. A miss does not clear the left pick.",
+      "pairs": [
+        { "themeId": "product", "left": "Product / Mobile", "right": "Product metrics + SQL/Pandas" },
+        { "themeId": "market", "left": "Marketplace", "right": "JOIN cardinality + order statuses" },
+        { "themeId": "media", "left": "Media / Content", "right": "Cleaning large datasets + Reporting" },
+        { "themeId": "consult", "left": "Consulting / IoT", "right": "Live coding + read the prompt carefully" },
+        { "themeId": "fintech", "left": "Fintech", "right": "Accuracy, dedup, idempotency" }
+      ]
+    },
+    {
+      "id": "C2",
+      "type": "scenario",
+      "tag": "Choice",
+      "title": "Where to aim right now?",
+      "emoji": "🧭",
+      "scene": "You are close to Analytics Engineering: SQL+Python, marts, product. Which simulation track is the main one for the next month?",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Product/Mobile + Consulting-style live SQL as second muscle",
+          "feedback": "Best fit for your background (media/marketing → DE). Do not scatter into fintech-K8s on day one."
+        },
+        {
+          "label": "Fintech SRE / Kubernetes only from day one",
+          "feedback": "Different track. Fine later; now it is noise before AE screenings."
+        },
+        {
+          "label": "Theory only, no tables",
+          "feedback": "Boring and does not prepare for Live. Prefer CSV labs in work-sim."
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "type": "theory",
+      "tag": "Honestly",
+      "title": "What Gym covers / does not cover",
+      "storyEmoji": "🎒",
+      "story": "Gym = thinking rehearsal + common patterns. Not a job offer guarantee and not leaked employer tests.",
+      "flow": [
+        { "title": "Covers", "desc": "SQL windows, Pandas, layers, DQ, day-1, CSV drills" },
+        { "title": "Does not cover", "desc": "Secret employer tests, 1:1 stress without your out-loud rehearsal" },
+        { "title": "Ethics", "desc": "Only generalized/public patterns, no client brand names" }
+      ],
+      "bullets": [
+        "Do not publish or sign exercises with company names you apply to",
+        "If a specific employer was mentioned somewhere — removed",
+        "Power = explain logic, not “guess their HackerRank id”"
+      ]
+    }
+  ]
+}

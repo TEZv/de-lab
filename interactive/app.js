@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260708d';
+const BUILD = '20260708e';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
@@ -90,6 +90,13 @@ function parseRoute() {
 }
 
 async function loadBlock(id) {
+  const lang = (window.DeLabI18n && DeLabI18n.getLang()) || 'ua';
+  if (lang === 'en') {
+    try {
+      const enRes = await fetch(`blocks/${id}.en.json`);
+      if (enRes.ok) return enRes.json();
+    } catch { /* fallback to UA */ }
+  }
   const res = await fetch(`blocks/${id}.json`);
   if (!res.ok) throw new Error('block not found');
   return res.json();

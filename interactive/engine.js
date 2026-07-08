@@ -44,6 +44,10 @@
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
+  function ui(key, ...args) {
+    return (global.DeLabI18n && DeLabI18n.t(key, ...args)) || key;
+  }
+
   function toast(root, text, ok = true) {
     const el = document.createElement('div');
     el.className = `pl-toast ${ok ? 'ok' : 'bad'}`;
@@ -570,8 +574,7 @@
       wrap.innerHTML = '';
       const tip = document.createElement('p');
       tip.className = 'pl-tip';
-      tip.textContent = level.matchTip
-        || 'Спочатку клікни ЛІВОРУЧ (тип), потім ПРАВОРУЧ (фокус). Вірна пара — лінія + колір.';
+      tip.textContent = level.matchTip || ui('matchTipDefault');
       wrap.appendChild(tip);
 
       const arena = document.createElement('div');
@@ -652,7 +655,7 @@
           leftCol.querySelectorAll('.pl-match-btn:not(.done)').forEach((b) => b.classList.remove('sel'));
           btn.classList.add('sel');
           selectedLeft = text;
-          feedback.textContent = 'Тепер обери фокус скрінінгу праворуч →';
+          feedback.textContent = ui('matchPickRight');
         });
         leftCol.appendChild(btn);
       });
@@ -667,7 +670,7 @@
         btn.addEventListener('click', () => {
           if (btn.classList.contains('done')) return;
           if (!selectedLeft) {
-            feedback.textContent = 'Спочатку обери тип компанії зліва.';
+            feedback.textContent = ui('matchPickLeftFirst');
             return;
           }
           const pair = level.pairs.find((p) => p.left === selectedLeft && p.right === text);
@@ -686,14 +689,14 @@
             matched += 1;
             paintLines();
             feedback.textContent = matched === level.pairs.length
-              ? '✅ Усі пари зібрано — лінії показують звʼязки.'
-              : `✅ Пара закріплена (${matched}/${level.pairs.length}).`;
+              ? ui('matchAllDone')
+              : ui('matchPairOk', matched, level.pairs.length);
             if (matched === level.pairs.length) {
-              toast(root, 'Match complete', true);
+              toast(root, ui('matchCompleteToast'), true);
               if (onComplete) onComplete(level.id);
             }
           } else {
-            feedback.textContent = '❌ Не та пара. Згадай картку з study / карту типів — лівий вибір лишається.';
+            feedback.textContent = ui('matchWrong');
             btn.classList.add('miss');
             setTimeout(() => btn.classList.remove('miss'), 450);
           }
@@ -714,8 +717,7 @@
       study.className = 'pl-match-study';
       const h = document.createElement('p');
       h.className = 'pl-tip';
-      h.innerHTML = level.studyIntro
-        || '<strong>Крок 1 · закріпи.</strong> Прочитай кожну пару вголос (тип → фокус). Потім матч без вгадування.';
+      h.innerHTML = level.studyIntro || ui('matchStudyIntroDefault');
       study.appendChild(h);
       const list = document.createElement('div');
       list.className = 'pl-study-list';
@@ -734,12 +736,12 @@
       study.appendChild(list);
       const go = document.createElement('button');
       go.type = 'button';
-      go.textContent = level.studyCta || 'Закарбувала · почати матч зі стрілами';
+      go.textContent = level.studyCta || ui('matchStudyCtaDefault');
       go.addEventListener('click', startMatch);
       study.appendChild(go);
       const skipHint = document.createElement('p');
       skipHint.className = 'pl-feedback';
-      skipHint.textContent = 'Порада: повернись на вкладку «Карта», якщо рядок не чіпляється.';
+      skipHint.textContent = ui('matchStudySkip');
       study.appendChild(skipHint);
       wrap.appendChild(study);
     } else {
@@ -1333,7 +1335,7 @@
     core.appendChild(coreCount);
     const coreLabel = document.createElement('span');
     coreLabel.className = 'pl-atlas-core-label';
-    coreLabel.textContent = 'Сигіли';
+    coreLabel.textContent = ui('atlasSigils');
     core.appendChild(coreLabel);
     arena.append(svg, core);
 
@@ -1376,10 +1378,10 @@
           <span class="pl-atlas-hook">${escapeHtml(t.hook || '')}</span>
         </div>
         <div class="pl-atlas-dock-body">
-          <p><span class="pl-dock-ico">🎯</span> <b>Якір матчу:</b> ${escapeHtml(t.focusChip || '')}</p>
-          <p><span class="pl-dock-ico">☀</span> <b>День DE:</b> ${escapeHtml(t.day || '')}</p>
-          <p><span class="pl-dock-ico">🎤</span> <b>Скрінінг:</b> ${escapeHtml(t.interview || '')}</p>
-          <p><span class="pl-dock-ico">🧰</span> <b>Стек:</b> ${escapeHtml(t.stack || '')}</p>
+          <p><span class="pl-dock-ico">🎯</span> <b>${escapeHtml(ui('atlasAnchorLabel'))}</b> ${escapeHtml(t.focusChip || '')}</p>
+          <p><span class="pl-dock-ico">☀</span> <b>${escapeHtml(ui('atlasDayLabel'))}</b> ${escapeHtml(t.day || '')}</p>
+          <p><span class="pl-dock-ico">🎤</span> <b>${escapeHtml(ui('atlasScreenLabel'))}</b> ${escapeHtml(t.interview || '')}</p>
+          <p><span class="pl-dock-ico">🧰</span> <b>${escapeHtml(ui('atlasStackLabel'))}</b> ${escapeHtml(t.stack || '')}</p>
         </div>`;
     }
 
@@ -1409,7 +1411,7 @@
           paintAtlasLines();
           if (opened >= cards.length) {
             core.classList.add('lit');
-            toast(root, 'Атлас запалений — іди на матч', true);
+            toast(root, ui('atlasLitToast'), true);
             if (onComplete) onComplete(level.id);
           }
         }
@@ -1420,8 +1422,7 @@
     wrap.append(arena, detailDock);
     const tip = document.createElement('p');
     tip.className = 'pl-feedback';
-    tip.textContent = level.completeHint
-      || 'Відкрий усі портали. Гачок + сигіл = те, що матч перевірить.';
+    tip.textContent = level.completeHint || ui('atlasCompleteHint');
     wrap.appendChild(tip);
     root.appendChild(wrap);
     requestAnimationFrame(paintAtlasLines);
