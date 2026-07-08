@@ -65,9 +65,15 @@ python -m http.server 8770
 
 SQL×10 · Python×10 · Theory/AE — see `interactive/README.md`.
 
-**Deploy (після push `interactive/`):** Vercel → Import `TEZv/de-lab` → **Root Directory = `interactive`** → Deploy.  
-Або GitHub Pages: Settings → Pages → Deploy from branch `/interactive` (або Actions).  
-Поки папка не в `origin/main` — з GitHub «відкрити як сайт» не вийде.
+**Live:** https://de-lab-interview-gym.web.app (Firebase Hosting)
+
+**Redeploy:**
+```bash
+cd interactive
+# Firebase (поточний прод)
+npx firebase-tools deploy --only hosting:de-lab-interview-gym --project earning-app-bytezv
+# або Vercel: Root Directory = interactive (потрібен активний `vercel login`)
+```
 ## Challenges
 
 👉 **[CHALLENGES.md](CHALLENGES.md)** — 18+ hands-on challenges from beginner to interview-ready, with questions to think about and a progress tracker.

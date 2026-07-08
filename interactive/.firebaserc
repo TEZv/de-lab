@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "earning-app-bytezv"
+  },
+  "targets": {
+    "earning-app-bytezv": {
+      "hosting": {
+        "gym": [
+          "de-lab-interview-gym"
+        ]
+      }
+    }
+  }
+}

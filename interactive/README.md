@@ -4,21 +4,19 @@
 
 Окремо від `CHALLENGES.md` (репо-квести) і від markdown у `interview-sprint/`.
 
-## Деплой (GitHub → публічний URL)
+## Live URL
 
-**Зараз:** Gym лише локально, бо `interactive/` ще не в `origin/main`.
+**https://de-lab-interview-gym.web.app**
 
-**Vercel (рекомендовано):**
-1. Закоміть і запуш `interactive/` у `TEZv/de-lab`
-2. [vercel.com/new](https://vercel.com/new) → Import `TEZv/de-lab`
-3. **Root Directory** = `interactive` (обовʼязково!)
-4. Framework = Other / без build → Deploy
-5. URL на кшталт `https://de-lab-….vercel.app`
+Redeploy:
+```bash
+cd interactive
+npx firebase-tools deploy --only hosting:de-lab-interview-gym --project earning-app-bytezv
+```
 
-**GitHub Pages:** Settings → Pages → branch `main` / folder `interactive`  
-(або Action; інколи треба `base`-шляхи — Vercel простіше)
+Локально: `python -m http.server 8770` (або node static server) у цій теці.
 
-Локально як і раніше: `python -m http.server 8770` у цій теці.
+GitHub Pages workflow: `.github/workflows/pages-interactive.yml` (увімкни Pages → Source: GitHub Actions у Settings репо, якщо ще не).
 
 ## Блоки зараз
 
