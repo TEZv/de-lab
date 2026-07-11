@@ -110,6 +110,72 @@
     return wrap;
   }
 
+  function miniTableHtml(spec, extraClass) {
+    if (!spec?.headers?.length) return '';
+    const cls = ['pl-mini-table', extraClass].filter(Boolean).join(' ');
+    const cap = spec.title ? `<caption>${esc(spec.title)}</caption>` : '';
+    const head = `<thead><tr>${spec.headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>`;
+    const body = (spec.rows || [])
+      .map((row, ri) => {
+        const hl = (spec.highlight || []).includes(ri) ? ' class="hl"' : '';
+        return `<tr${hl}>${row.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`;
+      })
+      .join('');
+    return `<table class="${cls}">${cap}${head}<tbody>${body}</tbody></table>`;
+  }
+
+  function sqlGroupVsWindow(spec) {
+    const wrap = el('div', 'pl-viz pl-viz-sql-compare');
+    if (spec.title) wrap.appendChild(el('p', 'pl-viz-caption', esc(spec.title)));
+    if (spec.source) {
+      const src = el('div', 'pl-viz-sql-source');
+      src.innerHTML = miniTableHtml(spec.source);
+      wrap.appendChild(src);
+    }
+    const cols = el('div', 'pl-viz-sql-result-cols');
+    (spec.columns || [spec.left, spec.right].filter(Boolean)).forEach((col) => {
+      const c = el('div', 'pl-viz-sql-result-col');
+      c.style.setProperty('--hub', col.color || '#5b8def');
+      c.innerHTML = `
+        <h4>${esc(col.title || '')}</h4>
+        ${col.subtitle ? `<p class="pl-viz-sql-sub">${esc(col.subtitle)}</p>` : ''}
+        ${miniTableHtml(col)}
+        ${col.badge ? `<span class="pl-viz-sql-badge">${esc(col.badge)}</span>` : ''}`;
+      cols.appendChild(c);
+    });
+    wrap.appendChild(cols);
+    if (spec.footnote) wrap.appendChild(el('p', 'pl-viz-footnote', esc(spec.footnote)));
+    return wrap;
+  }
+
+  function rankCompare(spec) {
+    const wrap = el('div', 'pl-viz pl-viz-rank-compare');
+    if (spec.title) wrap.appendChild(el('p', 'pl-viz-caption', esc(spec.title)));
+    const tableWrap = el('div', 'pl-viz-rank-table-wrap');
+    tableWrap.innerHTML = miniTableHtml({
+      headers: spec.headers || ['name', 'score', 'RANK()', 'DENSE_RANK()', 'ROW_NUMBER()'],
+      rows: spec.rows || [
+        ['Ana', '90', '1', '1', '1'],
+        ['Bob', '90', '1', '1', '2'],
+        ['Cal', '80', '3', '2', '3'],
+        ['Dan', '80', '3', '2', '4'],
+      ],
+      highlight: spec.highlight || [0, 1, 2, 3],
+    });
+    wrap.appendChild(tableWrap);
+    const legend = el('div', 'pl-viz-rank-legend');
+    (spec.notes || [
+      { fn: 'RANK()', note: 'tie → однаковий ранг; наступний стрибає (1,1,3,3 — немає 2)' },
+      { fn: 'DENSE_RANK()', note: 'tie → однаковий ранг; без пропуску (1,1,2,2)' },
+      { fn: 'ROW_NUMBER()', note: 'завжди 1,2,3,4 — tie не ділить номер рядка' },
+    ]).forEach((n) => {
+      legend.innerHTML += `<div class="pl-viz-rank-note"><strong>${esc(n.fn)}</strong><span>${esc(n.note)}</span></div>`;
+    });
+    wrap.appendChild(legend);
+    if (spec.footnote) wrap.appendChild(el('p', 'pl-viz-footnote', esc(spec.footnote)));
+    return wrap;
+  }
+
   function splitCompare(spec) {
     const wrap = el('div', 'pl-viz pl-viz-split');
     (spec.columns || []).forEach((col) => {
@@ -211,6 +277,8 @@
     skillOrbit,
     coverageSplit,
     dqGrid,
+    sqlGroupVsWindow,
+    rankCompare,
   };
 
   function mount(parent, spec) {

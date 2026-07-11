@@ -1,0 +1,177 @@
+{
+  "id": "13-cloud-storage-de",
+  "title": "Cloud storage · Data Lake",
+  "subtitle": "S3 ≈ Azure Blob ≈ GCS · зони lake · IAM · lifecycle · partition · cost",
+  "levels": [
+    {
+      "id": "A0",
+      "type": "theory",
+      "tag": "☁️ · карта",
+      "title": "Object storage + зони lake",
+      "instruction": "На інтервʼю (Amazinum, NDA, consultancy): один патерн — різні назви в хмарах.",
+      "viz": {
+        "type": "layerStack",
+        "title": "Префікси в bucket / container (умовно)",
+        "layers": [
+          { "label": "bronze / raw", "sublabel": "сирі CSV · JSON · логи як приїхали", "color": "#8b9cb3", "icon": "📥" },
+          { "label": "silver / curated", "sublabel": "очищено · typed · dedup", "color": "#5b8def", "icon": "🧽" },
+          { "label": "gold / marts", "sublabel": "вітрини · parquet для BI/ML", "color": "#e8a84b", "icon": "📊" }
+        ],
+        "side": [
+          { "label": "AWS", "items": ["S3 bucket", "IAM role", "lifecycle → Glacier"] },
+          { "label": "Azure", "items": ["Blob container", "RBAC", "cool/archive tier"] },
+          { "label": "GCP", "items": ["GCS bucket", "IAM", "Nearline/Coldline"] }
+        ]
+      },
+      "bullets": [
+        "Object storage ≠ база даних: файли + префікси, не JOIN у S3",
+        "Partition у шляху (year=/month=) — дешевше сканувати",
+        "Parquet у lake — стиснення + колоночний pushdown у Spark/BQ/Synapse"
+      ],
+      "recallMapRef": "📍 Bridge: DevOps K8s · K0 (Deployment → Pod — де крутиться ETL/сервіс)."
+    },
+    {
+      "id": "A1",
+      "type": "match_pairs",
+      "tag": "☁️ · 1/6",
+      "title": "MATCH · хмари ↔ термін",
+      "instruction": "Один концепт — три вендори. На співбесіді достатньо знати відповідники.",
+      "pairs": [
+        { "left": "S3 bucket", "right": "Azure Blob container ≈ GCS bucket" },
+        { "left": "S3 object key", "right": "Blob name ≈ GCS object path" },
+        { "left": "IAM role + policy", "right": "Azure RBAC ≈ GCS IAM" },
+        { "left": "s3://bucket/prefix/", "right": "https://acct.blob.core.windows.net/c/ ≈ gs://bucket/" },
+        { "left": "Lifecycle → Glacier", "right": "Cool/Archive tier ≈ Nearline/Coldline" }
+      ]
+    },
+    {
+      "id": "A2",
+      "type": "fill_blanks",
+      "tag": "☁️ · 2/6",
+      "title": "Шлях у lake · partition",
+      "instruction": "Сирі замовлення за день — у bronze, партиція по даті.",
+      "mission": {
+        "emoji": "📂",
+        "title": "Layout у bucket",
+        "brief": "Компанія кладе parquet по днях. Аналітик читає лише потрібний prefix — менше cost.",
+        "ask": "Заповни зону lake і ключі партиції в шляху."
+      },
+      "sampleTable": {
+        "headers": ["prefix", "зона", "навіщо"],
+        "rows": [
+          ["bronze/orders/", "raw", "як приїхало з API"],
+          ["silver/orders/", "curated", "після DQ"],
+          ["gold/mart_revenue/", "mart", "для BI"]
+        ],
+        "columnGlossary": {
+          "prefix": "Папка-префікс у bucket (не окремий bucket на кожен день)",
+          "зона": "bronze / silver / gold — етап зрілості даних",
+          "навіщо": "Хто споживає: ingest / DE / аналітик"
+        },
+        "caption": "Hive-style: year= / month= / day= у шляху — partition, не колонка в кожному файлі окремо."
+      },
+      "controlTip": "Місія й таблиця зон — вище. Шлях нижче.",
+      "template": "s3://acme-datalake/____/orders/year=____/month=____/day=____/part-0001.parquet",
+      "answers": ["bronze", "2026", "07", "01"],
+      "wordBank": ["bronze", "silver", "gold", "2026", "07", "01", "orders_id"],
+      "hints": [
+        "Сирі дані → bronze (або raw).",
+        "Партиція = папки year/month/day у key."
+      ]
+    },
+    {
+      "id": "A3",
+      "type": "whats_wrong",
+      "tag": "☁️ · 3/6 · IAM",
+      "title": "Що не так у policy?",
+      "instruction": "Класична пастка junior DE на AWS.",
+      "mission": {
+        "emoji": "🔐",
+        "title": "Security review",
+        "brief": "ETL-роль має читати bronze і писати silver. Публічний доступ — ні."
+      },
+      "buggyCode": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": \"*\",\n    \"Action\": \"s3:*\",\n    \"Resource\": \"arn:aws:s3:::acme-datalake/*\"\n  }]\n}",
+      "prompt": "Головний ризик у цій bucket policy?",
+      "options": [
+        "Principal * + s3:* на весь bucket = публічний повний доступ; треба IAM role для ETL і мінімальні Action/Resource",
+        "Version має бути 2024",
+        "Resource без /* заборонений завжди",
+        "s3:* обовʼязково замінити на s3:GetObject лише для Glacier"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Least privilege: role для сервісу, конкретні prefix (bronze/* read, silver/* write), без Principal *.",
+      "explanation": "На інтервʼю: «закрию public access block + role-based access»."
+    },
+    {
+      "id": "A4",
+      "type": "multi_choice",
+      "tag": "☁️ · 4/6",
+      "title": "Lifecycle · cost",
+      "instruction": "Дані старші 90 днів рідко читають, але треба лишити для audit.",
+      "mission": {
+        "emoji": "💰",
+        "title": "FinOps",
+        "brief": "1 TB логів у Standard. Читання 1 раз/квартал. Що робиш?"
+      },
+      "question": "Найрозумніший lifecycle для рідко читаних raw-логів?",
+      "options": [
+        "Правило: після 90 днів → Glacier / Archive tier; hot лише останній місяць",
+        "Тримати все в Standard — простіше",
+        "Видалити все старше 7 днів без узгодження з compliance",
+        "Скопіювати в RDS Postgres для дешевшого storage"
+      ],
+      "correctIndex": 0,
+      "explanation": "Lifecycle / tiering знижує cost; compliance → не delete без політики."
+    },
+    {
+      "id": "A5",
+      "type": "scenario",
+      "tag": "☁️ · 5/6",
+      "title": "S3 чи RDS?",
+      "emoji": "🗄️",
+      "scene": "PM: «Збережемо 500M івентів на рік і інколи робитимемо JOIN з users». Куди кладеш сирі івенти?",
+      "bestIndex": 1,
+      "choices": [
+        {
+          "label": "Тільки RDS Postgres — там же JOIN",
+          "feedback": "Дорого й погано масштабується на сотні мільйонів рядків сирих логів."
+        },
+        {
+          "label": "Сирі → object storage (parquet, partition by day); users у RDS/DWH; JOIN у warehouse (BQ/Snowflake/Spark), не в S3 напряму",
+          "feedback": "Типовий lake + warehouse патерн на інтервʼю."
+        },
+        {
+          "label": "Excel на SharePoint",
+          "feedback": "Не для production DE."
+        }
+      ]
+    },
+    {
+      "id": "A6",
+      "type": "drag_order",
+      "tag": "☁️ · 6/6",
+      "title": "Порядок: ingest → lake",
+      "instruction": "Розстав кроки batch-пайплайну в object storage (без Airflow поки — лише логіка).",
+      "studyViz": {
+        "type": "pipelineH",
+        "nodes": [
+          { "label": "landing", "hint": "API / logs", "color": "#8b9cb3" },
+          { "label": "bronze", "hint": "raw prefix", "color": "#5b8def" },
+          { "label": "validate", "hint": "schema + counts", "color": "#4ecdc4" },
+          { "label": "silver", "hint": "parquet", "color": "#3d9a6a" },
+          { "label": "catalog", "hint": "partition", "color": "#e8a84b" },
+          { "label": "mart", "hint": "BI", "color": "#c77dff" }
+        ]
+      },
+      "recallMapRef": "📍 Карта: рівень A0 «Object storage + зони lake» у Theory шарі 7.",
+      "items": [
+        "API / logs → landing file",
+        "Upload to bronze prefix",
+        "Validate schema + row counts",
+        "Transform → silver parquet",
+        "Register partition / catalog",
+        "Mart refresh for BI"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "id": "17-governance-ops-de",
+  "title": "Governance & ops",
+  "subtitle": "lineage · schema docs · incidents · alerts · migrations",
+  "levels": [
+    {
+      "id": "E0",
+      "type": "theory",
+      "tag": "🛡️ · карта",
+      "title": "Governance без бюрократії",
+      "instruction": "Senior DE: не лише ETL, а «що ламається о 3 ночі і хто знає, що змінилось».",
+      "viz": {
+        "type": "dqGrid",
+        "checks": [
+          { "icon": "🔗", "label": "Lineage", "desc": "source → STG → core → mart", "color": "#5b8def" },
+          { "icon": "📋", "label": "Schema docs", "desc": "dbt schema.yml · catalog · owners", "color": "#3d9a6a" },
+          { "icon": "📟", "label": "Monitoring", "desc": "freshness · rowcount · null rate", "color": "#e8a84b" },
+          { "icon": "🚑", "label": "Runbook", "desc": "хто · що · rollback · comms", "color": "#ff6b6b" }
+        ]
+      },
+      "bullets": [
+        "Data catalog (Atlan, DataHub, dbt docs) — «де truth і хто owner»",
+        "Alert на anomaly (0 rows, 2× rowcount) краще за «вчора було OK»",
+        "Schema change: version + communicate до analysts"
+      ]
+    },
+    {
+      "id": "E1",
+      "type": "match_pairs",
+      "tag": "🛡️ · 1/7",
+      "title": "MATCH · governance ↔ сенс",
+      "instruction": "Терміни prod data platform.",
+      "pairs": [
+        { "left": "Lineage", "right": "Граф: звідки колонка / хто downstream" },
+        { "left": "Data catalog", "right": "Пошук таблиць, owners, SLA" },
+        { "left": "Schema registry", "right": "Версії Avro/Protobuf для stream" },
+        { "left": "Runbook", "right": "Покроково при incident (не ad-hoc panic)" },
+        { "left": "SLA / freshness", "right": "Mart має бути свіжий до 08:00" }
+      ]
+    },
+    {
+      "id": "E2",
+      "type": "scenario",
+      "tag": "🛡️ · 2/7",
+      "title": "Mart порожній о 9:00",
+      "emoji": "📉",
+      "scene": "Looker dashboard порожній. STG свіжий, mart_orders 0 rows. Slack пише finance.",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Runbook: перевір DAG run / logs → останній успішний transform → rowcount STG vs mart → escalate з timeline",
+          "feedback": "Structured triage — Senior expectation."
+        },
+        {
+          "label": "Мовчки rerun без документування",
+          "feedback": "Може повторитись; немає root cause."
+        },
+        {
+          "label": "Видалити mart table",
+          "feedback": "Погіршує ситуацію."
+        }
+      ]
+    },
+    {
+      "id": "E3",
+      "type": "fill_blanks",
+      "tag": "🛡️ · 3/7",
+      "title": "dbt · document column",
+      "instruction": "Analyst питає: «що таке is_active у mart_users?»",
+      "mission": {
+        "emoji": "📝",
+        "title": "schema.yml",
+        "brief": "Документуємо колонку в dbt — description + tests.",
+        "ask": "Заповни фрагмент YAML."
+      },
+      "sampleTable": {
+        "headers": ["column", "business meaning", "test"],
+        "rows": [
+          ["user_id", "PK користувача", "unique, not_null"],
+          ["is_active", "1 = активна підписка сьогодні", "accepted_values: [0,1]"],
+          ["mrr", "Monthly revenue USD", "not_null where is_active=1"]
+        ],
+        "columnGlossary": {
+          "column": "Імʼя в mart",
+          "business meaning": "Teкst для catalog / BI",
+          "test": "dbt test на DQ"
+        },
+        "caption": "Docs живуть поруч із кодом — не в Confluence-only."
+      },
+      "controlTip": "Приклад колонок — у таблиці.",
+      "template": "models:\n  - name: mart_users\n    columns:\n      - name: is_active\n        description: ____\n        tests:\n          - ____:\n              values: [0, 1]",
+      "answers": ["1 = active subscription today", "accepted_values"],
+      "wordBank": ["1 = active subscription today", "accepted_values", "unique", "relationships", "not_null"],
+      "hints": [
+        "description — business мова з таблиці.",
+        "accepted_values для 0/1 flag."
+      ]
+    },
+    {
+      "id": "E4",
+      "type": "multi_choice",
+      "tag": "🛡️ · 4/7",
+      "title": "Коли alert?",
+      "instruction": "Nightly mart_orders: зазвичай 50k–55k rows.",
+      "mission": {
+        "emoji": "📟",
+        "title": "Grafana / observability",
+        "brief": "Сьогодні load завершився, але rows = 200.",
+        "ask": "Який alert rule найкорисніший?"
+      },
+      "question": "Найкращий prod alert?",
+      "options": [
+        "Rowcount outside 7-day band OR < 10% of median → page on-call",
+        "Alert лише якщо DAG status = failed (200 rows пройдуть непоміченими)",
+        "Ніколи не alert — analysts самі побачать",
+        "Alert на кожен успішний run"
+      ],
+      "correctIndex": 0,
+      "explanation": "Silent logic bugs ловлять anomaly alerts, не лише task failure."
+    },
+    {
+      "id": "E5",
+      "type": "whats_wrong",
+      "tag": "🛡️ · 5/7",
+      "title": "Що не так із migration?",
+      "instruction": "Deploy пʼятниця: rename column без попередження.",
+      "mission": {
+        "emoji": "💥",
+        "title": "Breaking change",
+        "brief": "Looker broken, notebook падає."
+      },
+      "buggyCode": "-- deploy Friday 17:00\nALTER TABLE mart_revenue\n  RENAME COLUMN revenue_usd TO rev;\n\n-- no deprecation period\n-- no view shim\n-- no #data-engineering post",
+      "prompt": "Головна помилка process?",
+      "options": [
+        "Breaking rename без deprecation / compat view / comms до downstream",
+        "RENAME заборонено в SQL",
+        "Пятниця — заборонений день",
+        "rev — занадто коротка назва"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Expand-contract: новa колонка → migrate consumers → drop old.",
+      "explanation": "Governance = люди + процес, не лише tooling."
+    },
+    {
+      "id": "E6",
+      "type": "drag_order",
+      "tag": "🛡️ · 6/7",
+      "title": "Incident runbook",
+      "instruction": "P1: mart критичний для finance, дані stale 6h.",
+      "mission": {
+        "emoji": "🚑",
+        "title": "P1 response",
+        "brief": "Розстав кроки (не panic order)."
+      },
+      "recallTips": [
+        "Ack + incident lead",
+        "DAG / last success time",
+        "STG vs mart rowcounts",
+        "Logs failing task",
+        "Mitigate (rerun / rollback)",
+        "Comms in #incidents",
+        "Postmortem після"
+      ],
+      "items": [
+        "Ack alert + assign incident lead",
+        "Check DAG / pipeline last success time",
+        "Compare STG vs mart rowcounts / samples",
+        "Identify failing task + logs",
+        "Mitigate (rerun / hotfix / rollback)",
+        "Post in #incidents with ETA",
+        "Postmortem + preventive ticket"
+      ]
+    },
+    {
+      "id": "E7",
+      "type": "scenario",
+      "tag": "🛡️ · 7/7",
+      "title": "Lineage request",
+      "emoji": "🔗",
+      "scene": "Compliance: «Звідки в mart_kpi поле revenue?» У вас dbt + Airflow.",
+      "bestIndex": 1,
+      "choices": [
+        {
+          "label": "«Не знаю, grep по ноуті»",
+          "feedback": "Unprofessional для regulated context."
+        },
+        {
+          "label": "Catalog/dbt lineage: mart_kpi → stg_orders → raw.events + owner + last refresh",
+          "feedback": "Саме для цього governance stack."
+        },
+        {
+          "label": "Видалити поле revenue",
+          "feedback": "Не відповідає на audit."
+        }
+      ]
+    }
+  ]
+}

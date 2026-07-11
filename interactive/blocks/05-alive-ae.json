@@ -171,7 +171,7 @@
       "bestIndex": 0,
       "choices": [
         {
-          "label": "Так і скажу: Gym покриває SQL windows, pandas, modeling, DQ, A/B-base, day-1. Далі — live-coding стрес + їхня задача про палички + практика вголос.",
+          "label": "Так і скажу: Gym покриває SQL windows, pandas, modeling, DQ, A/B-base, day-1. Далі — live-coding стрес + типова задача min-per-group (RFQ/SKU) + практика вголос.",
           "feedback": "Правильна планка. Не ідеалізуй і не знецінюй себе."
         },
         {

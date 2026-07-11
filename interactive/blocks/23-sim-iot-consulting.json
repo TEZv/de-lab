@@ -24,7 +24,17 @@
       "tag": "CSV",
       "title": "Аномалії температури",
       "fileName": "sensors.csv",
+      "mission": {
+        "emoji": "🌡️",
+        "title": "IoT alert",
+        "brief": "Потік з датчиків. Поріг alert: temp_c > 80.",
+        "ask": "Скільки device_id перевищують поріг?"
+      },
       "csv": "device_id,temp_c\nd1,21\nd2,85\nd3,22\nd4,19\nd5,90",
+      "columnGlossary": {
+        "device_id": "ID пристрою на обʼєкті",
+        "temp_c": "Температура °C; >80 — кандидат у alert"
+      },
       "question": "Скільки девайсів з temp_c > 80 (кандидат у alert)?",
       "expected": "2",
       "success": "2 аномалії. Далі — пайплайн алерту, не разовий SELECT."

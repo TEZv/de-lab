@@ -38,7 +38,17 @@
         "brief": "SQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.",
         "ask": "Збери рядок."
       },
-      "template": "res = df.____('department').____(avg_sal=('salary','____')).____()",
+      "sampleTable": {
+        "headers": ["department", "salary"],
+        "rows": [["IT", "3000"], ["IT", "3500"], ["HR", "1500"]],
+        "columnGlossary": {
+          "department": "Ключ groupby",
+          "salary": "Число для agg mean"
+        },
+        "caption": "Після agg: IT→3250, HR→1500."
+      },
+      "controlTip": "Таблиця — вище.",
+      "template": "res = df.____('department')\n    .____(avg_sal=('salary','____'))\n    .____()",
       "answers": ["groupby", "agg", "mean", "reset_index"],
       "wordBank": ["groupby", "agg", "mean", "avg", "reset_index", "merge"],
       "hints": ["Не 'avg'.", "Після groupby ключ стає індексом."]
@@ -59,6 +69,41 @@
         {
           "label": "Підглядати в телефон при камері",
           "feedback": "Ризик і гірший осад, ніж помилка в SQL."
+        }
+      ]
+    },
+    {
+      "id": "U5",
+      "type": "multi_choice",
+      "tag": "BI",
+      "title": "Power BI vs Tableau",
+      "instruction": "На скрінінгу важливі trade-offs стеку, не fan war.",
+      "question": "Команда на Microsoft (Azure, Excel-heavy). Новий mart у DWH — що логічніше для BI?",
+      "options": [
+        "Power BI — інтеграція M365/Azure, DAX, зручний entry для MS-стеку",
+        "Tableau завжди краще незалежно від стеку",
+        "Тільки Jupyter — BI не потрібен",
+        "Google Sheets замість обох"
+      ],
+      "correctIndex": 0,
+      "explanation": "Tableau сильний у viz/explore; Power BI — MS ecosystem. DE знає обидва conceptually."
+    },
+    {
+      "id": "U6",
+      "type": "scenario",
+      "tag": "Git+CI",
+      "title": "PR перед merge",
+      "emoji": "🔀",
+      "scene": "Додаєш dbt model у спільний репо. Що мінімум до merge в main? (Hands-on: CHALLENGES.md · Portfolio quest)",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "PR + CI (dbt test/lint) green + reviewer; не push прямо в main",
+          "feedback": "Той самий ritual що в prod DE teams."
+        },
+        {
+          "label": "Push у main у пʼятницю ввечері без review",
+          "feedback": "Incident waiting room."
         }
       ]
     }

@@ -39,7 +39,13 @@
           ["9", "01-03", "20", "NULL"]
         ],
         "highlight": [1, 2],
-        "caption": "LAG дивиться «вгору» всередині user_id після сортування по paid_at."
+        "caption": "LAG дивиться «вгору» всередині user_id після сортування по paid_at.",
+        "columnGlossary": {
+          "user_id": "ID користувача",
+          "paid_at": "Дата оплати",
+          "amount": "Сума платежу",
+          "prev (очікуємо)": "Очікуване значення LAG — попередня оплата"
+        }
       },
       "why": "На інтервʼю спочатку намалюй таку табличку на папері — і лише потім пиши OVER.",
       "template": "SELECT user_id, paid_at, amount,\n  LAG(____, 1) OVER (\n    PARTITION BY ____\n    ORDER BY ____\n  ) AS prev_amount\nFROM payments;",

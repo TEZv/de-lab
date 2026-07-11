@@ -39,6 +39,13 @@
         "ask": "Клікни тільки фінальні рядки замовлення."
       },
       "headers": ["sku_id", "power", "age", "price", "is_active"],
+      "columnGlossary": {
+        "sku_id": "Номер рядка в прайс-листі",
+        "power": "Клас потужності — група разом з age",
+        "age": "Вік партії товару (не людини)",
+        "price": "Ціна",
+        "is_active": "1 = в каталозі, 0 = виведено"
+      },
       "rows": [
         { "id": "77", "sku_id": "77", "power": "5", "age": "45", "price": "10", "is_active": "1", "correct": true },
         { "id": "12", "sku_id": "12", "power": "5", "age": "45", "price": "50", "is_active": "1", "correct": false },
@@ -80,7 +87,7 @@
         "brief": "PARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC",
         "ask": "Заповни."
       },
-      "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n    ROW_NUMBER() OVER(\n      PARTITION BY ____, ____\n      ORDER BY price ____\n    ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price FROM ranked\nWHERE rn = ____\nORDER BY power ____, age DESC;",
+      "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n    ROW_NUMBER() OVER(\n      PARTITION BY ____, ____\n      ORDER BY price ____\n    ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price\nFROM ranked\nWHERE rn = ____\nORDER BY power ____, age DESC;",
       "answers": ["power", "age", "ASC", "1", "1", "DESC"],
       "wordBank": ["power", "age", "sku_id", "ASC", "DESC", "1", "0", "GROUP"],
       "hints": ["Партиція = бізнес-ключ комбінації.", "Найдешевша → ASC.", "Активні → is_active=1."],

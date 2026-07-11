@@ -16,6 +16,11 @@
         "ask": "Скільки рядків у результаті?"
       },
       "csv": "side,key,extra\nuser,1,\nuser,2,\nuser,3,\norder,1,o100\norder,1,o101\norder,3,o200",
+      "columnGlossary": {
+        "side": "user або order — дві сутності в одному CSV для вправи",
+        "key": "user_id або order_id залежно від side",
+        "extra": "order_id для order-рядків; порожнє для user"
+      },
       "question": "Рядків після LEFT JOIN users to orders?",
       "expected": "4",
       "hintOnFail": "u1→2, u2→1 (NULL order), u3→1 = 4.",
@@ -33,6 +38,11 @@
         "ask": "Клікни актуальні рядки."
       },
       "headers": ["order_id", "status", "is_current"],
+      "columnGlossary": {
+        "order_id": "Бізнес-ключ замовлення",
+        "status": "Статус на момент запису в історії",
+        "is_current": "1 = актуальний рядок для цього order_id (SCD2)"
+      },
       "rows": [
         { "id": "1a", "order_id": "100", "status": "created", "is_current": "0", "correct": false },
         { "id": "1b", "order_id": "100", "status": "shipped", "is_current": "1", "correct": true },

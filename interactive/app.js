@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260708h';
+const BUILD = '20260711k';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
+const DEVOPS_GYM_URL = 'https://devops-lab-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
 const MENTORSHIP = 'https://sphere-mentorship-hub.vercel.app';
 const MENTORSHIP_QUEST = 'https://sphere-mentorship-hub.vercel.app/quest.html#T';
@@ -16,6 +17,11 @@ const ROADS = [
     blocks: [
       { id: '10-interview-company-types', ready: true, skill: 'modeling' },
       { id: '04-theory-data-ae', ready: true, skill: 'modeling' },
+      { id: '13-cloud-storage-de', ready: true, skill: 'cloud' },
+      { id: '14-orchestration-de', ready: true, skill: 'pipeline' },
+      { id: '15-incremental-loads-de', ready: true, skill: 'pipeline' },
+      { id: '16-stream-nosql-de', ready: true, skill: 'pipeline' },
+      { id: '17-governance-ops-de', ready: true, skill: 'dq' },
       { id: '05-alive-ae', ready: true, skill: 'modeling' },
       { id: '11-interview-skills-universal', ready: true, skill: 'sql' },
     ],
@@ -62,6 +68,7 @@ const SKILLS = [
   { id: 'product', label: 'Product', color: '#c77dff' },
   { id: 'pipeline', label: 'Pipeline', color: '#4ecdc4' },
   { id: 'dq', label: 'DQ', color: '#ff6b6b' },
+  { id: 'cloud', label: 'Cloud', color: '#6eb5ff' },
 ];
 
 function loadProgress() {
@@ -299,6 +306,7 @@ function paintChrome() {
   build.textContent = `build ${BUILD}`;
   const map = [
     ['nav-de-md', 'navDeMd'],
+    ['nav-devops-gym', 'navDevOpsGym'],
     ['nav-mentorship', 'navMentorship'],
     ['nav-repo', 'navRepo'],
   ];
@@ -308,6 +316,8 @@ function paintChrome() {
   });
   const m = document.getElementById('nav-mentorship');
   if (m) m.href = withLang(MENTORSHIP);
+  const d = document.getElementById('nav-devops-gym');
+  if (d) d.href = withLang(DEVOPS_GYM_URL);
   if (window.DeLabI18n) DeLabI18n.mountToggle(document.getElementById('lang-slot'));
 }
 

@@ -1,0 +1,209 @@
+{
+  "id": "16-stream-nosql-de",
+  "title": "Streaming & NoSQL",
+  "subtitle": "batch vs stream · Kafka · MongoDB · when NoSQL",
+  "levels": [
+    {
+      "id": "D0",
+      "type": "theory",
+      "tag": "🌊 · карта",
+      "title": "Batch vs stream",
+      "instruction": "На інтервʼю не треба адмінити Kafka — достатньо знати, коли stream, а коли nightly batch.",
+      "viz": {
+        "type": "splitCompare",
+        "columns": [
+          {
+            "title": "📦 Batch",
+            "color": "#5b8def",
+            "items": ["файл / таблиця за період", "Airflow cron, incremental", "latency: хвилини–години OK"]
+          },
+          {
+            "title": "🌊 Stream",
+            "color": "#4ecdc4",
+            "items": ["події one-by-one", "Kafka / Kinesis / PubSub", "latency: секунди, alerts, fraud"]
+          }
+        ]
+      },
+      "flow": [
+        { "title": "Producer", "desc": "сервіс публікує event" },
+        { "title": "Topic", "desc": "буфер / log (partitioned)" },
+        { "title": "Consumer", "desc": "читає offset, пише STG/DWH" },
+        { "title": "Mart", "desc": "batch aggregate або stream-table" }
+      ],
+      "bullets": [
+        "Kafka ≈ distributed commit log: producer → topic → consumer group",
+        "MongoDB — document store; коли схема гнучка / nested JSON",
+        "DE часто: stream → bronze → batch silver (lambda/kappa hybrid)"
+      ]
+    },
+    {
+      "id": "D1",
+      "type": "match_pairs",
+      "tag": "🌊 · 1/7",
+      "title": "MATCH · stream + Mongo",
+      "instruction": "Терміни «на чай» для Middle/Senior DE.",
+      "pairs": [
+        { "left": "Kafka topic", "right": "Named log; partitions для паралелізму" },
+        { "left": "Consumer offset", "right": "«Дочитали до сюди» — не втратити прогрес" },
+        { "left": "MongoDB collection", "right": "≈ таблиця, але documents (JSON)" },
+        { "left": "Embedded document", "right": "Nested array/object в одному doc" },
+        { "left": "Window / micro-batch", "right": "Stream → агрегат за 5 хв (Spark/Flink)" }
+      ]
+    },
+    {
+      "id": "D2",
+      "type": "multi_choice",
+      "tag": "🌊 · 2/7",
+      "title": "Kafka чи nightly batch?",
+      "instruction": "Product хоче dashboard «активні юзери за останні 5 хв».",
+      "mission": {
+        "emoji": "📊",
+        "title": "Near-real-time KPI",
+        "brief": "Events з мобільного app. Оновлення mart кожні 5 хв.",
+        "ask": "Який архетип?"
+      },
+      "question": "Найдоречніший дизайн?",
+      "options": [
+        "Stream ingest (Kafka) + micro-batch aggregate кожні 5 хв у mart",
+        "Один CSV раз на добу о 03:00 — достатньо",
+        "Ручний export з Postgres раз на тиждень",
+        "Spark batch раз на рік"
+      ],
+      "correctIndex": 0,
+      "explanation": "5 хв latency → stream або micro-batch; pure nightly batch не підходить."
+    },
+    {
+      "id": "D3",
+      "type": "fill_blanks",
+      "tag": "🌊 · 3/7",
+      "title": "MongoDB · простий agg",
+      "instruction": "Колекція sensors: по device_id — avg temp.",
+      "mission": {
+        "emoji": "🍃",
+        "title": "IoT documents",
+        "brief": "Документи в Mongo, не реляційна схема. Треба avg temp_c по device.",
+        "ask": "Заповни pipeline aggregation."
+      },
+      "sampleTable": {
+        "headers": ["device_id", "temp_c", "ts"],
+        "rows": [
+          ["d1", "21", "10:00"],
+          ["d1", "23", "10:05"],
+          ["d2", "85", "10:00"]
+        ],
+        "columnGlossary": {
+          "device_id": "Ключ групування",
+          "temp_c": "Поле для $avg",
+          "ts": "Timestamp події"
+        },
+        "caption": "У Mongo — один doc на reading; agg як SQL GROUP BY."
+      },
+      "controlTip": "Таблиця-аналог — вище.",
+      "template": "[\n  { $____: { temp_c: { $____: null } } },\n  { $____: { _id: '$device_id', avg_temp: { $____: '$temp_c' } } }\n]",
+      "answers": ["match", "ne", "group", "avg"],
+      "wordBank": ["match", "ne", "group", "avg", "sum", "project", "lookup"],
+      "hints": [
+        "$match: відкинути null temp.",
+        "$group + $avg — аналог GROUP BY + AVG."
+      ]
+    },
+    {
+      "id": "D4",
+      "type": "scenario",
+      "tag": "🌊 · 4/7",
+      "title": "Embed чи normalize?",
+      "emoji": "📄",
+      "scene": "E-com: order з 50 line items, рідко JOIN з products окремо. PM: «Mongo чи Postgres?»",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Mongo: order doc з embedded line_items — швидке читання цілого замовлення",
+          "feedback": "Read-heavy, nested shape — типовий Mongo case."
+        },
+        {
+          "label": "12 normalized tables у Mongo «як Postgres»",
+          "feedback": "Mongo без переваг; краще SQL DWH."
+        },
+        {
+          "label": "Excel на desktop кожного PM",
+          "feedback": "Не scale."
+        }
+      ]
+    },
+    {
+      "id": "D5",
+      "type": "whats_wrong",
+      "tag": "🌊 · 5/7",
+      "title": "Що не так із consumer?",
+      "instruction": "Stream падає — consumer читає знову з початку topic без dedup.",
+      "mission": {
+        "emoji": "🔁",
+        "title": "At-least-once delivery",
+        "brief": "Duplicate events потрапляють у mart."
+      },
+      "buggyCode": "for event in kafka_consumer:\n    row = parse(event)\n    insert_into_dwh(row)  # no key, no dedup\n    # offset commit after each batch — OK\n    # але rerun / retry → той самий event двічі",
+      "prompt": "Головний ризик для mart?",
+      "options": [
+        "Insert без idempotency по event_id → дублі при at-least-once",
+        "Kafka забороняє offset commit",
+        "parse() завжди повертає NULL",
+        "Stream не може писати в DWH"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Як incremental: natural key + MERGE або dedup window; exactly-once — складніше.",
+      "explanation": "Stream = той самий idempotency, що в Phase C."
+    },
+    {
+      "id": "D6",
+      "type": "drag_order",
+      "tag": "🌊 · 6/7",
+      "title": "Потік: app → mart",
+      "instruction": "Розстав кроки event pipeline (спрощено).",
+      "mission": {
+        "emoji": "⚡",
+        "title": "Mobile events",
+        "brief": "Клік → Kafka → STG → hourly mart."
+      },
+      "studyViz": {
+        "type": "pipelineH",
+        "nodes": [
+          { "label": "app event", "hint": "JSON", "color": "#5b8def" },
+          { "label": "Kafka", "hint": "topic", "color": "#4ecdc4" },
+          { "label": "consumer", "hint": "bronze/STG", "color": "#3d9a6a" },
+          { "label": "micro-batch", "hint": "aggregate", "color": "#e8a84b" },
+          { "label": "mart", "hint": "refresh", "color": "#c77dff" },
+          { "label": "lag alert", "hint": "monitor", "color": "#ff6b6b" }
+        ]
+      },
+      "items": [
+        "App publishes JSON event",
+        "Kafka topic (partitioned by user_id)",
+        "Consumer writes bronze/STG",
+        "Micro-batch aggregate to core",
+        "Refresh mart_sessions",
+        "Monitor consumer lag alert"
+      ]
+    },
+    {
+      "id": "D7",
+      "type": "multi_choice",
+      "tag": "🌊 · 7/7",
+      "title": "Consumer lag росте",
+      "instruction": "Grafana: lag 2M messages. BI скаржиться на stale data.",
+      "mission": {
+        "emoji": "🚨",
+        "title": "Ops triage",
+        "brief": "Що перевіряєш першим як DE?"
+      },
+      "question": "Найрозумніший перший крок?",
+      "options": [
+        "Consumer health + processing rate + recent deploys; scale consumers або fix slow transform",
+        "Видалити topic і почати з нуля",
+        "Вимкнути alerts — менше шуму",
+        "Переписати app на batch only без аналізу"
+      ],
+      "correctIndex": 0,
+      "explanation": "Lag = consumer не встигає; metrics + deploy correlation — класика."
+    }
+  ]
+}

@@ -48,6 +48,14 @@
     return (global.DeLabI18n && DeLabI18n.t(key, ...args)) || key;
   }
 
+  function formatCode(code, lang) {
+    if (!code) return '';
+    if (global.DeLabCodeFormat) {
+      return DeLabCodeFormat.formatForDisplay(code, lang || DeLabCodeFormat.detectLang(code));
+    }
+    return String(code).replace(/\r\n/g, '\n');
+  }
+
   function toast(root, text, ok = true) {
     const el = document.createElement('div');
     el.className = `pl-toast ${ok ? 'ok' : 'bad'}`;
@@ -137,16 +145,18 @@
       wrap.appendChild(note);
     }
 
+    appendRecallPanel(wrap, level);
+
     const actions = document.createElement('div');
     actions.className = 'pl-actions';
     const mark = document.createElement('button');
     mark.type = 'button';
-    mark.textContent = 'Зрозуміло — далі ✓';
+    mark.textContent = ui('theoryMark');
     mark.addEventListener('click', () => {
       mark.disabled = true;
-      mark.textContent = '✓ Зафіксовано в прогресі';
+      mark.textContent = ui('theoryMarked');
       mark.classList.add('marked');
-      toast(root, 'Прогрес збережено', true);
+      toast(root, ui('theorySaved'), true);
       if (onComplete) onComplete(level.id);
     });
     actions.appendChild(mark);
@@ -161,7 +171,7 @@
     const need = (level.cards || []).length;
     const feedback = document.createElement('p');
     feedback.className = 'pl-feedback';
-    feedback.textContent = 'Клікай картки — відкрий усі сторони.';
+    feedback.textContent = ui('flipHint');
 
     (level.cards || []).forEach((card) => {
       const el = document.createElement('button');
@@ -174,7 +184,7 @@
         opened += 1;
         feedback.textContent = `Відкрито ${opened}/${need}`;
         if (opened === need) {
-          feedback.textContent = '✅ Усі картки відкриті — блок зараховано!';
+          feedback.textContent = ui('flipDone');
           toast(root, 'Картки пройдено', true);
           if (onComplete) onComplete(level.id);
         }
@@ -251,7 +261,7 @@
 
     const check = document.createElement('button');
     check.type = 'button';
-    check.textContent = 'Перевірити конвеєр';
+    check.textContent = ui('btnCheckPipeline');
     check.addEventListener('click', () => {
       const ok = stages.every((s, i) => placed[i] === s.label);
       feedback.textContent = ok
@@ -303,8 +313,62 @@
     root.appendChild(wrap);
   }
 
+  function appendColumnGlossary(parent, glossary, headerOrder) {
+    if (!glossary || typeof glossary !== 'object') return;
+    const keys = (headerOrder && headerOrder.length)
+      ? headerOrder.filter((h) => glossary[h])
+      : Object.keys(glossary);
+    if (!keys.length) return;
+    const box = document.createElement('div');
+    box.className = 'pl-col-glossary';
+    const title = document.createElement('p');
+    title.className = 'pl-col-glossary-title';
+    title.textContent = ui('colGlossaryTitle');
+    box.appendChild(title);
+    const dl = document.createElement('dl');
+    dl.className = 'pl-col-glossary-list';
+    keys.forEach((key) => {
+      const dt = document.createElement('dt');
+      dt.textContent = key;
+      const dd = document.createElement('dd');
+      dd.textContent = glossary[key];
+      dl.append(dt, dd);
+    });
+    box.appendChild(dl);
+    parent.appendChild(box);
+  }
+
+  function appendMiniTable(parent, spec) {
+    if (!spec?.headers?.length) return;
+    const table = document.createElement('table');
+    table.className = 'pl-mini-table';
+    if (spec.title) {
+      const cap = document.createElement('caption');
+      cap.textContent = spec.title;
+      table.appendChild(cap);
+    }
+    const thead = document.createElement('thead');
+    thead.innerHTML = `<tr>${spec.headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
+    const tbody = document.createElement('tbody');
+    (spec.rows || []).forEach((row, ri) => {
+      const tr = document.createElement('tr');
+      if ((spec.highlight || []).includes(ri)) tr.classList.add('hl');
+      tr.innerHTML = row.map((c) => `<td>${escapeHtml(c)}</td>`).join('');
+      tbody.appendChild(tr);
+    });
+    table.append(thead, tbody);
+    parent.appendChild(table);
+    appendColumnGlossary(parent, spec.columnGlossary, spec.headers);
+    if (spec.caption) {
+      const note = document.createElement('p');
+      note.className = 'pl-tip';
+      note.textContent = spec.caption;
+      parent.appendChild(note);
+    }
+  }
+
   function mountMissionBrief(root, level) {
-    if (!level.mission && !level.sampleTable && !level.why) return;
+    if (!level.mission && !level.sampleTable && !level.why && !level.joinTables && !level.columnGlossary) return;
     const brief = document.createElement('div');
     brief.className = 'pl-mission';
     if (level.mission) {
@@ -312,7 +376,7 @@
         <div class="pl-mission-head">
           <span>${escapeHtml(level.mission.emoji || '🎯')}</span>
           <div>
-            <strong>${escapeHtml(level.mission.title || 'Місія')}</strong>
+            <strong>${escapeHtml(level.mission.title || ui('missionDefault'))}</strong>
             <p>${escapeHtml(level.mission.brief || '')}</p>
           </div>
         </div>`;
@@ -330,31 +394,82 @@
       brief.appendChild(why);
     }
     if (level.sampleTable) {
-      const table = document.createElement('table');
-      table.className = 'pl-mini-table';
-      const thead = document.createElement('thead');
-      thead.innerHTML = `<tr>${(level.sampleTable.headers || []).map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
-      const tbody = document.createElement('tbody');
-      (level.sampleTable.rows || []).forEach((row, ri) => {
-        const tr = document.createElement('tr');
-        if ((level.sampleTable.highlight || []).includes(ri)) tr.classList.add('hl');
-        tr.innerHTML = row.map((c) => `<td>${escapeHtml(c)}</td>`).join('');
-        tbody.appendChild(tr);
-      });
-      table.append(thead, tbody);
-      brief.appendChild(table);
-      if (level.sampleTable.caption) {
-        const cap = document.createElement('p');
-        cap.className = 'pl-tip';
-        cap.textContent = level.sampleTable.caption;
-        brief.appendChild(cap);
+      appendMiniTable(brief, level.sampleTable);
+    }
+    if (level.joinTables?.length) {
+      const joinWrap = document.createElement('div');
+      joinWrap.className = 'pl-join-tables';
+      level.joinTables.forEach((jt) => appendMiniTable(joinWrap, jt));
+      brief.appendChild(joinWrap);
+      if (level.joinCaption) {
+        const jc = document.createElement('p');
+        jc.className = 'pl-tip';
+        jc.textContent = level.joinCaption;
+        brief.appendChild(jc);
       }
+    }
+    if (!level.sampleTable && level.columnGlossary) {
+      appendColumnGlossary(brief, level.columnGlossary, level.headers);
     }
     root.appendChild(brief);
   }
 
+  /** Cheat-sheet panel before checks: map, viz, numbered tips (Пригадати). */
+  function appendRecallPanel(parent, level) {
+    const hasViz = level.studyViz || (level.studyVizs && level.studyVizs.length);
+    const tips = level.recallTips;
+    const intro = level.recallIntro || level.studyIntro;
+    if (!intro && !hasViz && !tips?.length && !level.recallMnemonic && !level.recallMapRef) return;
+
+    const box = document.createElement('div');
+    box.className = 'pl-recall-panel';
+    const title = document.createElement('p');
+    title.className = 'pl-recall-title';
+    title.textContent = ui('recallTitle');
+    box.appendChild(title);
+    if (intro) {
+      const h = document.createElement('p');
+      h.className = 'pl-tip pl-recall-intro';
+      h.innerHTML = intro;
+      box.appendChild(h);
+    }
+    if (hasViz && global.TheoryViz) {
+      const specs = level.studyVizs || (level.studyViz ? [level.studyViz] : []);
+      specs.forEach((vizSpec) => {
+        const vizBox = document.createElement('div');
+        vizBox.className = 'pl-viz-mount pl-viz-mount-recall';
+        TheoryViz.mount(vizBox, vizSpec);
+        box.appendChild(vizBox);
+      });
+    }
+    if (tips?.length) {
+      const ul = document.createElement('ul');
+      ul.className = 'pl-recall-tips';
+      tips.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="pl-recall-num">${i + 1}</span><span>${escapeHtml(t)}</span>`;
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+    }
+    if (level.recallMnemonic) {
+      const m = document.createElement('p');
+      m.className = 'pl-recall-mnemonic';
+      m.textContent = level.recallMnemonic;
+      box.appendChild(m);
+    }
+    if (level.recallMapRef) {
+      const r = document.createElement('p');
+      r.className = 'pl-recall-mapref';
+      r.textContent = level.recallMapRef;
+      box.appendChild(r);
+    }
+    parent.appendChild(box);
+  }
+
   function mountPickRows(root, level, onComplete) {
     mountMissionBrief(root, level);
+    appendRecallPanel(root, level);
     const selected = new Set();
     const need = (level.rows || []).filter((r) => r.correct).map((r) => String(r.id));
     const feedback = document.createElement('p');
@@ -365,6 +480,9 @@
     table.className = 'pl-mini-table pl-pick-table';
     const headers = level.headers || Object.keys(level.rows[0] || {}).filter((k) => k !== 'correct');
     table.innerHTML = `<thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join('')}<th>pick</th></tr></thead>`;
+    if (level.columnGlossary && !level.sampleTable) {
+      appendColumnGlossary(root, level.columnGlossary, headers);
+    }
     const tbody = document.createElement('tbody');
 
     (level.rows || []).forEach((row) => {
@@ -389,7 +507,7 @@
 
     const check = document.createElement('button');
     check.type = 'button';
-    check.textContent = 'Перевірити вибір';
+    check.textContent = ui('btnCheckPick');
     check.addEventListener('click', () => {
       const ok = need.length === selected.size && need.every((id) => selected.has(id));
       if (ok) {
@@ -403,7 +521,7 @@
         if (onComplete) onComplete(level.id);
       } else {
         feedback.textContent = '❌ Не той набір. Підказка: спочатку відкинь evil, потім найдешевшу в кожній парі (power, age).';
-        toast(root, 'Ще не ті палички', false);
+        toast(root, ui('pickRowsMiss') || 'Wrong set', false);
       }
     });
 
@@ -412,6 +530,7 @@
 
   function mountFillBlanks(root, level, onComplete) {
     mountMissionBrief(root, level);
+    appendRecallPanel(root, level);
     const answers = level.answers || [];
     const filled = answers.map(() => '');
     let activeSlot = 0;
@@ -423,7 +542,7 @@
     feedback.className = 'pl-feedback';
     const tip = document.createElement('p');
     tip.className = 'pl-tip';
-    tip.textContent = level.controlTip || 'Спочатку зрозумій місію вище ↑ потім заповни SQL. Перетягни чіп у ____.';
+    tip.textContent = level.controlTip || ui('fillTipDefault');
 
     function nextEmpty(from = 0) {
       for (let i = from; i < answers.length; i += 1) if (!filled[i]) return i;
@@ -440,8 +559,10 @@
       renderTemplate();
     }
 
+    const templateFormatted = formatCode(level.template, level.codeLang);
+
     function renderTemplate() {
-      const parts = level.template.split('____');
+      const parts = templateFormatted.split('____');
       templateEl.innerHTML = parts.map((part, i) => {
         if (i >= answers.length) return escapeHtml(part);
         const val = filled[i];
@@ -499,27 +620,27 @@
     actions.className = 'pl-actions';
     const check = document.createElement('button');
     check.type = 'button';
-    check.textContent = 'Перевірити';
+    check.textContent = ui('btnCheck');
     const reset = document.createElement('button');
     reset.type = 'button';
     reset.className = 'ghost';
-    reset.textContent = 'Скинути';
+    reset.textContent = ui('btnReset');
     const hint = document.createElement('button');
     hint.type = 'button';
     hint.className = 'ghost';
-    hint.textContent = 'Підказка';
+    hint.textContent = ui('btnHint');
     let hintsUsed = 0;
     const hints = level.hints || [];
 
     check.addEventListener('click', () => {
       const ok = answers.every((a, i) => filled[i] === a);
       feedback.textContent = ok
-        ? '✅ Збірка правильна!'
+        ? ui('fillOk')
         : (level.revealOnFail === false
-          ? '❌ Ще не так — спробуй ще або візьми підказку.'
-          : `❌ Перевір порядок. Орієнтир: ${answers.join(', ')}`);
+          ? ui('fillMiss')
+          : ui('fillMissReveal', answers.join(', ')));
       if (ok) {
-        toast(root, 'Зараховано', true);
+        toast(root, ui('fillCredited'), true);
         if (onComplete) onComplete(level.id);
       }
     });
@@ -534,7 +655,7 @@
         feedback.textContent = `💡 ${hints[hintsUsed]}`;
         hintsUsed += 1;
       } else {
-        feedback.textContent = '💡 Підказки закінчились.';
+        feedback.textContent = ui('hintsDone');
       }
     });
 
@@ -544,6 +665,8 @@
   }
 
   function mountDragOrder(root, level, onComplete) {
+    mountMissionBrief(root, level);
+    appendRecallPanel(root, level);
     const order = shuffle(level.items);
     const list = document.createElement('div');
     list.className = 'pl-drag-list';
@@ -570,13 +693,13 @@
     feedback.className = 'pl-feedback';
     const check = document.createElement('button');
     check.type = 'button';
-    check.textContent = 'Перевірити порядок';
+    check.textContent = ui('btnCheckOrder');
     check.addEventListener('click', () => {
       const current = [...list.children].map((n) => n.dataset.value);
       const ok = current.every((v, i) => v === level.items[i]);
-      feedback.textContent = ok ? '✅ Порядок вірний!' : '❌ Ще не так — подумай про логіку кроків.';
+      feedback.textContent = ok ? ui('dragOrderOk') : ui('dragOrderFail');
       if (ok) {
-        toast(root, 'Порядок OK', true);
+        toast(root, ui('dragOrderToast'), true);
         if (onComplete) onComplete(level.id);
       }
     });
@@ -737,6 +860,15 @@
       h.className = 'pl-tip';
       h.innerHTML = level.studyIntro || ui('matchStudyIntroDefault');
       study.appendChild(h);
+      const vizSpecs = level.studyVizs || (level.studyViz ? [level.studyViz] : []);
+      if (vizSpecs.length && global.TheoryViz) {
+        vizSpecs.forEach((vizSpec) => {
+          const vizBox = document.createElement('div');
+          vizBox.className = 'pl-viz-mount pl-viz-mount-study';
+          TheoryViz.mount(vizBox, vizSpec);
+          study.appendChild(vizBox);
+        });
+      }
       const list = document.createElement('div');
       list.className = 'pl-study-list';
       (level.pairs || []).forEach((p) => {
@@ -744,11 +876,12 @@
         const row = document.createElement('div');
         row.className = 'pl-study-row';
         row.style.setProperty('--pair', th.color);
+        const hint = p.studyHint ? `<span class="pl-study-hint">${escapeHtml(p.studyHint)}</span>` : '';
         row.innerHTML = `
           <span class="pl-study-sigil" style="--sigil:${th.color}">${escapeHtml(p.sigil || th.sigil)}</span>
           <span class="pl-study-left">${escapeHtml(p.left)}</span>
           <span class="pl-study-arrow" aria-hidden="true">⟶</span>
-          <span class="pl-study-right">${escapeHtml(p.right)}</span>`;
+          <span class="pl-study-right">${escapeHtml(p.right)}${hint}</span>`;
         list.appendChild(row);
       });
       study.appendChild(list);
@@ -770,6 +903,8 @@
   }
 
   function mountWhatsWrong(root, level, onComplete) {
+    mountMissionBrief(root, level);
+    appendRecallPanel(root, level);
     const wrap = document.createElement('div');
     wrap.className = 'pl-whats-wrong';
     if (level.viz && global.TheoryViz) {
@@ -785,11 +920,11 @@
     }
     const code = document.createElement('pre');
     code.className = 'pl-code-buggy';
-    code.textContent = level.buggyCode || '';
+    code.textContent = formatCode(level.buggyCode, level.codeLang || 'sql');
     wrap.appendChild(code);
     const prompt = document.createElement('p');
     prompt.className = 'pl-tip';
-    prompt.textContent = level.prompt || 'Що тут не так?';
+    prompt.textContent = level.prompt || ui('whatsWrongPrompt');
     wrap.appendChild(prompt);
     const opts = document.createElement('div');
     opts.className = 'pl-options';
@@ -806,10 +941,10 @@
         opts.querySelectorAll('.pl-option-btn').forEach((b) => { b.disabled = true; });
         btn.classList.add(ok ? 'ok' : 'bad');
         feedback.textContent = ok
-          ? `✅ ${level.explainOk || 'Так!'}`
-          : `❌ ${level.explainFail || 'Не той діагноз.'} ${level.explanation || ''}`;
+          ? `✅ ${level.explainOk || ui('explainOkDefault')}`
+          : `❌ ${level.explainFail || ui('explainFailDefault')} ${level.explanation || ''}`;
         if (ok) {
-          toast(root, 'Діагноз вірний', true);
+          toast(root, ui('toastDiagOk'), true);
           if (onComplete) onComplete(level.id);
         }
       });
@@ -821,6 +956,8 @@
   }
 
   function mountMultiChoice(root, level, onComplete) {
+    mountMissionBrief(root, level);
+    appendRecallPanel(root, level);
     const wrap = document.createElement('div');
     wrap.className = 'pl-mc';
     if (level.viz && global.TheoryViz) {
@@ -850,8 +987,8 @@
         opts.querySelectorAll('.pl-option-btn').forEach((b) => { b.disabled = true; });
         btn.classList.add(ok ? 'ok' : 'bad');
         feedback.textContent = ok
-          ? `✅ ${level.explanation || 'Вірно!'}`
-          : `❌ ${level.explanation || 'Невірно.'}`;
+          ? `✅ ${level.explanation || ui('mcOkDefault')}`
+          : `❌ ${level.explanation || ui('mcFailDefault')}`;
         if (ok) {
           toast(root, 'OK', true);
           if (onComplete) onComplete(level.id);
@@ -1244,6 +1381,10 @@
     const wrap = document.createElement('div');
     wrap.className = 'pl-csv-lab';
 
+    if (level.columnGlossary) {
+      appendColumnGlossary(wrap, level.columnGlossary, headers);
+    }
+
     const frame = document.createElement('div');
     frame.className = 'pl-csv-frame';
     frame.innerHTML = `<div class="pl-csv-bar">📄 ${escapeHtml(level.fileName || 'sample.csv')} · ${rows.length} rows</div>`;
@@ -1318,7 +1459,7 @@
       input.placeholder = level.answerPlaceholder || 'Твоя відповідь';
       const check = document.createElement('button');
       check.type = 'button';
-      check.textContent = 'Перевірити';
+      check.textContent = ui('btnCheck');
       check.addEventListener('click', () => {
         const val = input.value.trim();
         const ok = String(val) === String(level.expected);

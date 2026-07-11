@@ -9,7 +9,18 @@
       "tag": "DQ",
       "title": "Скільки валідних переглядів?",
       "fileName": "views_raw.csv",
+      "mission": {
+        "emoji": "📺",
+        "title": "Очистка логів переглядів",
+        "brief": "Редакція рахує лише «справжні» перегляди: не бот, не занадто короткі, не NULL.",
+        "ask": "Скільки рядків пройде фільтр seconds≥5, bot=0, seconds не порожнє?"
+      },
       "csv": "view_id,seconds,bot\n1,30,0\n2,2,0\n3,45,1\n4,60,0\n5,,0\n6,90,0",
+      "columnGlossary": {
+        "view_id": "ID події перегляду",
+        "seconds": "Тривалість; порожнє = NULL у джерелі",
+        "bot": "1 = бот-трафік, виключаємо"
+      },
       "question": "Правило: seconds>=5 і bot=0 і seconds не порожнє. Скільки рядків лишиться?",
       "expected": "3",
       "hintOnFail": "1,4,6 валідні. 2 закороткий, 3 бот, 5 NULL.",
@@ -20,7 +31,23 @@
       "type": "fill_blanks",
       "tag": "SQL",
       "title": "COALESCE для NULL seconds",
-      "template": "SELECT view_id, ____(seconds, ____) AS seconds_clean\nFROM staging.views;",
+      "mission": {
+        "emoji": "🧹",
+        "title": "NULL у staging",
+        "brief": "До фільтра bot/seconds треба замінити NULL seconds на 0 для звітів.",
+        "ask": "Заповни COALESCE у SELECT."
+      },
+      "sampleTable": {
+        "headers": ["view_id", "seconds"],
+        "rows": [["5", "NULL"], ["1", "30"], ["4", "60"]],
+        "columnGlossary": {
+          "view_id": "Ключ рядка",
+          "seconds": "NULL → COALESCE(..., 0)"
+        },
+        "caption": "Рядок 5 — типовий кейс для COALESCE перед WHERE."
+      },
+      "controlTip": "Приклад NULL — у таблиці вище.",
+      "template": "SELECT view_id,\n  ____(seconds, ____) AS seconds_clean\nFROM staging.views;",
       "answers": ["COALESCE", "0"],
       "wordBank": ["COALESCE", "0", "NULL", "AVG", "HAVING"],
       "hints": ["Перше не-NULL.", "Паралельно ticket джерелу."]

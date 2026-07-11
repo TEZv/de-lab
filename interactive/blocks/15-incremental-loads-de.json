@@ -1,0 +1,224 @@
+{
+  "id": "15-incremental-loads-de",
+  "title": "Incremental loads · watermark",
+  "subtitle": "full vs incremental · watermark · idempotency · backfill · MERGE",
+  "levels": [
+    {
+      "id": "C0",
+      "type": "theory",
+      "tag": "📥 · карта",
+      "title": "Full vs incremental",
+      "instruction": "На Middle DE: «як оновлюєш mart щодня без повного reload?»",
+      "viz": {
+        "type": "splitCompare",
+        "columns": [
+          {
+            "title": "🔄 Full load",
+            "color": "#ff6b6b",
+            "items": ["TRUNCATE + INSERT усе", "просто, але дорого", "OK для малих довідників"]
+          },
+          {
+            "title": "➕ Incremental",
+            "color": "#3d9a6a",
+            "items": ["лише нові/змінені рядки", "watermark / updated_at", "потрібна idempotency"]
+          }
+        ]
+      },
+      "flow": [
+        { "title": "Read watermark", "desc": "max(updated_at) з meta або state table" },
+        { "title": "Extract delta", "desc": "WHERE updated_at > watermark" },
+        { "title": "Transform", "desc": "typing, dedup keys" },
+        { "title": "Load idempotent", "desc": "MERGE / upsert / partition swap" },
+        { "title": "Commit watermark", "desc": "лише після успішного load" }
+      ],
+      "bullets": [
+        "Watermark — «до куди вже прочитали» (timestamp, ID, LSN)",
+        "Idempotent = повторний run не псує дані (немає дублів)",
+        "Backfill — свідомий прогін за минулі періоди; не плутати з catchup Airflow"
+      ]
+    },
+    {
+      "id": "C1",
+      "type": "match_pairs",
+      "tag": "📥 · 1/7",
+      "title": "MATCH · патерн ↔ сенс",
+      "instruction": "Терміни incremental ETL на інтервʼю.",
+      "pairs": [
+        { "left": "Watermark", "right": "Межа «вже оброблено» (час / ID / offset)" },
+        { "left": "Idempotent load", "right": "Повторний run → той самий результат, без дублів" },
+        { "left": "Upsert / MERGE", "right": "INSERT нових + UPDATE існуючих по ключу" },
+        { "left": "Append-only", "right": "Лише INSERT; без idempotency → дублі при rerun" },
+        { "left": "Backfill", "right": "Свідомо перезавантажити історичний діапазон" }
+      ]
+    },
+    {
+      "id": "C2",
+      "type": "fill_blanks",
+      "tag": "📥 · 2/7",
+      "title": "SQL · extract delta",
+      "instruction": "Джерело: staging.events з updated_at. Watermark у змінній pipeline.",
+      "mission": {
+        "emoji": "🕐",
+        "title": "Nightly delta",
+        "brief": "Вчора watermark = 2026-07-10 23:00:00. Тягнемо лише свіжіші події.",
+        "ask": "Заповни поріг у WHERE."
+      },
+      "sampleTable": {
+        "headers": ["event_id", "updated_at", "payload"],
+        "rows": [
+          ["e1", "2026-07-10 22:00", "old"],
+          ["e2", "2026-07-11 01:00", "new"],
+          ["e3", "2026-07-11 03:00", "new"]
+        ],
+        "columnGlossary": {
+          "event_id": "PK / natural key для MERGE",
+          "updated_at": "Колонка для incremental filter",
+          "payload": "Дані події"
+        },
+        "caption": "e1 ≤ watermark → не беремо. e2, e3 → у delta."
+      },
+      "controlTip": "Таблиця + watermark — вище.",
+      "template": "SELECT event_id, updated_at, payload\nFROM staging.events\nWHERE updated_at > ____",
+      "answers": ["'2026-07-10 23:00:00'"],
+      "wordBank": ["'2026-07-10 23:00:00'", "'2026-07-11 00:00:00'", "MAX(updated_at)", "ORDER BY"],
+      "hints": [
+        "Watermark — остання успішна межа, не «сьогодні 00:00» без узгодження.",
+        "Літерал timestamp у лапках для SQL."
+      ]
+    },
+    {
+      "id": "C3",
+      "type": "fill_blanks",
+      "tag": "📥 · 3/7",
+      "title": "State table · commit watermark",
+      "instruction": "Після успішного load оновлюємо meta.pipeline_watermarks.",
+      "mission": {
+        "emoji": "💾",
+        "title": "Не commit раніше часу",
+        "brief": "Watermark пишемо лише коли core.events і mart узгоджені.",
+        "ask": "Заповни UPDATE state table."
+      },
+      "sampleTable": {
+        "headers": ["pipeline", "watermark_ts", "rows_loaded"],
+        "rows": [
+          ["events_to_core", "2026-07-10 23:00:00", "1200"],
+          ["events_to_core", "2026-07-11 03:00:00", "85"]
+        ],
+        "columnGlossary": {
+          "pipeline": "Імʼя DAG / job",
+          "watermark_ts": "Нова межа після успішного run",
+          "rows_loaded": "Кontrol metric для DQ"
+        },
+        "caption": "Другий рядок — після сьогоднішнього run (max updated_at у batch)."
+      },
+      "controlTip": "Приклад state — у таблиці.",
+      "template": "UPDATE meta.pipeline_watermarks\nSET watermark_ts = ____,\n    rows_loaded = ____\nWHERE pipeline = 'events_to_core';",
+      "answers": ["'2026-07-11 03:00:00'", "85"],
+      "wordBank": ["'2026-07-11 03:00:00'", "85", "1200", "NOW()", "NULL"],
+      "hints": [
+        "Новий watermark = max(updated_at) з обробленого batch.",
+        "rows_loaded — з лічильника цього run."
+      ]
+    },
+    {
+      "id": "C4",
+      "type": "whats_wrong",
+      "tag": "📥 · 4/7",
+      "title": "Що не так із load?",
+      "instruction": "DAG упав після load, rerun зранку — у mart подвоєні замовлення.",
+      "mission": {
+        "emoji": "⚠️",
+        "title": "Rerun без idempotency",
+        "brief": "Скрипт append-ить у mart кожен раз."
+      },
+      "buggyCode": "# incremental extract OK\nnew_rows = read_delta(watermark)\n\ndf = transform(new_rows)\n\ndf.to_sql(\n    'mart_orders',\n    con,\n    if_exists='append',\n    index=False\n)\n# watermark оновлюється навіть якщо load впав",
+      "prompt": "Головна причина дублів при rerun?",
+      "options": [
+        "if_exists='append' без MERGE/upsert по order_id + watermark commit не в транзакції з load",
+        "to_sql заборонено в pandas",
+        "watermark не можна зберігати в meta table",
+        "transform завжди дублює рядки"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Idempotent: MERGE ON key, або delete partition + insert, або staging swap. Watermark — після успіху.",
+      "explanation": "На інтервʼю: «append + rerun = dupes; потрібен upsert або partition replace»."
+    },
+    {
+      "id": "C5",
+      "type": "multi_choice",
+      "tag": "📥 · 5/7",
+      "title": "MERGE чи append?",
+      "instruction": "core.orders вже має order_id. Щоденний batch з оновленнями status.",
+      "mission": {
+        "emoji": "🔑",
+        "title": "Slowly changing facts",
+        "brief": "Той самий order_id може прийти з новим status у delta.",
+        "ask": "Який load pattern?"
+      },
+      "question": "Найбезпечніший патерн для idempotent incremental?",
+      "options": [
+        "MERGE / upsert по order_id: INSERT нових, UPDATE змінених",
+        "APPEND усе — дублі потім приберемо в BI",
+        "TRUNCATE mart щодня — incremental марно",
+        "SELECT * без WHERE — full load кожен раз"
+      ],
+      "correctIndex": 0,
+      "explanation": "Natural/business key + MERGE = класика incremental у DWH."
+    },
+    {
+      "id": "C6",
+      "type": "scenario",
+      "tag": "📥 · 6/7",
+      "title": "Backfill чи incremental?",
+      "emoji": "📆",
+      "scene": "Баг у transform 1–5 липня. Core вже має bad rows за ці дні. Prod mart використовується.",
+      "bestIndex": 1,
+      "choices": [
+        {
+          "label": "Повний TRUNCATE prod mart і full reload з 2020",
+          "feedback": "Overkill, довгий downtime, ризик для BI."
+        },
+        {
+          "label": "Свідомий backfill: reprocess 1–5 липня idempotent MERGE у staging→core→mart + перевірка rowcount",
+          "feedback": "Типовий prod fix: вузький діапазон + idempotency."
+        },
+        {
+          "label": "Ігнорувати — наступний incremental сам виправить",
+          "feedback": "Bad data лишиться без reprocess."
+        }
+      ]
+    },
+    {
+      "id": "C7",
+      "type": "drag_order",
+      "tag": "📥 · 7/7",
+      "title": "Безпечний incremental run",
+      "instruction": "Розстав кроки nightly job (happy path + safe commit).",
+      "mission": {
+        "emoji": "✅",
+        "title": "Runbook",
+        "brief": "Watermark не оновлюємо, якщо validate failed.",
+        "ask": "Правильний порядок."
+      },
+      "recallTips": [
+        "Read watermark (не оновлюй на старті)",
+        "Extract delta only",
+        "Validate — rowcount / null keys",
+        "Transform + dedup",
+        "MERGE idempotent",
+        "Update watermark лише після success",
+        "Alert on anomaly"
+      ],
+      "recallMnemonic": "Watermark оновлюємо в кінці — інакше втратимо дані при failed validate.",
+      "items": [
+        "Read watermark from meta table",
+        "Extract delta from source (updated_at > watermark)",
+        "Validate row count + null keys",
+        "Transform + dedup on business key",
+        "MERGE into core / mart (idempotent)",
+        "Update watermark + log metrics",
+        "Alert if anomaly vs 7-day avg"
+      ]
+    }
+  ]
+}

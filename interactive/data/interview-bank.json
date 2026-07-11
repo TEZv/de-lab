@@ -102,8 +102,8 @@
         "en": "Місія: попередня покупка"
       },
       "prompt": {
-        "ua": "Не «заповни бланк» — розкажи бізнес-питання.",
-        "en": "Не «заповни бланк» — розкажи бізнес-питання."
+        "ua": "Менеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна. · Не «заповни бланк» — розкажи бізнес-питання.",
+        "en": "Менеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна. · Не «заповни бланк» — розкажи бізнес-питання."
       }
     },
     {
@@ -121,8 +121,8 @@
         "en": "Перед SQL: хто «переможець» у кімнаті?"
       },
       "prompt": {
-        "ua": "Уяви ROW_NUMBER без коду.",
-        "en": "Уяви ROW_NUMBER без коду."
+        "ua": "Для кожного department лишаємо людину з НАЙБІЛЬШОЮ salary. · Уяви ROW_NUMBER без коду.",
+        "en": "Для кожного department лишаємо людину з НАЙБІЛЬШОЮ salary. · Уяви ROW_NUMBER без коду."
       }
     },
     {
@@ -178,8 +178,8 @@
         "en": "HAVING vs WHERE"
       },
       "prompt": {
-        "ua": "Відділи зі середньою зарплатою > 2000.",
-        "en": "Відділи зі середньою зарплатою > 2000."
+        "ua": "Таблиця core.employees: багато людей на department. Спочатку GROUP BY + AVG(salary), потім відсікаємо «бідні» відділи. · Лише відділи, де середня зарплата > 2000.",
+        "en": "Таблиця core.employees: багато людей на department. Спочатку GROUP BY + AVG(salary), потім відсікаємо «бідні» відділи. · Лише відділи, де середня зарплата > 2000."
       }
     },
     {
@@ -197,8 +197,8 @@
         "en": "ROW_NUMBER · top-1 у групі"
       },
       "prompt": {
-        "ua": "Найдешевша паличка для кожної пари code+power.",
-        "en": "Найдешевша паличка для кожної пари code+power."
+        "ua": "Вендори надсилають quote на ту саму категорію й tier якості. Потрібен один рядок на (category_code, tier) — з мінімальною unit_price. Типовий live-coding патерн (як min price per group), без fantasy-даних. · Закупівлі: найдешевша пропозиція на кожну пару (category_code, tier).",
+        "en": "Вендори надсилають quote на ту саму категорію й tier якості. Потрібен один рядок на (category_code, tier) — з мінімальною unit_price. Типовий live-coding патерн (як min price per group), без fantasy-даних. · Закупівлі: найдешевша пропозиція на кожну пару (category_code, tier)."
       }
     },
     {
@@ -216,8 +216,8 @@
         "en": "Min price у групі (SKU)"
       },
       "prompt": {
-        "ua": "Спочатку місія — потім кістяк. Повний сюжет — блок «Місія: найдешевший SKU».",
-        "en": "Спочатку місія — потім кістяк. Повний сюжет — блок «Місія: найдешевший SKU»."
+        "ua": "Серед активних: для кожної пари (power, age) — мінімальна price. Сортування: power↓ age↓. · Той самий патерн що S2, але каталог SKU: фільтр is_active + сортування результату.",
+        "en": "Серед активних: для кожної пари (power, age) — мінімальна price. Сортування: power↓ age↓. · Той самий патерн що S2, але каталог SKU: фільтр is_active + сортування результату."
       }
     },
     {
@@ -235,8 +235,8 @@
         "en": "LAG · попередня сесія"
       },
       "prompt": {
-        "ua": "Час попередньої сесії того ж юзера.",
-        "en": "Час попередньої сесії того ж юзера."
+        "ua": "Таблиця core.user_sessions: user_id, session_start. Менеджер хоче колонку prev_session — коли цей юзер був онлайн ДО поточного рядка. · Для кожної сесії — час попередньої сесії того ж user_id.",
+        "en": "Таблиця core.user_sessions: user_id, session_start. Менеджер хоче колонку prev_session — коли цей юзер був онлайн ДО поточного рядка. · Для кожної сесії — час попередньої сесії того ж user_id."
       }
     },
     {
@@ -254,8 +254,8 @@
         "en": "Що не так?"
       },
       "prompt": {
-        "ua": "Класична помилка інтернів.",
-        "en": "Класична помилка інтернів."
+        "ua": "«Покажи customer_id, у кого максимальний amount замовлення > 500, відсортуй за сумою». Кандидат написав код нижче — знайди головний баг. · Класична помилка на live-coding: MAX у WHERE.",
+        "en": "«Покажи customer_id, у кого максимальний amount замовлення > 500, відсортуй за сумою». Кандидат написав код нижче — знайди головний баг. · Класична помилка на live-coding: MAX у WHERE."
       }
     },
     {
@@ -273,8 +273,8 @@
         "en": "JOIN · дублі рядків"
       },
       "prompt": {
-        "ua": "Критичний Middle-кейс.",
-        "en": "Критичний Middle-кейс."
+        "ua": "users: 10 унікальних user_id. orders: багато рядків на одного user. LEFT JOIN users → orders — скільки рядків у результаті? · Перед JOIN — уяви cardinality.",
+        "en": "users: 10 унікальних user_id. orders: багато рядків на одного user. LEFT JOIN users → orders — скільки рядків у результаті? · Перед JOIN — уяви cardinality."
       }
     },
     {
@@ -292,8 +292,8 @@
         "en": "COALESCE · NULL у CORE"
       },
       "prompt": {
-        "ua": "NULL у amount → 0 на шарі очищення.",
-        "en": "NULL у amount → 0 на шарі очищення."
+        "ua": "У staging.orders частина amount = NULL (збій джерела). У вітрині сума не може бути NULL — дефолт 0. · На шарі staging: NULL у amount замінити на 0 перед завантаженням у core.",
+        "en": "У staging.orders частина amount = NULL (збій джерела). У вітрині сума не може бути NULL — дефолт 0. · На шарі staging: NULL у amount замінити на 0 перед завантаженням у core."
       }
     },
     {
@@ -311,8 +311,8 @@
         "en": "Дедуплікація"
       },
       "prompt": {
-        "ua": "Лишити найсвіжіший рядок на user_id.",
-        "en": "Лишити найсвіжіший рядок на user_id."
+        "ua": "staging.users отримує повторні завантаження одного user_id. Для core потрібен один актуальний рядок на ключа. · Лишити один рядок на user_id — найсвіжіший за updated_at.",
+        "en": "staging.users отримує повторні завантаження одного user_id. Для core потрібен один актуальний рядок на ключа. · Лишити один рядок на user_id — найсвіжіший за updated_at."
       }
     },
     {
@@ -463,8 +463,8 @@
         "en": "Pandas groupby + mean"
       },
       "prompt": {
-        "ua": "Середня зарплата по відділу. Памʼятай: mean ≠ avg.",
-        "en": "Середня зарплата по відділу. Памʼятай: mean ≠ avg."
+        "ua": "Є таблиця співробітників. Треба середня salary по department. · Середня зарплата по відділу. Памʼятай: mean ≠ avg.",
+        "en": "Є таблиця співробітників. Треба середня salary по department. · Середня зарплата по відділу. Памʼятай: mean ≠ avg."
       }
     },
     {
@@ -482,8 +482,8 @@
         "en": "pd.merge = LEFT JOIN"
       },
       "prompt": {
-        "ua": "users ⟕ orders по user_id.",
-        "en": "users ⟕ orders по user_id."
+        "ua": "Ліва таблиця users — усі користувачі лишаються. orders додає колонки справа. · users ⟕ orders по user_id.",
+        "en": "Ліва таблиця users — усі користувачі лишаються. orders додає колонки справа. · users ⟕ orders по user_id."
       }
     },
     {
@@ -1090,8 +1090,8 @@
         "en": "Pandas mean (не avg!)"
       },
       "prompt": {
-        "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
-        "en": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями."
+        "ua": "SQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.",
+        "en": "SQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку."
       }
     },
     {
@@ -1107,6 +1107,44 @@
       "title": {
         "ua": "Паперовий блокнот",
         "en": "Паперовий блокнот"
+      },
+      "prompt": {
+        "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+        "en": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями."
+      }
+    },
+    {
+      "id": "gym-11-interview-skills-universal-U5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "11-interview-skills-universal",
+      "levelId": "U5",
+      "tag": "BI",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Power BI vs Tableau",
+        "en": "Power BI vs Tableau"
+      },
+      "prompt": {
+        "ua": "На скрінінгу важливі trade-offs стеку, не fan war.",
+        "en": "На скрінінгу важливі trade-offs стеку, не fan war."
+      }
+    },
+    {
+      "id": "gym-11-interview-skills-universal-U6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "11-interview-skills-universal",
+      "levelId": "U6",
+      "tag": "Git+CI",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "PR перед merge",
+        "en": "PR перед merge"
       },
       "prompt": {
         "ua": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
@@ -1147,8 +1185,8 @@
         "en": "Обери рядки руками"
       },
       "prompt": {
-        "ua": "Каталог постачальників. is_active=0 — не беремо. У парі (power, age) — найдешевша.",
-        "en": "Каталог постачальників. is_active=0 — не беремо. У парі (power, age) — найдешевша."
+        "ua": "Кілька продавців на той самий (power, age). Бізнес хоче мінімальну ціну на кожну комбінацію серед активних. · Каталог постачальників. is_active=0 — не беремо. У парі (power, age) — найдешевша.",
+        "en": "Кілька продавців на той самий (power, age). Бізнес хоче мінімальну ціну на кожну комбінацію серед активних. · Каталог постачальників. is_active=0 — не беремо. У парі (power, age) — найдешевша."
       }
     },
     {
@@ -1166,8 +1204,8 @@
         "en": "Порахуй з CSV"
       },
       "prompt": {
-        "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
-        "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+        "ua": "Нижче «файл» уже у фреймі. Скільки рядків потрапить у фінальний список (active + min price per power+age)?",
+        "en": "Нижче «файл» уже у фреймі. Скільки рядків потрапить у фінальний список (active + min price per power+age)?"
       }
     },
     {
@@ -1185,8 +1223,8 @@
         "en": "Запиши кістяк"
       },
       "prompt": {
-        "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
-        "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+        "ua": "PARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC",
+        "en": "PARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC"
       }
     },
     {
@@ -1206,6 +1244,747 @@
       "prompt": {
         "ua": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
         "en": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A0",
+      "tag": "☁️ · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Object storage + зони lake",
+        "en": "Object storage + зони lake"
+      },
+      "prompt": {
+        "ua": "На інтервʼю (Amazinum, NDA, consultancy): один патерн — різні назви в хмарах.",
+        "en": "На інтервʼю (Amazinum, NDA, consultancy): один патерн — різні назви в хмарах."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A1",
+      "tag": "☁️ · 1/6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · хмари ↔ термін",
+        "en": "MATCH · хмари ↔ термін"
+      },
+      "prompt": {
+        "ua": "Один концепт — три вендори. На співбесіді достатньо знати відповідники.",
+        "en": "Один концепт — три вендори. На співбесіді достатньо знати відповідники."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A2",
+      "tag": "☁️ · 2/6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Шлях у lake · partition",
+        "en": "Шлях у lake · partition"
+      },
+      "prompt": {
+        "ua": "Компанія кладе parquet по днях. Аналітик читає лише потрібний prefix — менше cost. · Сирі замовлення за день — у bronze, партиція по даті.",
+        "en": "Компанія кладе parquet по днях. Аналітик читає лише потрібний prefix — менше cost. · Сирі замовлення за день — у bronze, партиція по даті."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A3",
+      "tag": "☁️ · 3/6 · IAM",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що не так у policy?",
+        "en": "Що не так у policy?"
+      },
+      "prompt": {
+        "ua": "ETL-роль має читати bronze і писати silver. Публічний доступ — ні. · Класична пастка junior DE на AWS.",
+        "en": "ETL-роль має читати bronze і писати silver. Публічний доступ — ні. · Класична пастка junior DE на AWS."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A4",
+      "tag": "☁️ · 4/6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Lifecycle · cost",
+        "en": "Lifecycle · cost"
+      },
+      "prompt": {
+        "ua": "1 TB логів у Standard. Читання 1 раз/квартал. Що робиш? · Дані старші 90 днів рідко читають, але треба лишити для audit.",
+        "en": "1 TB логів у Standard. Читання 1 раз/квартал. Що робиш? · Дані старші 90 днів рідко читають, але треба лишити для audit."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A5",
+      "tag": "☁️ · 5/6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "S3 чи RDS?",
+        "en": "S3 чи RDS?"
+      },
+      "prompt": {
+        "ua": "S3 ≈ Azure Blob ≈ GCS · зони lake · IAM · lifecycle · partition · cost",
+        "en": "S3 ≈ Azure Blob ≈ GCS · зони lake · IAM · lifecycle · partition · cost"
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A6",
+      "tag": "☁️ · 6/6",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Порядок: ingest → lake",
+        "en": "Порядок: ingest → lake"
+      },
+      "prompt": {
+        "ua": "Розстав кроки batch-пайплайну в object storage (без Airflow поки — лише логіка).",
+        "en": "Розстав кроки batch-пайплайну в object storage (без Airflow поки — лише логіка)."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O0",
+      "tag": "⚙️ · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Airflow у двох словах",
+        "en": "Airflow у двох словах"
+      },
+      "prompt": {
+        "ua": "На Middle DE питають «як би ти запустив nightly ETL» — Cron або Airflow, і чому.",
+        "en": "На Middle DE питають «як би ти запустив nightly ETL» — Cron або Airflow, і чому."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O1",
+      "tag": "⚙️ · 1/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · оркестрація ↔ термін",
+        "en": "MATCH · оркестрація ↔ термін"
+      },
+      "prompt": {
+        "ua": "Airflow-терміни на інтервʼю + коли згадати Cron.",
+        "en": "Airflow-терміни на інтервʼю + коли згадати Cron."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O2",
+      "tag": "⚙️ · 2/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Порядок задач у DAG",
+        "en": "Порядок задач у DAG"
+      },
+      "prompt": {
+        "ua": "Файл у S3 bronze/orders/ о 02:00. Далі validate → transform → mart. · Nightly ingest orders: спочатку чекаємо файл, потім ETL. Розстав task-и.",
+        "en": "Файл у S3 bronze/orders/ о 02:00. Далі validate → transform → mart. · Nightly ingest orders: спочатку чекаємо файл, потім ETL. Розстав task-и."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O3",
+      "tag": "⚙️ · 3/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Cron · щодня о 03:00",
+        "en": "Cron · щодня о 03:00"
+      },
+      "prompt": {
+        "ua": "Один bash-скрипт ingest.sh — запускати щодня о 03:00 UTC. · Класичний crontab для DE, хто ще не на Airflow.",
+        "en": "Один bash-скрипт ingest.sh — запускати щодня о 03:00 UTC. · Класичний crontab для DE, хто ще не на Airflow."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O4",
+      "tag": "⚙️ · 4/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Sensor чи сліпий cron?",
+        "en": "Sensor чи сліпий cron?"
+      },
+      "prompt": {
+        "ua": "Cron о 02:00 інколи бʼє в порожній prefix — mart пустий. · Файл від vendor може приїхати між 01:00 і 04:00. Mart треба до 06:00.",
+        "en": "Cron о 02:00 інколи бʼє в порожній prefix — mart пустий. · Файл від vendor може приїхати між 01:00 і 04:00. Mart треба до 06:00."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O5",
+      "tag": "⚙️ · 5/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що не так у DAG?",
+        "en": "Що не так у DAG?"
+      },
+      "prompt": {
+        "ua": "start_date давно в минулому + catchup увімкнено. · Junior додав DAG у prod — раптом тисячі backfill runs.",
+        "en": "start_date давно в минулому + catchup увімкнено. · Junior додав DAG у prod — раптом тисячі backfill runs."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O6",
+      "tag": "⚙️ · 6/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Cron чи Airflow?",
+        "en": "Cron чи Airflow?"
+      },
+      "prompt": {
+        "ua": "DAG · operators · sensors · schedule · retry · Cron vs orchestrator",
+        "en": "DAG · operators · sensors · schedule · retry · Cron vs orchestrator"
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O7",
+      "tag": "⚙️ · 7/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Залежності task >> retry",
+        "en": "Залежності task >> retry"
+      },
+      "prompt": {
+        "ua": "extract → validate → transform → mart. Два retries через 5 хв. · Airflow Python: ланцюжок і resilience.",
+        "en": "extract → validate → transform → mart. Два retries через 5 хв. · Airflow Python: ланцюжок і resilience."
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C0",
+      "tag": "📥 · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Full vs incremental",
+        "en": "Full vs incremental"
+      },
+      "prompt": {
+        "ua": "На Middle DE: «як оновлюєш mart щодня без повного reload?»",
+        "en": "На Middle DE: «як оновлюєш mart щодня без повного reload?»"
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C1",
+      "tag": "📥 · 1/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · патерн ↔ сенс",
+        "en": "MATCH · патерн ↔ сенс"
+      },
+      "prompt": {
+        "ua": "Терміни incremental ETL на інтервʼю.",
+        "en": "Терміни incremental ETL на інтервʼю."
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C2",
+      "tag": "📥 · 2/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "SQL · extract delta",
+        "en": "SQL · extract delta"
+      },
+      "prompt": {
+        "ua": "Вчора watermark = 2026-07-10 23:00:00. Тягнемо лише свіжіші події. · Джерело: staging.events з updated_at. Watermark у змінній pipeline.",
+        "en": "Вчора watermark = 2026-07-10 23:00:00. Тягнемо лише свіжіші події. · Джерело: staging.events з updated_at. Watermark у змінній pipeline."
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C3",
+      "tag": "📥 · 3/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "State table · commit watermark",
+        "en": "State table · commit watermark"
+      },
+      "prompt": {
+        "ua": "Watermark пишемо лише коли core.events і mart узгоджені. · Після успішного load оновлюємо meta.pipeline_watermarks.",
+        "en": "Watermark пишемо лише коли core.events і mart узгоджені. · Після успішного load оновлюємо meta.pipeline_watermarks."
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C4",
+      "tag": "📥 · 4/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що не так із load?",
+        "en": "Що не так із load?"
+      },
+      "prompt": {
+        "ua": "Скрипт append-ить у mart кожен раз. · DAG упав після load, rerun зранку — у mart подвоєні замовлення.",
+        "en": "Скрипт append-ить у mart кожен раз. · DAG упав після load, rerun зранку — у mart подвоєні замовлення."
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C5",
+      "tag": "📥 · 5/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "MERGE чи append?",
+        "en": "MERGE чи append?"
+      },
+      "prompt": {
+        "ua": "Той самий order_id може прийти з новим status у delta. · core.orders вже має order_id. Щоденний batch з оновленнями status.",
+        "en": "Той самий order_id може прийти з новим status у delta. · core.orders вже має order_id. Щоденний batch з оновленнями status."
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C6",
+      "tag": "📥 · 6/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Backfill чи incremental?",
+        "en": "Backfill чи incremental?"
+      },
+      "prompt": {
+        "ua": "full vs incremental · watermark · idempotency · backfill · MERGE",
+        "en": "full vs incremental · watermark · idempotency · backfill · MERGE"
+      }
+    },
+    {
+      "id": "gym-15-incremental-loads-de-C7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C7",
+      "tag": "📥 · 7/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Безпечний incremental run",
+        "en": "Безпечний incremental run"
+      },
+      "prompt": {
+        "ua": "Watermark не оновлюємо, якщо validate failed. · Розстав кроки nightly job (happy path + safe commit).",
+        "en": "Watermark не оновлюємо, якщо validate failed. · Розстав кроки nightly job (happy path + safe commit)."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D0",
+      "tag": "🌊 · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Batch vs stream",
+        "en": "Batch vs stream"
+      },
+      "prompt": {
+        "ua": "На інтервʼю не треба адмінити Kafka — достатньо знати, коли stream, а коли nightly batch.",
+        "en": "На інтервʼю не треба адмінити Kafka — достатньо знати, коли stream, а коли nightly batch."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D1",
+      "tag": "🌊 · 1/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · stream + Mongo",
+        "en": "MATCH · stream + Mongo"
+      },
+      "prompt": {
+        "ua": "Терміни «на чай» для Middle/Senior DE.",
+        "en": "Терміни «на чай» для Middle/Senior DE."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D2",
+      "tag": "🌊 · 2/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Kafka чи nightly batch?",
+        "en": "Kafka чи nightly batch?"
+      },
+      "prompt": {
+        "ua": "Events з мобільного app. Оновлення mart кожні 5 хв. · Product хоче dashboard «активні юзери за останні 5 хв».",
+        "en": "Events з мобільного app. Оновлення mart кожні 5 хв. · Product хоче dashboard «активні юзери за останні 5 хв»."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D3",
+      "tag": "🌊 · 3/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "MongoDB · простий agg",
+        "en": "MongoDB · простий agg"
+      },
+      "prompt": {
+        "ua": "Документи в Mongo, не реляційна схема. Треба avg temp_c по device. · Колекція sensors: по device_id — avg temp.",
+        "en": "Документи в Mongo, не реляційна схема. Треба avg temp_c по device. · Колекція sensors: по device_id — avg temp."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D4",
+      "tag": "🌊 · 4/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Embed чи normalize?",
+        "en": "Embed чи normalize?"
+      },
+      "prompt": {
+        "ua": "batch vs stream · Kafka · MongoDB · when NoSQL",
+        "en": "batch vs stream · Kafka · MongoDB · when NoSQL"
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D5",
+      "tag": "🌊 · 5/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що не так із consumer?",
+        "en": "Що не так із consumer?"
+      },
+      "prompt": {
+        "ua": "Duplicate events потрапляють у mart. · Stream падає — consumer читає знову з початку topic без dedup.",
+        "en": "Duplicate events потрапляють у mart. · Stream падає — consumer читає знову з початку topic без dedup."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D6",
+      "tag": "🌊 · 6/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Потік: app → mart",
+        "en": "Потік: app → mart"
+      },
+      "prompt": {
+        "ua": "Клік → Kafka → STG → hourly mart. · Розстав кроки event pipeline (спрощено).",
+        "en": "Клік → Kafka → STG → hourly mart. · Розстав кроки event pipeline (спрощено)."
+      }
+    },
+    {
+      "id": "gym-16-stream-nosql-de-D7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D7",
+      "tag": "🌊 · 7/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Consumer lag росте",
+        "en": "Consumer lag росте"
+      },
+      "prompt": {
+        "ua": "Що перевіряєш першим як DE? · Grafana: lag 2M messages. BI скаржиться на stale data.",
+        "en": "Що перевіряєш першим як DE? · Grafana: lag 2M messages. BI скаржиться на stale data."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E0",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E0",
+      "tag": "🛡️ · карта",
+      "skill": "modeling",
+      "difficulty": "easy",
+      "minutes": 10,
+      "title": {
+        "ua": "Governance без бюрократії",
+        "en": "Governance без бюрократії"
+      },
+      "prompt": {
+        "ua": "Senior DE: не лише ETL, а «що ламається о 3 ночі і хто знає, що змінилось».",
+        "en": "Senior DE: не лише ETL, а «що ламається о 3 ночі і хто знає, що змінилось»."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E1",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E1",
+      "tag": "🛡️ · 1/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 12,
+      "title": {
+        "ua": "MATCH · governance ↔ сенс",
+        "en": "MATCH · governance ↔ сенс"
+      },
+      "prompt": {
+        "ua": "Терміни prod data platform.",
+        "en": "Терміни prod data platform."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E2",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E2",
+      "tag": "🛡️ · 2/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Mart порожній о 9:00",
+        "en": "Mart порожній о 9:00"
+      },
+      "prompt": {
+        "ua": "lineage · schema docs · incidents · alerts · migrations",
+        "en": "lineage · schema docs · incidents · alerts · migrations"
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E3",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E3",
+      "tag": "🛡️ · 3/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "dbt · document column",
+        "en": "dbt · document column"
+      },
+      "prompt": {
+        "ua": "Документуємо колонку в dbt — description + tests. · Analyst питає: «що таке is_active у mart_users?»",
+        "en": "Документуємо колонку в dbt — description + tests. · Analyst питає: «що таке is_active у mart_users?»"
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E4",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E4",
+      "tag": "🛡️ · 4/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Коли alert?",
+        "en": "Коли alert?"
+      },
+      "prompt": {
+        "ua": "Сьогодні load завершився, але rows = 200. · Nightly mart_orders: зазвичай 50k–55k rows.",
+        "en": "Сьогодні load завершився, але rows = 200. · Nightly mart_orders: зазвичай 50k–55k rows."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E5",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E5",
+      "tag": "🛡️ · 5/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Що не так із migration?",
+        "en": "Що не так із migration?"
+      },
+      "prompt": {
+        "ua": "Looker broken, notebook падає. · Deploy пʼятниця: rename column без попередження.",
+        "en": "Looker broken, notebook падає. · Deploy пʼятниця: rename column без попередження."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E6",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E6",
+      "tag": "🛡️ · 6/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Incident runbook",
+        "en": "Incident runbook"
+      },
+      "prompt": {
+        "ua": "Розстав кроки (не panic order). · P1: mart критичний для finance, дані stale 6h.",
+        "en": "Розстав кроки (не panic order). · P1: mart критичний для finance, дані stale 6h."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E7",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E7",
+      "tag": "🛡️ · 7/7",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 10,
+      "title": {
+        "ua": "Lineage request",
+        "en": "Lineage request"
+      },
+      "prompt": {
+        "ua": "lineage · schema docs · incidents · alerts · migrations",
+        "en": "lineage · schema docs · incidents · alerts · migrations"
       }
     },
     {
@@ -1242,8 +2021,8 @@
         "en": "D1 retention з таблиці"
       },
       "prompt": {
-        "ua": "Типова зміна: події апки, підписки, UA spend. CSV як у таску.",
-        "en": "Типова зміна: події апки, підписки, UA spend. CSV як у таску."
+        "ua": "Когорта install_date. D1 = повернулись наступного дня.",
+        "en": "Когорта install_date. D1 = повернулись наступного дня."
       }
     },
     {
@@ -1261,8 +2040,8 @@
         "en": "SQL: активні підписники"
       },
       "prompt": {
-        "ua": "Типова зміна: події апки, підписки, UA spend. CSV як у таску.",
-        "en": "Типова зміна: події апки, підписки, UA spend. CSV як у таску."
+        "ua": "Підписки зі статусами. Рахуємо mrr лише для active.",
+        "en": "Підписки зі статусами. Рахуємо mrr лише для active."
       }
     },
     {
@@ -1299,8 +2078,8 @@
         "en": "Скільки рядків після LEFT JOIN?"
       },
       "prompt": {
-        "ua": "Замовлення, статуси, 1:N джойн — класика.",
-        "en": "Замовлення, статуси, 1:N джойн — класика."
+        "ua": "3 users. У user 1 — два orders. LEFT JOIN users→orders.",
+        "en": "3 users. У user 1 — два orders. LEFT JOIN users→orders."
       }
     },
     {
@@ -1318,8 +2097,8 @@
         "en": "Актуальний статус замовлення (SCD2 руками)"
       },
       "prompt": {
-        "ua": "Замовлення, статуси, 1:N джойн — класика.",
-        "en": "Замовлення, статуси, 1:N джойн — класика."
+        "ua": "Лишаємо лише is_current=1 для кожного order_id.",
+        "en": "Лишаємо лише is_current=1 для кожного order_id."
       }
     },
     {
@@ -1356,8 +2135,8 @@
         "en": "Скільки валідних переглядів?"
       },
       "prompt": {
-        "ua": "Очистка логів переглядів і звіт для редакції.",
-        "en": "Очистка логів переглядів і звіт для редакції."
+        "ua": "Редакція рахує лише «справжні» перегляди: не бот, не занадто короткі, не NULL.",
+        "en": "Редакція рахує лише «справжні» перегляди: не бот, не занадто короткі, не NULL."
       }
     },
     {
@@ -1375,8 +2154,8 @@
         "en": "COALESCE для NULL seconds"
       },
       "prompt": {
-        "ua": "Очистка логів переглядів і звіт для редакції.",
-        "en": "Очистка логів переглядів і звіт для редакції."
+        "ua": "До фільтра bot/seconds треба замінити NULL seconds на 0 для звітів.",
+        "en": "До фільтра bot/seconds треба замінити NULL seconds на 0 для звітів."
       }
     },
     {
@@ -1432,8 +2211,8 @@
         "en": "Аномалії температури"
       },
       "prompt": {
-        "ua": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день.",
-        "en": "PoC→prod, сенсорні події, фічі для моделей. Узагальнений консалтинговий день."
+        "ua": "Потік з датчиків. Поріг alert: temp_c > 80.",
+        "en": "Потік з датчиків. Поріг alert: temp_c > 80."
       }
     },
     {
@@ -1489,8 +2268,8 @@
         "en": "Кістяк дедупа"
       },
       "prompt": {
-        "ua": "Ідемпотентність і дедуп платежів.",
-        "en": "Ідемпотентність і дедуп платежів."
+        "ua": "staging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.",
+        "en": "staging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at."
       }
     },
     {

@@ -1,0 +1,214 @@
+{
+  "id": "14-orchestration-de",
+  "title": "Orchestration · Airflow + Cron",
+  "subtitle": "DAG · operators · sensors · schedule · retry · Cron vs orchestrator",
+  "levels": [
+    {
+      "id": "O0",
+      "type": "theory",
+      "tag": "⚙️ · map",
+      "title": "Airflow in two minutes",
+      "instruction": "Middle DE: «how would you run nightly ETL?» — Cron or Airflow, and why.",
+      "viz": {
+        "type": "pipelineH",
+        "nodes": [
+          { "label": "Scheduler", "hint": "when to create DAG run", "color": "#5b8def" },
+          { "label": "DAG", "hint": "acyclic task graph", "color": "#3d9a6a" },
+          { "label": "Operator", "hint": "task action (SQL, Bash…)", "color": "#e8a84b" },
+          { "label": "Sensor", "hint": "wait for file/time/partition", "color": "#c77dff" }
+        ]
+      },
+      "flow": [
+        { "title": "Trigger", "desc": "schedule or manual run" },
+        { "title": "Tasks", "desc": "run by dependencies >>" },
+        { "title": "Retry", "desc": "retries + alert on failure" },
+        { "title": "Mart fresh", "desc": "BI sees new data" }
+      ],
+      "bullets": [
+        "DAG = Directed Acyclic Graph — no cycles A→B→A",
+        "Sensor blocks downstream until condition is true (file landed, partition exists)",
+        "Cron — OK for one script; Airflow — many steps, retries, UI, lineage"
+      ]
+    },
+    {
+      "id": "O1",
+      "type": "match_pairs",
+      "tag": "⚙️ · 1/7",
+      "title": "MATCH · orchestration ↔ term",
+      "instruction": "Airflow terms on interviews + when to mention Cron.",
+      "pairs": [
+        { "left": "DAG", "right": "Acyclic task graph + schedule" },
+        { "left": "Operator", "right": "Task action template (PythonOperator, Bash…)" },
+        { "left": "Sensor", "right": "Task that waits for condition (S3 file, partition)" },
+        { "left": "Task instance", "right": "One run of a specific task in a DAG run" },
+        { "left": "Cron (crontab)", "right": "Linux scheduler: 5 fields + command, no DAG UI" }
+      ]
+    },
+    {
+      "id": "O2",
+      "type": "drag_order",
+      "tag": "⚙️ · 2/7",
+      "title": "Task order in DAG",
+      "instruction": "Nightly orders ingest: wait for file first, then ETL.",
+      "mission": {
+        "emoji": "📋",
+        "title": "DAG daily_orders",
+        "brief": "File in S3 bronze/orders/ at 02:00. Then validate → transform → mart.",
+        "ask": "Correct execution order (top to bottom)."
+      },
+      "recallTips": [
+        "Sensor / wait — file exists?",
+        "Extract → staging",
+        "Validate / DQ",
+        "Transform → core",
+        "Load mart",
+        "Alert on failure"
+      ],
+      "recallMapRef": "📍 Bridge: DevOps Terraform · T7 output → Airflow Variable → this DAG.",
+      "items": [
+        "S3KeySensor: file in bronze/orders/",
+        "Extract → staging.orders",
+        "Validate row count + schema",
+        "Transform → core.orders",
+        "Refresh mart_revenue",
+        "Slack notify on success"
+      ]
+    },
+    {
+      "id": "O3",
+      "type": "fill_blanks",
+      "tag": "⚙️ · 3/7",
+      "title": "Cron · daily at 03:00",
+      "instruction": "Classic crontab for DE not yet on Airflow.",
+      "mission": {
+        "emoji": "🕒",
+        "title": "Server crontab",
+        "brief": "One bash script ingest.sh — run daily at 03:00 UTC.",
+        "ask": "Fill minutes and hours in the cron line."
+      },
+      "sampleTable": {
+        "headers": ["field", "value", "meaning"],
+        "rows": [
+          ["1", "minutes", "0–59"],
+          ["2", "hours", "0–23"],
+          ["3", "day of month", "* = every day"],
+          ["4", "month", "*"],
+          ["5", "day of week", "*"]
+        ],
+        "columnGlossary": {
+          "field": "Crontab field order (5 fields + command)",
+          "value": "Number or *",
+          "meaning": "Range or «any»"
+        },
+        "caption": "03:00 UTC → minutes=0, hours=3."
+      },
+      "controlTip": "Cron fields table above. Line below.",
+      "template": "# min hour dom mon dow\n____ ____ * * * /opt/etl/ingest.sh",
+      "answers": ["0", "3"],
+      "wordBank": ["0", "3", "30", "*", "03"],
+      "hints": ["Minutes first: 0 = start of hour.", "03:00 → hour = 3."]
+    },
+    {
+      "id": "O4",
+      "type": "multi_choice",
+      "tag": "⚙️ · 4/7",
+      "title": "Sensor or blind cron?",
+      "instruction": "Vendor file may land between 01:00 and 04:00. Mart needed by 06:00.",
+      "mission": {
+        "emoji": "📡",
+        "title": "Unreliable landing time",
+        "brief": "Cron at 02:00 sometimes hits empty prefix — empty mart.",
+        "ask": "What do you change in design?"
+      },
+      "question": "Best pattern for «file when ready»?",
+      "options": [
+        "S3KeySensor / FileSensor + timeout + downstream transform; frequent DAG schedule, sensor pokes until success",
+        "Daily cron with no check — if no file, just skip",
+        "Run extract every 5 minutes without sensor — duplicate loads",
+        "Manually click Run in BI every morning"
+      ],
+      "correctIndex": 0,
+      "explanation": "Sensor = wait for condition; timeout + alert if file never appears."
+    },
+    {
+      "id": "O5",
+      "type": "whats_wrong",
+      "tag": "⚙️ · 5/7",
+      "title": "What's wrong with this DAG?",
+      "instruction": "Junior added DAG to prod — thousands of backfill runs appear.",
+      "mission": {
+        "emoji": "🔥",
+        "title": "Code review",
+        "brief": "start_date far in the past + catchup enabled.",
+        "ask": "Main mistake?"
+      },
+      "buggyCode": "from airflow import DAG\nfrom datetime import datetime\n\nwith DAG(\n    dag_id='daily_mart',\n    start_date=datetime(2020, 1, 1),\n    schedule_interval='@daily',\n    catchup=True,\n) as dag:\n    extract >> transform >> load_mart",
+      "prompt": "Why is this dangerous in prod?",
+      "options": [
+        "catchup=True + old start_date → Airflow creates a DAG run for every missed day since 2020",
+        "schedule_interval @daily is forbidden in Airflow 2",
+        "extract >> transform syntax is wrong",
+        "dag_id must be a UUID"
+      ],
+      "correctIndex": 0,
+      "explainOk": "New DAG: catchup=False or start_date ≈ today; backfill only deliberately.",
+      "explanation": "On interview: «check catchup and start_date before merge»."
+    },
+    {
+      "id": "O6",
+      "type": "scenario",
+      "tag": "⚙️ · 6/7",
+      "title": "Cron or Airflow?",
+      "emoji": "🤔",
+      "scene": "One 80-line Python script, once daily, no dependencies, one server. PM: «Why Airflow?»",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Cron + log + simple alert (email/Slack) is enough; Airflow is overkill now",
+          "feedback": "Mature trade-off: don't drag orchestrator without need."
+        },
+        {
+          "label": "Airflow mandatory even for hello world",
+          "feedback": "Ops overhead without gain at small scope."
+        },
+        {
+          "label": "Run manually once a week",
+          "feedback": "Not a production pattern."
+        }
+      ]
+    },
+    {
+      "id": "O7",
+      "type": "fill_blanks",
+      "tag": "⚙️ · 7/7",
+      "title": "Task deps >> retry",
+      "instruction": "Airflow Python: chain and resilience.",
+      "mission": {
+        "emoji": "🔗",
+        "title": "DAG dependencies",
+        "brief": "extract → validate → transform → mart. Two retries after 5 min.",
+        "ask": "Fill >> chain and retries."
+      },
+      "sampleTable": {
+        "headers": ["task", "operator", "purpose"],
+        "rows": [
+          ["extract", "PythonOperator", "S3 → staging"],
+          ["validate", "ShortCircuit", "stop if rowcount=0"],
+          ["transform", "PythonOperator", "staging → core"],
+          ["load_mart", "PythonOperator", "core → mart"]
+        ],
+        "columnGlossary": {
+          "task": "task_id in DAG",
+          "operator": "Airflow action type",
+          "purpose": "ETL step"
+        },
+        "caption": ">> sets order; retries in default_args or per task."
+      },
+      "controlTip": "Task table above.",
+      "template": "extract >> ____ >> transform >> ____\n\n# default_args\nretries=____,\nretry_delay=timedelta(minutes=____)",
+      "answers": ["validate", "load_mart", "2", "5"],
+      "wordBank": ["validate", "load_mart", "extract", "2", "5", "0", "sensor"],
+      "hints": ["After extract — validate before transform.", "Two retries, 5 minute pause."]
+    }
+  ]
+}

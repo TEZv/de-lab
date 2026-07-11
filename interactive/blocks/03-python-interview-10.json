@@ -21,6 +21,12 @@
         "dict[key] — key може бути str/int/tuple",
         "set / dict як індекс списку → TypeError",
         "isinstance(x, dict/list/tuple) — розбір брудних даних"
+      ],
+      "recallTips": [
+        "list[i] — лише int або slice [start:stop]",
+        "dict[key] — key має бути hashable",
+        "set/dict як індекс list → TypeError",
+        "чистий Python: dict лічильник; Pandas: groupby"
       ]
     },
     {
@@ -80,7 +86,30 @@
       "tag": "PY · 5/10",
       "title": "Pandas groupby + mean",
       "instruction": "Середня зарплата по відділу. Памʼятай: mean ≠ avg.",
-      "template": "result = df.____('department').____(mean_salary=('salary', '____')).____()",
+      "mission": {
+        "emoji": "💼",
+        "title": "HR-звіт",
+        "brief": "Є таблиця співробітників. Треба середня salary по department.",
+        "ask": "Заповни ланцюжок groupby → agg(mean) → reset_index."
+      },
+      "sampleTable": {
+        "headers": ["employee_id", "department", "salary"],
+        "rows": [
+          ["e1", "IT", "3000"],
+          ["e2", "IT", "3500"],
+          ["e3", "HR", "2100"],
+          ["e4", "Sales", "1800"],
+          ["e5", "Sales", "2200"]
+        ],
+        "columnGlossary": {
+          "employee_id": "ID співробітника (не групуємо)",
+          "department": "Ключ groupby — відділ",
+          "salary": "Число для agg mean"
+        },
+        "caption": "Після agg: IT→3250, HR→2100, Sales→2000."
+      },
+      "controlTip": "Таблиця й місія — вище. Код нижче.",
+      "template": "result = df.____('department')\n    .____(mean_salary=('salary', '____'))\n    .____()",
       "answers": ["groupby", "agg", "mean", "reset_index"],
       "wordBank": ["groupby", "agg", "mean", "avg", "sum", "reset_index", "merge"],
       "hints": [
@@ -94,6 +123,35 @@
       "tag": "PY · 6/10",
       "title": "pd.merge = LEFT JOIN",
       "instruction": "users ⟕ orders по user_id.",
+      "mission": {
+        "emoji": "🔗",
+        "title": "Злиття DataFrame",
+        "brief": "Ліва таблиця users — усі користувачі лишаються. orders додає колонки справа.",
+        "ask": "Заповни merge: ліва, права, ключ, how='left'."
+      },
+      "joinTables": [
+        {
+          "title": "df_users",
+          "headers": ["user_id", "name"],
+          "rows": [["u1", "Anna"], ["u2", "Bob"], ["u3", "Cara"]],
+          "columnGlossary": {
+            "user_id": "Ключ merge",
+            "name": "Атрибут user"
+          }
+        },
+        {
+          "title": "df_orders",
+          "headers": ["order_id", "user_id", "amount"],
+          "rows": [["o100", "u1", "50"], ["o101", "u1", "30"], ["o200", "u3", "80"]],
+          "columnGlossary": {
+            "order_id": "ID замовлення",
+            "user_id": "FK → users",
+            "amount": "Сума"
+          }
+        }
+      ],
+      "joinCaption": "pd.merge(..., how='left') = SQL LEFT JOIN. u2 без orders → NaN у колонках orders.",
+      "controlTip": "Дві таблиці вище — заповни merge нижче.",
       "template": "merged = pd.merge(\n    ____,\n    ____,\n    on='____',\n    how='____'\n)",
       "answers": ["df_users", "df_orders", "user_id", "left"],
       "wordBank": ["df_users", "df_orders", "user_id", "left", "inner", "right", "outer"],
@@ -136,13 +194,39 @@
       "type": "match_pairs",
       "tag": "PY · 9/10",
       "title": "MATCH · типи",
-      "instruction": "Що можна юзати як ключ / індекс?",
+      "instruction": "Що можна юзати як ключ / індекс? Спочатку — приклади, не абстракції.",
+      "studyIntro": "<strong>Крок 1 · побач різницю list vs dict.</strong> Зліва — позиція (int), справа — ключ (hashable). Потім пари.",
+      "studyViz": {
+        "type": "splitCompare",
+        "columns": [
+          {
+            "title": "list[i] · позиція",
+            "color": "#5b8def",
+            "items": [
+              "words[0] → 'hello' (int index)",
+              "words[-1] → останній",
+              "words[::-1] → reverse slice",
+              "list[{'a':1}] → TypeError ❌"
+            ]
+          },
+          {
+            "title": "dict[k] · ключ",
+            "color": "#3d9a6a",
+            "items": [
+              "counts['apple'] → 3 (str key)",
+              "counts.get('pear', 0) → без KeyError",
+              "key = tuple → OK (hashable)",
+              "key = list → TypeError ❌"
+            ]
+          }
+        ]
+      },
       "pairs": [
-        { "left": "list[i]", "right": "лише int (або slice)" },
-        { "left": "dict[k]", "right": "hashable key (str/int/tuple)" },
+        { "left": "list[i]", "right": "лише int (або slice)", "studyHint": "↑ list-колонка" },
+        { "left": "dict[k]", "right": "hashable key (str/int/tuple)", "studyHint": "↑ dict-колонка" },
         { "left": "isinstance(x, dict)", "right": "перевірка типу перед парсингом" },
-        { "left": "word[::-1]", "right": "перевернутий рядок" },
-        { "left": "counts.get(k, 0)", "right": "лічильник без if/else" }
+        { "left": "word[::-1]", "right": "перевернутий рядок", "studyHint": "↑ slice" },
+        { "left": "counts.get(k, 0)", "right": "лічильник без if/else", "studyHint": "↑ .get()" }
       ]
     },
     {
@@ -151,6 +235,15 @@
       "tag": "PY · 10/10",
       "title": "Розбір брудного списку (hah trick)",
       "instruction": "Порядок кроків для парсингу mixed types → clean_dict.",
+      "recallIntro": "Алгоритм «hah trick» — спочатку прочитай кроки, потім розстав.",
+      "recallTips": [
+        "Порожній clean_dict = {}",
+        "for item: isinstance — dict чи list/tuple?",
+        "dict → витягни key/value (вкладений 'hah, trick')",
+        "list/tuple → [0]=key, [1]=value",
+        "В кінці — sort keys і зібрати результат"
+      ],
+      "recallMapRef": "📍 Карта: рівень P0 «Чистий Python vs Pandas» у цьому блоці.",
       "items": [
         "Створити clean_dict = {}",
         "for item in a: перевірити isinstance",

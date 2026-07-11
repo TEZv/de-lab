@@ -19,7 +19,30 @@
       "type": "fill_blanks",
       "tag": "SQL",
       "title": "Кістяк дедупа",
-      "template": "WITH r AS (\n  SELECT *,\n    ROW_NUMBER() OVER(PARTITION BY ____ ORDER BY ____ DESC) rn\n  FROM staging.payments\n)\nSELECT * FROM r WHERE rn = ____;",
+      "mission": {
+        "emoji": "🏦",
+        "title": "Payments dedup",
+        "brief": "staging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.",
+        "ask": "Заповни PARTITION BY, ORDER BY, rn."
+      },
+      "sampleTable": {
+        "headers": ["payment_id", "amount", "updated_at", "лишити?"],
+        "rows": [
+          ["p1", "10", "10:00", "—"],
+          ["p1", "10", "10:05", "✓ newest"],
+          ["p2", "20", "10:01", "✓ only"],
+          ["p3", "15", "10:03", "✓ newest"]
+        ],
+        "columnGlossary": {
+          "payment_id": "Business key — PARTITION BY",
+          "amount": "Сума (не ключ dedup)",
+          "updated_at": "Свіжість — ORDER BY DESC",
+          "лишити?": "rn=1 після ROW_NUMBER"
+        },
+        "caption": "Ті самі дані що F1 csv_lab."
+      },
+      "controlTip": "Таблиця вище — той самий кейс що F1.",
+      "template": "WITH r AS (\n  SELECT *,\n    ROW_NUMBER() OVER (\n      PARTITION BY ____\n      ORDER BY ____ DESC\n    ) rn\n  FROM staging.payments\n)\nSELECT *\nFROM r\nWHERE rn = ____;",
       "answers": ["payment_id", "updated_at", "1"],
       "wordBank": ["payment_id", "updated_at", "1", "amount", "0"],
       "hints": ["Ключ платежу.", "Найсвіжіший апдейт."]

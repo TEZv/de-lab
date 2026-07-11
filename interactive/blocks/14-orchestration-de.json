@@ -1,0 +1,220 @@
+{
+  "id": "14-orchestration-de",
+  "title": "Orchestration · Airflow + Cron",
+  "subtitle": "DAG · operators · sensors · schedule · retry · Cron vs orchestrator",
+  "levels": [
+    {
+      "id": "O0",
+      "type": "theory",
+      "tag": "⚙️ · карта",
+      "title": "Airflow у двох словах",
+      "instruction": "На Middle DE питають «як би ти запустив nightly ETL» — Cron або Airflow, і чому.",
+      "viz": {
+        "type": "pipelineH",
+        "nodes": [
+          { "label": "Scheduler", "hint": "коли створити DAG run", "color": "#5b8def" },
+          { "label": "DAG", "hint": "граф задач без циклів", "color": "#3d9a6a" },
+          { "label": "Operator", "hint": "дія task (SQL, Bash…)", "color": "#e8a84b" },
+          { "label": "Sensor", "hint": "чекати файл/час/partition", "color": "#c77dff" }
+        ]
+      },
+      "flow": [
+        { "title": "Trigger", "desc": "schedule або manual run" },
+        { "title": "Tasks", "desc": "виконуються за залежностями >>" },
+        { "title": "Retry", "desc": "retries + alert якщо failed" },
+        { "title": "Mart fresh", "desc": "BI бачить нові дані" }
+      ],
+      "bullets": [
+        "DAG = Directed **Acyclic** Graph — без циклів A→B→A",
+        "Sensor блокує downstream, поки умова не true (file landed, partition exists)",
+        "Cron — ок для одного скрипта; Airflow — коли кроків багато, retries, UI, lineage"
+      ]
+    },
+    {
+      "id": "O1",
+      "type": "match_pairs",
+      "tag": "⚙️ · 1/7",
+      "title": "MATCH · оркестрація ↔ термін",
+      "instruction": "Airflow-терміни на інтервʼю + коли згадати Cron.",
+      "pairs": [
+        { "left": "DAG", "right": "Граф задач без циклів + schedule" },
+        { "left": "Operator", "right": "Шаблон дії task (PythonOperator, Bash…)" },
+        { "left": "Sensor", "right": "Task, що чекає умову (S3 file, partition)" },
+        { "left": "Task instance", "right": "Один запуск конкретного task у DAG run" },
+        { "left": "Cron (crontab)", "right": "Linux scheduler: 5 полів + команда, без DAG UI" }
+      ]
+    },
+    {
+      "id": "O2",
+      "type": "drag_order",
+      "tag": "⚙️ · 2/7",
+      "title": "Порядок задач у DAG",
+      "instruction": "Nightly ingest orders: спочатку чекаємо файл, потім ETL. Розстав task-и.",
+      "mission": {
+        "emoji": "📋",
+        "title": "DAG daily_orders",
+        "brief": "Файл у S3 bronze/orders/ о 02:00. Далі validate → transform → mart.",
+        "ask": "Правильний порядок виконання (зверху вниз)."
+      },
+      "recallTips": [
+        "Sensor / wait — файл є?",
+        "Extract → staging",
+        "Validate / DQ",
+        "Transform → core",
+        "Load mart",
+        "Alert on failure"
+      ],
+      "recallMapRef": "📍 Bridge: DevOps Terraform · T7 output → Airflow Variable → цей DAG.",
+      "items": [
+        "S3KeySensor: file in bronze/orders/",
+        "Extract → staging.orders",
+        "Validate row count + schema",
+        "Transform → core.orders",
+        "Refresh mart_revenue",
+        "Slack notify on success"
+      ]
+    },
+    {
+      "id": "O3",
+      "type": "fill_blanks",
+      "tag": "⚙️ · 3/7",
+      "title": "Cron · щодня о 03:00",
+      "instruction": "Класичний crontab для DE, хто ще не на Airflow.",
+      "mission": {
+        "emoji": "🕒",
+        "title": "Crontab на сервері",
+        "brief": "Один bash-скрипт ingest.sh — запускати щодня о 03:00 UTC.",
+        "ask": "Заповни хвилини та години в cron-рядку."
+      },
+      "sampleTable": {
+        "headers": ["поле", "значення", "що означає"],
+        "rows": [
+          ["1", "хвилини", "0–59"],
+          ["2", "години", "0–23"],
+          ["3", "день місяця", "* = щодня"],
+          ["4", "місяць", "*"],
+          ["5", "день тижня", "*"]
+        ],
+        "columnGlossary": {
+          "поле": "Порядок у crontab (5 полів + команда)",
+          "значення": "Число або *",
+          "що означає": "Діапазон або «будь-який»"
+        },
+        "caption": "03:00 UTC → хвилини=0, години=3."
+      },
+      "controlTip": "Таблиця полів cron — вище. Рядок нижче.",
+      "template": "# min hour dom mon dow\n____ ____ * * * /opt/etl/ingest.sh",
+      "answers": ["0", "3"],
+      "wordBank": ["0", "3", "30", "*", "03"],
+      "hints": [
+        "Хвилини першими: 0 = на початку години.",
+        "03:00 → година = 3 (не 03 у word bank — число 3)."
+      ]
+    },
+    {
+      "id": "O4",
+      "type": "multi_choice",
+      "tag": "⚙️ · 4/7",
+      "title": "Sensor чи сліпий cron?",
+      "instruction": "Файл від vendor може приїхати між 01:00 і 04:00. Mart треба до 06:00.",
+      "mission": {
+        "emoji": "📡",
+        "title": "Ненадійний landing time",
+        "brief": "Cron о 02:00 інколи бʼє в порожній prefix — mart пустий.",
+        "ask": "Що зміниш у дизайні?"
+      },
+      "question": "Найкращий патерн для «файл коли готовий»?",
+      "options": [
+        "S3KeySensor / FileSensor + timeout + downstream transform; schedule DAG часто, sensor poke до success",
+        "Cron раз на добу без перевірки — якщо файлу нема, просто skip",
+        "Запускати extract кожні 5 хвилин без sensor — дублювати load",
+        "Вручну клікати Run у BI щоранку"
+      ],
+      "correctIndex": 0,
+      "explanation": "Sensor = чекати умову; timeout + alert якщо файл не зʼявився."
+    },
+    {
+      "id": "O5",
+      "type": "whats_wrong",
+      "tag": "⚙️ · 5/7",
+      "title": "Що не так у DAG?",
+      "instruction": "Junior додав DAG у prod — раптом тисячі backfill runs.",
+      "mission": {
+        "emoji": "🔥",
+        "title": "Code review",
+        "brief": "start_date давно в минулому + catchup увімкнено.",
+        "ask": "Головна помилка?"
+      },
+      "buggyCode": "from airflow import DAG\nfrom datetime import datetime\n\nwith DAG(\n    dag_id='daily_mart',\n    start_date=datetime(2020, 1, 1),\n    schedule_interval='@daily',\n    catchup=True,\n) as dag:\n    extract >> transform >> load_mart",
+      "prompt": "Чому це небезпечно в prod?",
+      "options": [
+        "catchup=True + старий start_date → Airflow створить DAG run на кожен пропущений день з 2020",
+        "schedule_interval @daily заборонений у Airflow 2",
+        "extract >> transform синтаксис невірний",
+        "dag_id має бути UUID"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Новий DAG: catchup=False або start_date ≈ сьогодні; backfill — лише свідомо.",
+      "explanation": "На інтервʼю: «перевірю catchup і start_date перед merge»."
+    },
+    {
+      "id": "O6",
+      "type": "scenario",
+      "tag": "⚙️ · 6/7",
+      "title": "Cron чи Airflow?",
+      "emoji": "🤔",
+      "scene": "Один Python-скрипт 80 рядків, раз на добу, без залежностей, один сервер. PM: «Навіщо Airflow?»",
+      "bestIndex": 0,
+      "choices": [
+        {
+          "label": "Cron + log + простий alert (email/Slack) достатньо; Airflow — overkill зараз",
+          "feedback": "Зрілий trade-off: не тягнути оркестратор без потреби."
+        },
+        {
+          "label": "Обовʼязково Airflow навіть для hello world",
+          "feedback": "Ops overhead без виграшу на малому scope."
+        },
+        {
+          "label": "Запускати вручну раз на тиждень",
+          "feedback": "Не production pattern."
+        }
+      ]
+    },
+    {
+      "id": "O7",
+      "type": "fill_blanks",
+      "tag": "⚙️ · 7/7",
+      "title": "Залежності task >> retry",
+      "instruction": "Airflow Python: ланцюжок і resilience.",
+      "mission": {
+        "emoji": "🔗",
+        "title": "DAG dependencies",
+        "brief": "extract → validate → transform → mart. Два retries через 5 хв.",
+        "ask": "Заповни >> ланцюжок і retries."
+      },
+      "sampleTable": {
+        "headers": ["task", "operator", "навіщо"],
+        "rows": [
+          ["extract", "PythonOperator", "з S3 у staging"],
+          ["validate", "ShortCircuit", "stop якщо rowcount=0"],
+          ["transform", "PythonOperator", "staging → core"],
+          ["load_mart", "PythonOperator", "core → mart"]
+        ],
+        "columnGlossary": {
+          "task": "task_id у DAG",
+          "operator": "тип дії Airflow",
+          "навіщо": "крок ETL"
+        },
+        "caption": ">> задає порядок; retries на рівні default_args або task."
+      },
+      "controlTip": "Таблиця task-ів — вище.",
+      "template": "extract >> ____ >> transform >> ____\n\n# default_args\nretries=____,\nretry_delay=timedelta(minutes=____)",
+      "answers": ["validate", "load_mart", "2", "5"],
+      "wordBank": ["validate", "load_mart", "extract", "2", "5", "0", "sensor"],
+      "hints": [
+        "Після extract — validate перед transform.",
+        "Два retries, пауза 5 хвилин."
+      ]
+    }
+  ]
+}

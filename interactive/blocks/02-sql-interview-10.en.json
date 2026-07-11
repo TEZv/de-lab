@@ -1,0 +1,421 @@
+{
+  "id": "02-sql-interview-10",
+  "title": "SQL Interview · 10 drills",
+  "subtitle": "HAVING · windows · JOIN traps · min-in-group · LAG · DQ",
+  "levels": [
+    {
+      "id": "S0",
+      "type": "theory",
+      "tag": "SQL · map",
+      "title": "Before practice · SQL execution order",
+      "instruction": "The server does not run clauses in the order you read them.",
+      "viz": {
+        "type": "sqlOrder",
+        "over": "window: does NOT collapse rows — ROW_NUMBER / LAG",
+        "steps": [
+          { "label": "FROM", "color": "#5b8def", "note": "tables" },
+          { "label": "WHERE", "color": "#4ecdc4", "note": "filter raw rows" },
+          { "label": "GROUP BY", "color": "#e8a84b", "note": "collapse" },
+          { "label": "HAVING", "color": "#ff6b6b", "note": "filter aggregates" },
+          { "label": "SELECT", "color": "#3d9a6a", "note": "projection" },
+          { "label": "ORDER BY", "color": "#c77dff", "note": "sort" }
+        ]
+      },
+      "bullets": [
+        "SELECT aliases do not work in WHERE / GROUP BY",
+        "Every non-aggregated column in SELECT must be in GROUP BY",
+        "ROW_NUMBER / LAG — #1 tool on live-coding"
+      ],
+      "recallTips": [
+        "FROM — where rows come from (tables / JOIN)",
+        "WHERE — filter raw rows (before GROUP BY)",
+        "GROUP BY — collapse into groups + aggregates",
+        "HAVING — filter on aggregates (after GROUP BY)",
+        "SELECT — project columns (aliases appear here)",
+        "ORDER BY — sort at the end"
+      ],
+      "recallMnemonic": "Mnemonic: FWGHSO — «From Where Group Having Select Order» (not how you read it!)"
+    },
+    {
+      "id": "S1",
+      "type": "fill_blanks",
+      "tag": "SQL · 1/10",
+      "title": "HAVING vs WHERE",
+      "instruction": "Only departments where average salary > 2000.",
+      "mission": {
+        "emoji": "💼",
+        "title": "HR analytics",
+        "brief": "Table core.employees: many people per department. First GROUP BY + AVG(salary), then drop low-paying departments.",
+        "ask": "Filter on an aggregate — which keyword after GROUP BY?"
+      },
+      "sampleTable": {
+        "headers": ["department", "avg_salary"],
+        "rows": [
+          ["IT", "3200"],
+          ["HR", "2100"],
+          ["Sales", "1850"]
+        ],
+        "highlight": [0, 1],
+        "caption": "Sales (1850) fails the 2000 threshold. WHERE won't work — we filter grouped rows.",
+        "columnGlossary": {
+          "department": "Department name",
+          "avg_salary": "Average salary per department after GROUP BY"
+        }
+      },
+      "controlTip": "Mission and table above. Fill the SQL gap.",
+      "recallTips": [
+        "WHERE — filters rows BEFORE grouping (per-person salary)",
+        "GROUP BY department + AVG(salary) — per department",
+        "HAVING — drops groups below threshold (not WHERE!)"
+      ],
+      "recallMnemonic": "Rule: WHERE = rows · HAVING = groups after aggregate",
+      "template": "SELECT department, AVG(salary) AS avg_sal\nFROM core.employees\nGROUP BY department\n____ AVG(salary) > 2000;",
+      "answers": ["HAVING"],
+      "wordBank": ["HAVING", "WHERE", "ORDER BY", "LIMIT"],
+      "hints": ["Aggregates live after GROUP BY.", "WHERE cannot see AVG()."]
+    },
+    {
+      "id": "S2",
+      "type": "fill_blanks",
+      "tag": "SQL · 2/10",
+      "title": "ROW_NUMBER · top-1 per group",
+      "instruction": "Procurement: cheapest vendor quote per (category_code, tier).",
+      "mission": {
+        "emoji": "🛒",
+        "title": "Marketplace · RFQ",
+        "brief": "Vendors submit quotes for the same category and quality tier. Need one row per (category_code, tier) with minimum unit_price. Standard live-coding pattern (min per group) — no fantasy tables.",
+        "ask": "Grain = one winner per (category_code, tier). What do we rank by?"
+      },
+      "sampleTable": {
+        "headers": ["quote_id", "category_code", "tier", "unit_price", "in result?"],
+        "rows": [
+          ["Q-101", "ELEC", "A", "12.50", "—"],
+          ["Q-102", "ELEC", "A", "9.99", "✓ min"],
+          ["Q-201", "ELEC", "B", "15.00", "✓ only"],
+          ["Q-301", "HOME", "A", "8.00", "✓ only"]
+        ],
+        "highlight": [1],
+        "caption": "Same pattern as public «cheapest SKU / listing» tasks — B2B column names.",
+        "columnGlossary": {
+          "quote_id": "Supplier quote ID",
+          "category_code": "Product category (groups with tier)",
+          "tier": "Quality tier (A, B…)",
+          "unit_price": "Price per unit",
+          "in result?": "Hint: row kept after min per group"
+        }
+      },
+      "why": "On interviews: 1) restate the prompt, 2) draw grain, 3) then OVER (PARTITION … ORDER …).",
+      "template": "WITH ranked AS (\n  SELECT quote_id, category_code, tier, unit_price,\n    ROW_NUMBER() OVER (\n      ____ BY category_code, tier\n      ____ BY unit_price ____\n    ) AS rn\n  FROM staging.vendor_quotes\n)\nSELECT quote_id, category_code, tier, unit_price\nFROM ranked\nWHERE rn = ____;",
+      "answers": ["PARTITION", "ORDER", "ASC", "1"],
+      "wordBank": ["PARTITION", "ORDER", "ASC", "DESC", "GROUP", "1", "0"],
+      "hints": [
+        "Group = PARTITION BY category_code, tier (rows stay).",
+        "Cheapest → ORDER BY unit_price ASC, then rn = 1."
+      ],
+      "revealOnFail": false,
+      "controlTip": "Mission and table above. SQL skeleton below."
+    },
+    {
+      "id": "S3",
+      "type": "fill_blanks",
+      "tag": "SQL · 3/10",
+      "title": "Min price per group (SKU)",
+      "instruction": "Same pattern as S2, but SKU catalog: is_active filter + result sort.",
+      "mission": {
+        "emoji": "🏷️",
+        "title": "Catalog / pricing",
+        "brief": "Among active rows: for each (power, age) pair — minimum price. Sort: power↓ age↓.",
+        "ask": "Raw rows in the table below. Find 3 final SKUs, then fill SQL."
+      },
+      "sampleTable": {
+        "headers": ["sku_id", "power", "age", "price", "is_active", "in result?"],
+        "rows": [
+          ["77", "5", "45", "10", "1", "✓ min"],
+          ["12", "5", "45", "50", "1", "—"],
+          ["99", "5", "45", "120", "1", "—"],
+          ["43", "8", "40", "25", "1", "✓ min"],
+          ["55", "8", "40", "80", "1", "—"],
+          ["3", "8", "40", "5", "0", "inactive"],
+          ["21", "10", "20", "40", "1", "✓ min"]
+        ],
+        "highlight": [0, 3, 6],
+        "caption": "Expected result (3 rows): (10,20,40) → (8,40,25) → (5,45,10). Skip is_active=0 even if price is lowest.",
+        "columnGlossary": {
+          "sku_id": "Row ID in the price list (one seller offer)",
+          "power": "Product «power» class — groups with age",
+          "age": "Batch / series age (product attribute, not person age)",
+          "price": "Price in one currency",
+          "is_active": "1 = listed, 0 = delisted",
+          "in result?": "Hint: included in final answer"
+        }
+      },
+      "why": "Point at winners in the table first — then PARTITION BY power, age and ORDER BY price ASC.",
+      "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n         ROW_NUMBER() OVER(\n           PARTITION BY ____, ____\n           ORDER BY price ____\n         ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price\nFROM ranked\nWHERE rn = 1\nORDER BY power ____, age DESC;",
+      "answers": ["power", "age", "ASC", "1", "DESC"],
+      "wordBank": ["power", "age", "sku_id", "ASC", "DESC", "0", "1"],
+      "hints": [
+        "PARTITION BY power, age.",
+        "Active → is_active = 1.",
+        "Final ORDER: power DESC."
+      ],
+      "revealOnFail": false,
+      "controlTip": "Mission and table above. SQL skeleton below."
+    },
+    {
+      "id": "S4",
+      "type": "fill_blanks",
+      "tag": "SQL · 4/10",
+      "title": "LAG · previous session",
+      "instruction": "For each session — previous session time for the same user_id.",
+      "mission": {
+        "emoji": "📱",
+        "title": "Product · retention",
+        "brief": "Table core.user_sessions: user_id, session_start. PM wants prev_session — when this user was online BEFORE the current row.",
+        "ask": "Which function looks at the previous row in the window?"
+      },
+      "sampleTable": {
+        "headers": ["user_id", "session_start", "prev_session"],
+        "rows": [
+          ["42", "2026-01-01 10:00", "NULL"],
+          ["42", "2026-01-03 14:00", "2026-01-01 10:00"],
+          ["42", "2026-01-05 09:00", "2026-01-03 14:00"]
+        ],
+        "highlight": [1, 2],
+        "caption": "PARTITION BY user_id · ORDER BY session_start — timeline per user.",
+        "columnGlossary": {
+          "user_id": "User identifier",
+          "session_start": "Session start time",
+          "prev_session": "Expected LAG — previous session for this user"
+        }
+      },
+      "controlTip": "Mission and expected output above.",
+      "template": "SELECT user_id, session_start,\n  ____(session_start) OVER (\n    PARTITION BY user_id\n    ORDER BY session_start\n  ) AS prev_session\nFROM core.user_sessions;",
+      "answers": ["LAG"],
+      "wordBank": ["LAG", "LEAD", "ROW_NUMBER", "FIRST_VALUE", "NOW"],
+      "hints": ["Previous row = LAG, next = LEAD.", "NOW() is «now», not the past session."]
+    },
+    {
+      "id": "S5",
+      "type": "whats_wrong",
+      "tag": "SQL · 5/10 · trap",
+      "title": "What's wrong?",
+      "instruction": "Classic live-coding mistake: MAX in WHERE.",
+      "mission": {
+        "emoji": "🪤",
+        "title": "Interviewer prompt",
+        "brief": "«Show customer_id where max order amount > 500, sort by amount». Candidate wrote the code below — find the main bug."
+      },
+      "buggyCode": "SELECT customer_id, MAX(amount) AS maximum_order_amount\nFROM orders\nWHERE MAX(amount) > 500\nGROUP BY maximum_order_amount\nORDER BY 2 DESC;",
+      "prompt": "Pick the main bug (there are several, but one key diagnosis).",
+      "options": [
+        "Aggregates in WHERE + GROUP BY on alias — need HAVING and GROUP BY customer_id",
+        "Need SELECT * instead of customer_id",
+        "ORDER BY 2 DESC is forbidden in all databases",
+        "MAX always requires a window function"
+      ],
+      "correctIndex": 0,
+      "explainOk": "WHERE MAX(...) is illegal; alias in GROUP BY too. Correct: GROUP BY customer_id HAVING MAX(amount) > 500.",
+      "explanation": "Filter aggregates with HAVING."
+    },
+    {
+      "id": "S6",
+      "type": "multi_choice",
+      "tag": "SQL · 6/10",
+      "title": "JOIN · row duplication",
+      "instruction": "Before JOIN — imagine cardinality.",
+      "mission": {
+        "emoji": "🔗",
+        "title": "Setup",
+        "brief": "users: 10 unique user_id. orders: many rows per user. LEFT JOIN users → orders — how many rows in the result?"
+      },
+      "joinTables": [
+        {
+          "title": "users (left)",
+          "headers": ["user_id", "name"],
+          "rows": [["u1", "Anna"], ["u2", "Bob"], ["u3", "Cara"]],
+          "columnGlossary": {
+            "user_id": "User key — join on this",
+            "name": "Display name (context only)"
+          }
+        },
+        {
+          "title": "orders (right)",
+          "headers": ["order_id", "user_id", "amount"],
+          "rows": [["o100", "u1", "50"], ["o101", "u1", "30"], ["o200", "u3", "80"]],
+          "columnGlossary": {
+            "order_id": "Order ID",
+            "user_id": "FK → users.user_id (1:N link)",
+            "amount": "Order amount"
+          }
+        }
+      ],
+      "joinCaption": "u1 has 2 orders → duplicated after LEFT JOIN. u2 has no orders → one row with NULLs. Total 4 rows from 3 users.",
+      "question": "Can a LEFT JOIN result have MORE than 10 rows?",
+      "options": [
+        "Yes — if one user has several orders, the user row is duplicated",
+        "No — LEFT JOIN never increases row count of the left table",
+        "Only with INNER JOIN",
+        "Only with FULL OUTER JOIN"
+      ],
+      "correctIndex": 0,
+      "explanation": "1:N relationship inflates cardinality. A common cause of duplicate metrics."
+    },
+    {
+      "id": "S7",
+      "type": "fill_blanks",
+      "tag": "SQL · 7/10",
+      "title": "COALESCE · NULL in CORE",
+      "instruction": "On staging layer: replace NULL in amount with 0 before loading to core.",
+      "mission": {
+        "emoji": "🧹",
+        "title": "DQ · staging → core",
+        "brief": "In staging.orders some amount = NULL (source glitch). In marts, sums cannot be NULL — default 0.",
+        "ask": "Which function returns first non-NULL?"
+      },
+      "sampleTable": {
+        "headers": ["order_id", "amount (raw)", "cleaned_amount"],
+        "rows": [
+          ["O-1", "120.50", "120.50"],
+          ["O-2", "NULL", "0"],
+          ["O-3", "80", "80"]
+        ],
+        "highlight": [1],
+        "caption": "Typical DQ requirement on DE/AE interviews.",
+        "columnGlossary": {
+          "order_id": "Order ID",
+          "amount (raw)": "Source amount — may be NULL",
+          "cleaned_amount": "After COALESCE: NULL → 0"
+        }
+      },
+      "controlTip": "Mission above — fill function and default.",
+      "template": "SELECT order_id,\n  ____(amount, ____) AS cleaned_amount\nFROM staging.orders;",
+      "answers": ["COALESCE", "0"],
+      "wordBank": ["COALESCE", "IFNULL", "0", "NULL", "CASE"],
+      "hints": ["COALESCE returns first non-NULL.", "Alternative: CASE WHEN amount IS NULL THEN 0."]
+    },
+    {
+      "id": "S8",
+      "type": "fill_blanks",
+      "tag": "SQL · 8/10",
+      "title": "Deduplication",
+      "instruction": "Keep one row per user_id — freshest by updated_at.",
+      "mission": {
+        "emoji": "💳",
+        "title": "Fintech · CDC duplicates",
+        "brief": "staging.users gets repeat loads for the same user_id. Core needs one current row per key.",
+        "ask": "PARTITION BY what? ORDER BY what DESC? rn = ?"
+      },
+      "sampleTable": {
+        "headers": ["user_id", "updated_at", "keep?"],
+        "rows": [
+          ["U-9", "2026-06-01", "—"],
+          ["U-9", "2026-06-10", "✓ newest"],
+          ["U-9", "2026-06-05", "—"]
+        ],
+        "highlight": [1],
+        "caption": "ROW_NUMBER … WHERE rn = 1 — standard dedup on interviews.",
+        "columnGlossary": {
+          "user_id": "Business key — one current row per user",
+          "updated_at": "Last update time — pick newest",
+          "keep?": "Hint: row we keep"
+        }
+      },
+      "controlTip": "Mission and duplicate example above.",
+      "template": "WITH RankedData AS (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY ____\n           ORDER BY ____ DESC\n         ) AS rn\n  FROM staging.users\n)\nSELECT *\nFROM RankedData\nWHERE rn = ____;",
+      "answers": ["user_id", "updated_at", "1"],
+      "wordBank": ["user_id", "updated_at", "created_at", "1", "0", "email"],
+      "hints": ["Uniqueness key = user_id.", "Newest = ORDER BY updated_at DESC, rn=1."]
+    },
+    {
+      "id": "S9",
+      "type": "match_pairs",
+      "tag": "SQL · 9/10",
+      "title": "MATCH · windows vs aggregates",
+      "instruction": "Match each tool to its behavior — look at the tables first, not words alone.",
+      "studyIntro": "<strong>Step 1 · see the result.</strong> Two schemas below: GROUP BY collapses rows, OVER does not. Then ranking. Read the tables → then match pairs.",
+      "studyVizs": [
+        {
+          "type": "sqlGroupVsWindow",
+          "title": "Same orders — two different results",
+          "source": {
+            "title": "Input data",
+            "headers": ["dept", "amount"],
+            "rows": [["IT", "10"], ["IT", "30"], ["HR", "20"]]
+          },
+          "left": {
+            "title": "GROUP BY dept, SUM(amount)",
+            "subtitle": "3 rows → 2 (detail gone)",
+            "color": "#e8a84b",
+            "headers": ["dept", "total"],
+            "rows": [["IT", "40"], ["HR", "20"]],
+            "badge": "collapsed to 1 row per group"
+          },
+          "right": {
+            "title": "SUM(amount) OVER(PARTITION BY dept)",
+            "subtitle": "3 rows → all stay",
+            "color": "#3d9a6a",
+            "headers": ["dept", "amount", "dept_total"],
+            "rows": [["IT", "10", "40"], ["IT", "30", "40"], ["HR", "20", "20"]],
+            "highlight": [0, 1],
+            "badge": "sum «alongside» — dept_total on every row"
+          },
+          "footnote": "In interviews, draw exactly this: left = rows gone, right = new column, rows stay."
+        },
+        {
+          "type": "rankCompare",
+          "title": "Same scores — three different behaviors",
+          "rows": [
+            ["Ana", "90", "1", "1", "1"],
+            ["Bob", "90", "1", "1", "2"],
+            ["Cal", "80", "3", "2", "3"],
+            ["Dan", "80", "3", "2", "4"]
+          ],
+          "highlight": [0, 1, 2, 3],
+          "notes": [
+            { "fn": "RANK()", "note": "Ana+Bob tie at 1 → both 1; Cal+Dan tie at 3 (2 skipped)" },
+            { "fn": "DENSE_RANK()", "note": "tie shares rank, no gap → 1,1,2,2" },
+            { "fn": "ROW_NUMBER()", "note": "every row unique: 1,2,3,4" }
+          ],
+          "footnote": "ORDER BY score DESC. Tie = same score → RANK/DENSE match, ROW_NUMBER does not."
+        }
+      ],
+      "pairs": [
+        { "left": "GROUP BY + SUM", "right": "Collapses rows to 1 per group", "studyHint": "↑ schema 1, left" },
+        { "left": "SUM() OVER(PARTITION BY …)", "right": "Sum alongside, rows stay", "studyHint": "↑ schema 1, right" },
+        { "left": "RANK()", "right": "1,1,3,3 — gap after tie", "studyHint": "↑ schema 2, RANK col" },
+        { "left": "DENSE_RANK()", "right": "1,1,2,2 — no gap", "studyHint": "↑ schema 2, DENSE col" },
+        { "left": "ROW_NUMBER()", "right": "Always unique 1,2,3,4", "studyHint": "↑ schema 2, ROW# col" }
+      ]
+    },
+    {
+      "id": "S10",
+      "type": "drag_order",
+      "tag": "SQL · 10/10",
+      "title": "Query execution order",
+      "instruction": "Arrange as the server sees it (not as you write it).",
+      "recallIntro": "<strong>Map first.</strong> Same order as level <strong>S0 · SQL map</strong> at the start of this block.",
+      "studyViz": {
+        "type": "sqlOrder",
+        "over": "OVER() — after FROM; does not collapse rows"
+      },
+      "recallTips": [
+        "FROM — tables / JOIN",
+        "WHERE — filter raw rows",
+        "GROUP BY — collapse + aggregates",
+        "HAVING — filter groups (after GROUP BY)",
+        "SELECT — which columns to show",
+        "ORDER BY — sort at the end"
+      ],
+      "recallMnemonic": "FWGHSO: From → Where → Group → Having → Select → Order",
+      "recallMapRef": "📍 Forgot? Open S0 «Before practice · SQL execution order» in this block's level list.",
+      "items": [
+        "FROM",
+        "WHERE",
+        "GROUP BY",
+        "HAVING",
+        "SELECT",
+        "ORDER BY"
+      ]
+    }
+  ]
+}

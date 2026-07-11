@@ -1,0 +1,162 @@
+{
+  "id": "13-cloud-storage-de",
+  "title": "Cloud storage · Data Lake",
+  "subtitle": "S3 ≈ Azure Blob ≈ GCS · lake zones · IAM · lifecycle · partition · cost",
+  "levels": [
+    {
+      "id": "A0",
+      "type": "theory",
+      "tag": "☁️ · map",
+      "title": "Object storage + lake zones",
+      "instruction": "On interviews: one pattern — different names per cloud.",
+      "viz": {
+        "type": "layerStack",
+        "title": "Prefixes in bucket / container (typical)",
+        "layers": [
+          { "label": "bronze / raw", "sublabel": "raw CSV · JSON · logs as landed", "color": "#8b9cb3", "icon": "📥" },
+          { "label": "silver / curated", "sublabel": "cleaned · typed · dedup", "color": "#5b8def", "icon": "🧽" },
+          { "label": "gold / marts", "sublabel": "marts · parquet for BI/ML", "color": "#e8a84b", "icon": "📊" }
+        ],
+        "side": [
+          { "label": "AWS", "items": ["S3 bucket", "IAM role", "lifecycle → Glacier"] },
+          { "label": "Azure", "items": ["Blob container", "RBAC", "cool/archive tier"] },
+          { "label": "GCP", "items": ["GCS bucket", "IAM", "Nearline/Coldline"] }
+        ]
+      },
+      "bullets": [
+        "Object storage ≠ database: files + prefixes, no JOIN in S3",
+        "Path partition (year=/month=) — cheaper scans",
+        "Parquet in lake — compression + column pushdown in Spark/BQ/Synapse"
+      ],
+      "recallMapRef": "📍 Bridge: DevOps K8s · K0 (Deployment → Pod — where ETL/service runs)."
+    },
+    {
+      "id": "A1",
+      "type": "match_pairs",
+      "tag": "☁️ · 1/6",
+      "title": "MATCH · cloud ↔ term",
+      "instruction": "One concept — three vendors. Know the equivalents.",
+      "pairs": [
+        { "left": "S3 bucket", "right": "Azure Blob container ≈ GCS bucket" },
+        { "left": "S3 object key", "right": "Blob name ≈ GCS object path" },
+        { "left": "IAM role + policy", "right": "Azure RBAC ≈ GCS IAM" },
+        { "left": "s3://bucket/prefix/", "right": "https://acct.blob.core.windows.net/c/ ≈ gs://bucket/" },
+        { "left": "Lifecycle → Glacier", "right": "Cool/Archive tier ≈ Nearline/Coldline" }
+      ]
+    },
+    {
+      "id": "A2",
+      "type": "fill_blanks",
+      "tag": "☁️ · 2/6",
+      "title": "Lake path · partition",
+      "instruction": "Raw daily orders in bronze, partitioned by date.",
+      "mission": {
+        "emoji": "📂",
+        "title": "Bucket layout",
+        "brief": "Company stores parquet by day. Analysts read only the needed prefix — lower cost.",
+        "ask": "Fill lake zone and partition keys in the path."
+      },
+      "sampleTable": {
+        "headers": ["prefix", "zone", "purpose"],
+        "rows": [
+          ["bronze/orders/", "raw", "as landed from API"],
+          ["silver/orders/", "curated", "after DQ"],
+          ["gold/mart_revenue/", "mart", "for BI"]
+        ],
+        "columnGlossary": {
+          "prefix": "Folder prefix in bucket (not a new bucket per day)",
+          "zone": "bronze / silver / gold — data maturity stage",
+          "purpose": "Who consumes: ingest / DE / analyst"
+        },
+        "caption": "Hive-style: year= / month= / day= in path — partition, not a column in every file."
+      },
+      "controlTip": "Mission and zone table above. Path below.",
+      "template": "s3://acme-datalake/____/orders/year=____/month=____/day=____/part-0001.parquet",
+      "answers": ["bronze", "2026", "07", "01"],
+      "wordBank": ["bronze", "silver", "gold", "2026", "07", "01", "orders_id"],
+      "hints": ["Raw data → bronze.", "Partition = year/month/day folders in key."]
+    },
+    {
+      "id": "A3",
+      "type": "whats_wrong",
+      "tag": "☁️ · 3/6 · IAM",
+      "title": "What's wrong with this policy?",
+      "instruction": "Classic junior DE trap on AWS.",
+      "mission": {
+        "emoji": "🔐",
+        "title": "Security review",
+        "brief": "ETL role should read bronze and write silver. No public access."
+      },
+      "buggyCode": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": \"*\",\n    \"Action\": \"s3:*\",\n    \"Resource\": \"arn:aws:s3:::acme-datalake/*\"\n  }]\n}",
+      "prompt": "Main risk in this bucket policy?",
+      "options": [
+        "Principal * + s3:* on whole bucket = public full access; need IAM role for ETL and minimal Action/Resource",
+        "Version must be 2024",
+        "Resource without /* is always forbidden",
+        "s3:* must be replaced with s3:GetObject only for Glacier"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Least privilege: service role, specific prefixes (bronze/* read, silver/* write), no Principal *.",
+      "explanation": "On interview: «enable public access block + role-based access»."
+    },
+    {
+      "id": "A4",
+      "type": "multi_choice",
+      "tag": "☁️ · 4/6",
+      "title": "Lifecycle · cost",
+      "instruction": "Data older than 90 days is rarely read but must stay for audit.",
+      "mission": {
+        "emoji": "💰",
+        "title": "FinOps",
+        "brief": "1 TB logs in Standard. Read once per quarter. What do you do?"
+      },
+      "question": "Smartest lifecycle for rarely read raw logs?",
+      "options": [
+        "Rule: after 90 days → Glacier / Archive tier; hot only last month",
+        "Keep everything in Standard — simpler",
+        "Delete everything older than 7 days without compliance sign-off",
+        "Copy to RDS Postgres for cheaper storage"
+      ],
+      "correctIndex": 0,
+      "explanation": "Lifecycle / tiering lowers cost; compliance → no delete without policy."
+    },
+    {
+      "id": "A5",
+      "type": "scenario",
+      "tag": "☁️ · 5/6",
+      "title": "S3 or RDS?",
+      "emoji": "🗄️",
+      "scene": "PM: «We'll store 500M events/year and sometimes JOIN with users». Where do raw events go?",
+      "bestIndex": 1,
+      "choices": [
+        {
+          "label": "RDS Postgres only — JOIN there",
+          "feedback": "Expensive and poor scale for hundreds of millions of raw log rows."
+        },
+        {
+          "label": "Raw → object storage (parquet, partition by day); users in RDS/DWH; JOIN in warehouse (BQ/Snowflake/Spark), not in S3 directly",
+          "feedback": "Typical lake + warehouse pattern on interviews."
+        },
+        {
+          "label": "Excel on SharePoint",
+          "feedback": "Not production DE."
+        }
+      ]
+    },
+    {
+      "id": "A6",
+      "type": "drag_order",
+      "tag": "☁️ · 6/6",
+      "title": "Order: ingest → lake",
+      "instruction": "Arrange batch pipeline steps in object storage (logic only, no Airflow yet).",
+      "items": [
+        "API / logs → landing file",
+        "Upload to bronze prefix",
+        "Validate schema + row counts",
+        "Transform → silver parquet",
+        "Register partition / catalog",
+        "Mart refresh for BI"
+      ]
+    }
+  ]
+}

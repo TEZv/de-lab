@@ -17,14 +17,50 @@
         "Аліаси з SELECT не працюють у WHERE/GROUP BY",
         "У SELECT все не-агреговане → обовʼязково у GROUP BY",
         "ROW_NUMBER/LAG — інструмент №1 на live-coding"
-      ]
+      ],
+      "recallTips": [
+        "FROM — звідки беремо рядки (таблиці / JOIN)",
+        "WHERE — фільтр сирих рядків (ще до GROUP BY)",
+        "GROUP BY — стискаємо в групи + агрегати",
+        "HAVING — фільтр уже по агрегатах (після GROUP BY)",
+        "SELECT — проєкція колонок (аліаси зʼявляються тут)",
+        "ORDER BY — сортування результату в кінці"
+      ],
+      "recallMnemonic": "Мнемоніка: FWGHSO — «From Where Group Having Select Order» (не як пишеш очима!)"
     },
     {
       "id": "S1",
       "type": "fill_blanks",
       "tag": "SQL · 1/10",
       "title": "HAVING vs WHERE",
-      "instruction": "Відділи зі середньою зарплатою > 2000.",
+      "instruction": "Лише відділи, де середня зарплата > 2000.",
+      "mission": {
+        "emoji": "💼",
+        "title": "HR analytics",
+        "brief": "Таблиця core.employees: багато людей на department. Спочатку GROUP BY + AVG(salary), потім відсікаємо «бідні» відділи.",
+        "ask": "Фільтр по агрегату — який ключовик після GROUP BY?"
+      },
+      "sampleTable": {
+        "headers": ["department", "avg_salary"],
+        "rows": [
+          ["IT", "3200"],
+          ["HR", "2100"],
+          ["Sales", "1850"]
+        ],
+        "highlight": [0, 1],
+        "caption": "Sales (1850) не проходить поріг 2000. WHERE тут не підійде — фільтруємо вже згрупований результат.",
+        "columnGlossary": {
+          "department": "Назва відділу в компанії",
+          "avg_salary": "Середня зарплата по відділу після GROUP BY (агрегат)"
+        }
+      },
+      "controlTip": "Місія й таблиця вище. Заповни пропуск у SQL.",
+      "recallTips": [
+        "WHERE — фільтрує рядки ДО групування (salary по людині)",
+        "GROUP BY department + AVG(salary) — рахуємо по відділах",
+        "HAVING — відсікаємо групи, де avg < порогу (не WHERE!)"
+      ],
+      "recallMnemonic": "Правило: WHERE = рядки · HAVING = групи після агрегату",
       "template": "SELECT department, AVG(salary) AS avg_sal\nFROM core.employees\nGROUP BY department\n____ AVG(salary) > 2000;",
       "answers": ["HAVING"],
       "wordBank": ["HAVING", "WHERE", "ORDER BY", "LIMIT"],
@@ -35,29 +71,78 @@
       "type": "fill_blanks",
       "tag": "SQL · 2/10",
       "title": "ROW_NUMBER · top-1 у групі",
-      "instruction": "Найдешевша паличка для кожної пари code+power.",
-      "template": "WITH Ranked AS (\n  SELECT id, code, coins_needed, power,\n         ROW_NUMBER() OVER(____ BY code, power ____ BY coins_needed ____) AS rn\n  FROM staging.wands\n)\nSELECT * FROM Ranked WHERE rn = ____;",
+      "instruction": "Закупівлі: найдешевша пропозиція на кожну пару (category_code, tier).",
+      "mission": {
+        "emoji": "🛒",
+        "title": "Marketplace · RFQ",
+        "brief": "Вендори надсилають quote на ту саму категорію й tier якості. Потрібен один рядок на (category_code, tier) — з мінімальною unit_price. Типовий live-coding патерн (як min price per group), без fantasy-даних.",
+        "ask": "Grain = одна перемога на (category_code, tier). За чим ранжуємо?"
+      },
+      "sampleTable": {
+        "headers": ["quote_id", "category_code", "tier", "unit_price", "у фіналі?"],
+        "rows": [
+          ["Q-101", "ELEC", "A", "12.50", "—"],
+          ["Q-102", "ELEC", "A", "9.99", "✓ min"],
+          ["Q-201", "ELEC", "B", "15.00", "✓ єдиний"],
+          ["Q-301", "HOME", "A", "8.00", "✓ єдиний"]
+        ],
+        "highlight": [1],
+        "caption": "Аналог публічних задач «cheapest SKU / listing» — тільки B2B-назви колонок.",
+        "columnGlossary": {
+          "quote_id": "ID пропозиції постачальника",
+          "category_code": "Код категорії товару (разом з tier = група)",
+          "tier": "Рівень якості / клас (A, B…)",
+          "unit_price": "Ціна за одиницю",
+          "у фіналі?": "Підказка: чи лишається рядок після min price у групі"
+        }
+      },
+      "why": "На інтервʼю: 1) перефразуй умову, 2) намалюй grain, 3) потім OVER (PARTITION … ORDER …).",
+      "template": "WITH ranked AS (\n  SELECT quote_id, category_code, tier, unit_price,\n    ROW_NUMBER() OVER (\n      ____ BY category_code, tier\n      ____ BY unit_price ____\n    ) AS rn\n  FROM staging.vendor_quotes\n)\nSELECT quote_id, category_code, tier, unit_price\nFROM ranked\nWHERE rn = ____;",
       "answers": ["PARTITION", "ORDER", "ASC", "1"],
       "wordBank": ["PARTITION", "ORDER", "ASC", "DESC", "GROUP", "1", "0"],
       "hints": [
-        "Вікно ділить PARTITION BY, не GROUP BY.",
-        "Найдешевша → ASC, номер 1."
-      ]
+        "Група = PARTITION BY category_code, tier (рядки не стискаються).",
+        "Найдешевша → ORDER BY unit_price ASC, далі rn = 1."
+      ],
+      "revealOnFail": false,
+      "controlTip": "Місія й таблиця вище. Нижче — кістяк SQL."
     },
     {
       "id": "S3",
       "type": "fill_blanks",
       "tag": "SQL · 3/10",
       "title": "Min price у групі (SKU)",
-      "instruction": "Спочатку місія — потім кістяк. Повний сюжет — блок «Місія: найдешевший SKU».",
+      "instruction": "Той самий патерн що S2, але каталог SKU: фільтр is_active + сортування результату.",
       "mission": {
         "emoji": "🏷️",
         "title": "Каталог / прайс",
         "brief": "Серед активних: для кожної пари (power, age) — мінімальна price. Сортування: power↓ age↓.",
-        "ask": "Короткий каркас нижче."
+        "ask": "У таблиці нижче — сирі рядки. Знайди 3 фінальні SKU, потім заповни SQL."
       },
-      "why": "Не починай з ____ у вакуумі: спочатку скажи логіку вголос.",
-      "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n         ROW_NUMBER() OVER(\n           PARTITION BY ____, ____\n           ORDER BY price ____\n         ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price FROM ranked\nWHERE rn = 1\nORDER BY power ____, age DESC;",
+      "sampleTable": {
+        "headers": ["sku_id", "power", "age", "price", "is_active", "у фіналі?"],
+        "rows": [
+          ["77", "5", "45", "10", "1", "✓ min"],
+          ["12", "5", "45", "50", "1", "—"],
+          ["99", "5", "45", "120", "1", "—"],
+          ["43", "8", "40", "25", "1", "✓ min"],
+          ["55", "8", "40", "80", "1", "—"],
+          ["3", "8", "40", "5", "0", "inactive"],
+          ["21", "10", "20", "40", "1", "✓ min"]
+        ],
+        "highlight": [0, 3, 6],
+        "caption": "Очікуваний результат (3 рядки): (10,20,40) → (8,40,25) → (5,45,10). is_active=0 не беремо навіть якщо price мінімальна.",
+        "columnGlossary": {
+          "sku_id": "Номер рядка в прайс-листі (одна пропозиція продавця)",
+          "power": "Клас «потужності» товару — разом з age визначає групу",
+          "age": "Вік партії / серії (атрибут товару, не вік людини)",
+          "price": "Ціна в одній валюті",
+          "is_active": "1 = в каталозі, 0 = виведено з продажу",
+          "у фіналі?": "Підказка: чи потрапляє рядок у відповідь"
+        }
+      },
+      "why": "Спочатку вкажи пальцем переможців у таблиці — потім PARTITION BY power, age і ORDER BY price ASC.",
+      "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n         ROW_NUMBER() OVER(\n           PARTITION BY ____, ____\n           ORDER BY price ____\n         ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price\nFROM ranked\nWHERE rn = 1\nORDER BY power ____, age DESC;",
       "answers": ["power", "age", "ASC", "1", "DESC"],
       "wordBank": ["power", "age", "sku_id", "ASC", "DESC", "0", "1"],
       "hints": [
@@ -66,15 +151,37 @@
         "Фінальний ORDER: power DESC."
       ],
       "revealOnFail": false,
-      "controlTip": "Місія вище. Нижче — тільки синтаксис."
+      "controlTip": "Місія й таблиця вище. Нижче — кістяк SQL."
     },
     {
       "id": "S4",
       "type": "fill_blanks",
       "tag": "SQL · 4/10",
       "title": "LAG · попередня сесія",
-      "instruction": "Час попередньої сесії того ж юзера.",
-      "template": "SELECT user_id, session_start,\n  ____(session_start) OVER(PARTITION BY user_id ORDER BY session_start) AS prev_session\nFROM core.user_sessions;",
+      "instruction": "Для кожної сесії — час попередньої сесії того ж user_id.",
+      "mission": {
+        "emoji": "📱",
+        "title": "Product · retention",
+        "brief": "Таблиця core.user_sessions: user_id, session_start. Менеджер хоче колонку prev_session — коли цей юзер був онлайн ДО поточного рядка.",
+        "ask": "Яка функція дивиться на попередній рядок у вікні?"
+      },
+      "sampleTable": {
+        "headers": ["user_id", "session_start", "prev_session"],
+        "rows": [
+          ["42", "2026-01-01 10:00", "NULL"],
+          ["42", "2026-01-03 14:00", "2026-01-01 10:00"],
+          ["42", "2026-01-05 09:00", "2026-01-03 14:00"]
+        ],
+        "highlight": [1, 2],
+        "caption": "PARTITION BY user_id · ORDER BY session_start — хронологія всередині юзера.",
+        "columnGlossary": {
+          "user_id": "Ідентифікатор користувача",
+          "session_start": "Час початку сесії",
+          "prev_session": "Очікуване значення LAG — попередня сесія цього user"
+        }
+      },
+      "controlTip": "Місія й очікуваний результат — вище.",
+      "template": "SELECT user_id, session_start,\n  ____(session_start) OVER (\n    PARTITION BY user_id\n    ORDER BY session_start\n  ) AS prev_session\nFROM core.user_sessions;",
       "answers": ["LAG"],
       "wordBank": ["LAG", "LEAD", "ROW_NUMBER", "FIRST_VALUE", "NOW"],
       "hints": ["Попередній рядок = LAG, наступний = LEAD.", "NOW() — це «зараз», не минула сесія."]
@@ -84,7 +191,12 @@
       "type": "whats_wrong",
       "tag": "SQL · 5/10 · пастка",
       "title": "Що не так?",
-      "instruction": "Класична помилка інтернів.",
+      "instruction": "Класична помилка на live-coding: MAX у WHERE.",
+      "mission": {
+        "emoji": "🪤",
+        "title": "Умова інтервʼюера",
+        "brief": "«Покажи customer_id, у кого максимальний amount замовлення > 500, відсортуй за сумою». Кандидат написав код нижче — знайди головний баг."
+      },
       "buggyCode": "SELECT customer_id, MAX(amount) AS maximum_order_amount\nFROM orders\nWHERE MAX(amount) > 500\nGROUP BY maximum_order_amount\nORDER BY 2 DESC;",
       "prompt": "Обери головний баг (їх кілька, але ключовий діагноз).",
       "options": [
@@ -102,8 +214,34 @@
       "type": "multi_choice",
       "tag": "SQL · 6/10",
       "title": "JOIN · дублі рядків",
-      "instruction": "Критичний Middle-кейс.",
-      "diagram": "users: 10 унікальних user_id\norders: багато замовлень на 1 user\nLEFT JOIN users → orders",
+      "instruction": "Перед JOIN — уяви cardinality.",
+      "mission": {
+        "emoji": "🔗",
+        "title": "Умова",
+        "brief": "users: 10 унікальних user_id. orders: багато рядків на одного user. LEFT JOIN users → orders — скільки рядків у результаті?"
+      },
+      "joinTables": [
+        {
+          "title": "users (ліва таблиця)",
+          "headers": ["user_id", "name"],
+          "rows": [["u1", "Anna"], ["u2", "Bob"], ["u3", "Cara"]],
+          "columnGlossary": {
+            "user_id": "Ключ користувача — по ньому джойнимо",
+            "name": "Імʼя (для контексту, не для JOIN)"
+          }
+        },
+        {
+          "title": "orders (права таблиця)",
+          "headers": ["order_id", "user_id", "amount"],
+          "rows": [["o100", "u1", "50"], ["o101", "u1", "30"], ["o200", "u3", "80"]],
+          "columnGlossary": {
+            "order_id": "ID замовлення",
+            "user_id": "FK → users.user_id (звʼязок 1:N)",
+            "amount": "Сума замовлення"
+          }
+        }
+      ],
+      "joinCaption": "u1 має 2 orders → після LEFT JOIN рядок u1 дублюється. u2 без orders → 1 рядок з NULL. Разом 4 рядки, хоча users лише 3.",
       "question": "Чи може результат LEFT JOIN мати БІЛЬШЕ 10 рядків?",
       "options": [
         "Так — якщо у одного user кілька orders, рядок user продублюється",
@@ -119,8 +257,30 @@
       "type": "fill_blanks",
       "tag": "SQL · 7/10",
       "title": "COALESCE · NULL у CORE",
-      "instruction": "NULL у amount → 0 на шарі очищення.",
-      "template": "SELECT order_id, ____(amount, ____) AS cleaned_amount\nFROM staging.orders;",
+      "instruction": "На шарі staging: NULL у amount замінити на 0 перед завантаженням у core.",
+      "mission": {
+        "emoji": "🧹",
+        "title": "DQ · staging → core",
+        "brief": "У staging.orders частина amount = NULL (збій джерела). У вітрині сума не може бути NULL — дефолт 0.",
+        "ask": "Яка функція «перше не-NULL»?"
+      },
+      "sampleTable": {
+        "headers": ["order_id", "amount (raw)", "cleaned_amount"],
+        "rows": [
+          ["O-1", "120.50", "120.50"],
+          ["O-2", "NULL", "0"],
+          ["O-3", "80", "80"]
+        ],
+        "highlight": [1],
+        "caption": "Типова вимога data quality на інтервʼю DE/AE.",
+        "columnGlossary": {
+          "order_id": "ID замовлення",
+          "amount (raw)": "Сума з джерела — може бути NULL",
+          "cleaned_amount": "Після COALESCE: NULL → 0"
+        }
+      },
+      "controlTip": "Місія вище — заповни функцію й дефолт.",
+      "template": "SELECT order_id,\n  ____(amount, ____) AS cleaned_amount\nFROM staging.orders;",
       "answers": ["COALESCE", "0"],
       "wordBank": ["COALESCE", "IFNULL", "0", "NULL", "CASE"],
       "hints": ["COALESCE повертає перше не-NULL.", "Альтернатива: CASE WHEN amount IS NULL THEN 0."]
@@ -130,8 +290,30 @@
       "type": "fill_blanks",
       "tag": "SQL · 8/10",
       "title": "Дедуплікація",
-      "instruction": "Лишити найсвіжіший рядок на user_id.",
-      "template": "WITH RankedData AS (\n  SELECT *,\n         ROW_NUMBER() OVER(PARTITION BY ____ ORDER BY ____ DESC) AS rn\n  FROM staging.users\n)\nSELECT * FROM RankedData WHERE rn = ____;",
+      "instruction": "Лишити один рядок на user_id — найсвіжіший за updated_at.",
+      "mission": {
+        "emoji": "💳",
+        "title": "Fintech · CDC дублі",
+        "brief": "staging.users отримує повторні завантаження одного user_id. Для core потрібен один актуальний рядок на ключа.",
+        "ask": "PARTITION BY що? ORDER BY що DESC? rn = ?"
+      },
+      "sampleTable": {
+        "headers": ["user_id", "updated_at", "лишити?"],
+        "rows": [
+          ["U-9", "2026-06-01", "—"],
+          ["U-9", "2026-06-10", "✓ newest"],
+          ["U-9", "2026-06-05", "—"]
+        ],
+        "highlight": [1],
+        "caption": "ROW_NUMBER … WHERE rn = 1 — стандарт дедупу на інтервʼю.",
+        "columnGlossary": {
+          "user_id": "Бізнес-ключ — один актуальний рядок на user",
+          "updated_at": "Час останнього оновлення — за ним визначаємо «найсвіжіший»",
+          "лишити?": "Підказка: який рядок залишаємо"
+        }
+      },
+      "controlTip": "Місія й приклад дублікатів — вище.",
+      "template": "WITH RankedData AS (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY ____\n           ORDER BY ____ DESC\n         ) AS rn\n  FROM staging.users\n)\nSELECT *\nFROM RankedData\nWHERE rn = ____;",
       "answers": ["user_id", "updated_at", "1"],
       "wordBank": ["user_id", "updated_at", "created_at", "1", "0", "email"],
       "hints": ["Ключ унікальності = user_id.", "Найновіший = ORDER BY updated_at DESC, rn=1."]
@@ -141,13 +323,60 @@
       "type": "match_pairs",
       "tag": "SQL · 9/10",
       "title": "MATCH · віконні vs агрегати",
-      "instruction": "Зʼєднай інструмент із поведінкою.",
+      "instruction": "Зʼєднай інструмент із поведінкою — спочатку подивись таблиці, не лише слова.",
+      "studyIntro": "<strong>Крок 1 · побач результат.</strong> Дві схеми нижче: GROUP BY стискає рядки, OVER — ні. Потім ranking. Прочитай таблиці → тоді пари.",
+      "studyVizs": [
+        {
+          "type": "sqlGroupVsWindow",
+          "title": "Одні й ті самі orders — два різні результати",
+          "source": {
+            "title": "Вхідні дані",
+            "headers": ["dept", "amount"],
+            "rows": [["IT", "10"], ["IT", "30"], ["HR", "20"]]
+          },
+          "left": {
+            "title": "GROUP BY dept, SUM(amount)",
+            "subtitle": "3 рядки → 2 (деталі зникли)",
+            "color": "#e8a84b",
+            "headers": ["dept", "total"],
+            "rows": [["IT", "40"], ["HR", "20"]],
+            "badge": "стиснуто в 1 рядок на групу"
+          },
+          "right": {
+            "title": "SUM(amount) OVER(PARTITION BY dept)",
+            "subtitle": "3 рядки → лишились усі",
+            "color": "#3d9a6a",
+            "headers": ["dept", "amount", "dept_total"],
+            "rows": [["IT", "10", "40"], ["IT", "30", "40"], ["HR", "20", "20"]],
+            "highlight": [0, 1],
+            "badge": "сума «поруч» — dept_total на кожному рядку"
+          },
+          "footnote": "На інтервʼю намалюй саме так: зліва «зникли рядки», справа «нова колонка, рядки на місці»."
+        },
+        {
+          "type": "rankCompare",
+          "title": "Ranking на одних score — три різні поведінки",
+          "rows": [
+            ["Ana", "90", "1", "1", "1"],
+            ["Bob", "90", "1", "1", "2"],
+            ["Cal", "80", "3", "2", "3"],
+            ["Dan", "80", "3", "2", "4"]
+          ],
+          "highlight": [0, 1, 2, 3],
+          "notes": [
+            { "fn": "RANK()", "note": "Ana+Bob tie на 1 → обидва 1; Cal+Dan tie на 3 (2 пропущено)" },
+            { "fn": "DENSE_RANK()", "note": "tie ділить ранг, але 2 не пропускаємо → 1,1,2,2" },
+            { "fn": "ROW_NUMBER()", "note": "кожен рядок унікальний: 1,2,3,4" }
+          ],
+          "footnote": "Сортування score DESC. Tie = однаковий score → RANK/DENSE однакові, ROW_NUMBER — ні."
+        }
+      ],
       "pairs": [
-        { "left": "GROUP BY + SUM", "right": "Стискає рядки в 1 на групу" },
-        { "left": "SUM() OVER(PARTITION BY …)", "right": "Сума поруч, рядки лишаються" },
-        { "left": "RANK()", "right": "1,2,2,4 — пропуск після tie" },
-        { "left": "DENSE_RANK()", "right": "1,2,2,3 — без пропуску" },
-        { "left": "ROW_NUMBER()", "right": "Завжди унікальні 1,2,3,4" }
+        { "left": "GROUP BY + SUM", "right": "Стискає рядки в 1 на групу", "studyHint": "↑ схема 1, ліворуч" },
+        { "left": "SUM() OVER(PARTITION BY …)", "right": "Сума поруч, рядки лишаються", "studyHint": "↑ схема 1, праворуч" },
+        { "left": "RANK()", "right": "1,1,3,3 — пропуск після tie", "studyHint": "↑ схема 2, колонка RANK" },
+        { "left": "DENSE_RANK()", "right": "1,1,2,2 — без пропуску", "studyHint": "↑ схема 2, колонка DENSE" },
+        { "left": "ROW_NUMBER()", "right": "Завжди унікальні 1,2,3,4", "studyHint": "↑ схема 2, колонка ROW#" }
       ]
     },
     {
@@ -156,6 +385,21 @@
       "tag": "SQL · 10/10",
       "title": "Порядок виконання запиту",
       "instruction": "Розстав у порядку, як бачить сервер (не як ти пишеш).",
+      "recallIntro": "<strong>Спочатку карта.</strong> Це той самий порядок, що на рівні <strong>S0 · SQL карта</strong> на початку блоку.",
+      "studyViz": {
+        "type": "sqlOrder",
+        "over": "OVER() — після FROM; рядки не стискає"
+      },
+      "recallTips": [
+        "FROM — таблиці / JOIN",
+        "WHERE — фільтр сирих рядків",
+        "GROUP BY — стискання + агрегати",
+        "HAVING — фільтр груп (після GROUP BY)",
+        "SELECT — які колонки показати",
+        "ORDER BY — сортування в кінці"
+      ],
+      "recallMnemonic": "FWGHSO: From → Where → Group → Having → Select → Order",
+      "recallMapRef": "📍 Забула? Відкрий S0 «Перед тренуванням · порядок SQL» у списку рівнів цього блоку.",
       "items": [
         "FROM",
         "WHERE",

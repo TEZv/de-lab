@@ -1,6 +1,13 @@
 /* Interview Arena — all prep tasks in-gym (archetypes, no employer brands). */
 (function initInterviewHub(global) {
   const ARCHETYPE_ORDER = ['universal', 'product', 'market', 'media', 'consult', 'fintech'];
+  const OPS_GYM = 'https://devops-lab-gym.web.app';
+  const OPS_BRIDGE_LINKS = [
+    { href: `${OPS_GYM}/#/interview`, labelKey: 'hubBridgeOpsArena' },
+    { href: `${OPS_GYM}/#/block/06-prod-devops/R4`, labelKey: 'hubBridgeOpsProd' },
+    { href: `${OPS_GYM}/#/block/04-terraform-devops/T7`, labelKey: 'hubBridgeOpsTf' },
+    { href: `${OPS_GYM}/#/block/05-k8s-devops/K0`, labelKey: 'hubBridgeOpsK8s' },
+  ];
 
   function lang() {
     return (global.DeLabI18n && DeLabI18n.getLang()) || 'ua';
@@ -117,6 +124,10 @@
         <div class="hub-search-row">
           <input type="search" id="hub-search" class="hub-search" placeholder="${escapeHtml(ui('hubSearch'))}" value="${escapeHtml(route.q || '')}" />
           <a class="ghost nav-pill" href="#/block/10-interview-company-types/C0">${escapeHtml(ui('hubAtlasLink'))}</a>
+        </div>
+        <div class="hub-bridge-row">
+          <span class="hub-bridge-label">${escapeHtml(ui('hubBridgeTitle'))}</span>
+          ${OPS_BRIDGE_LINKS.map((b) => `<a class="ghost nav-pill hub-bridge-link" href="${escapeHtml(b.href)}" target="_blank" rel="noopener">${escapeHtml(ui(b.labelKey))}</a>`).join('')}
         </div>
         <div class="hub-arch-tabs">
           <a class="hub-arch-tab ${filter === 'all' ? 'active' : ''}" href="#/interview">${escapeHtml(ui('hubAll'))} <small>${(bank.tasks || []).length}</small></a>

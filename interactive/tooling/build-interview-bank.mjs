@@ -23,6 +23,11 @@ const ARCHETYPE_BY_BLOCK = {
   '05-alive-ae': 'universal',
   '11-interview-skills-universal': 'universal',
   '12-sku-minprice-mission': 'market',
+  '13-cloud-storage-de': 'universal',
+  '14-orchestration-de': 'universal',
+  '15-incremental-loads-de': 'universal',
+  '16-stream-nosql-de': 'universal',
+  '17-governance-ops-de': 'universal',
   '01-window-functions': 'product',
   '02-sql-interview-10': 'universal',
   '03-python-interview-10': 'universal',
@@ -42,6 +47,14 @@ const ARCHETYPES = [
   { id: 'consult', sigil: 'LIVE', color: '#4ecdc4', glyph: '🔬' },
   { id: 'fintech', sigil: 'DEDUP', color: '#ff6b6b', glyph: '💳' },
 ];
+
+function levelPrompt(level, block) {
+  const bits = [];
+  if (level.mission?.brief) bits.push(level.mission.brief);
+  if (level.instruction) bits.push(level.instruction);
+  if (!bits.length) bits.push(level.intro || block.subtitle || '');
+  return bits.join(' · ');
+}
 
 function gymTasks() {
   const tasks = [];
@@ -63,8 +76,8 @@ function gymTasks() {
         minutes: inferMinutes(level.type),
         title: { ua: level.title || block.title, en: level.title || block.title },
         prompt: {
-          ua: level.instruction || level.intro || block.subtitle || '',
-          en: level.instruction || level.intro || block.subtitle || '',
+          ua: levelPrompt(level, block),
+          en: levelPrompt(level, block),
         },
       });
     }
