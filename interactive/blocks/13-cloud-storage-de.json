@@ -216,6 +216,63 @@
       ]
     },
     {
+      "id": "A1b",
+      "type": "drag_buckets",
+      "tag": "☁️ · drag",
+      "title": "Закріпи MATCH: вендор-кошик",
+      "instruction": "Після study — куди термін «живе» у трійці хмар (патерн, не бренд).",
+      "buckets": [
+        {
+          "id": "store",
+          "icon": "📦",
+          "title": "Store",
+          "hint": "bucket/container",
+          "color": "#5b8def"
+        },
+        {
+          "id": "auth",
+          "icon": "🔐",
+          "title": "Auth",
+          "hint": "IAM/RBAC",
+          "color": "#3d9a6a"
+        },
+        {
+          "id": "tier",
+          "icon": "❄️",
+          "title": "Cold tier",
+          "hint": "archive",
+          "color": "#8b9cb3"
+        }
+      ],
+      "items": [
+        {
+          "text": "S3 bucket",
+          "bucket": "store"
+        },
+        {
+          "text": "Blob container",
+          "bucket": "store"
+        },
+        {
+          "text": "IAM role",
+          "bucket": "auth"
+        },
+        {
+          "text": "Azure RBAC",
+          "bucket": "auth"
+        },
+        {
+          "text": "Glacier",
+          "bucket": "tier"
+        },
+        {
+          "text": "Coldline",
+          "bucket": "tier"
+        }
+      ],
+      "recallMapRef": "📍 Після A1 MATCH."
+    },
+    {
       "id": "A2",
       "type": "fill_blanks",
       "tag": "☁️ · 2/6",

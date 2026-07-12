@@ -387,8 +387,8 @@
         "en": "Чистий Python vs Pandas"
       },
       "prompt": {
-        "ua": "На скрінінгу можуть заборонити import pandas — май обидва шаблони. Спочатку сімʼї типів, потім інструменти.",
-        "en": "На скрінінгу можуть заборонити import pandas — май обидва шаблони. Спочатку сімʼї типів, потім інструменти."
+        "ua": "Скрінінг без pandas — май обидва шаблони. Спочатку: у кого порядок і [i], у кого лише ключ.",
+        "en": "Скрінінг без pandas — май обидва шаблони. Спочатку: у кого порядок і [i], у кого лише ключ."
       }
     },
     {
@@ -408,6 +408,25 @@
       "prompt": {
         "ua": "Закріпи P0 руками: кожен тип — у Sequence / Mapping / Set.",
         "en": "Закріпи P0 руками: кожен тип — у Sequence / Mapping / Set."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P0c",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P0c",
+      "tag": "PY · drag 2",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Порядок vs індекс — розклади твердження",
+        "en": "Порядок vs індекс — розклади твердження"
+      },
+      "prompt": {
+        "ua": "Закріпи плутанину: що правда для sequence / dict / set.",
+        "en": "Закріпи плутанину: що правда для sequence / dict / set."
       }
     },
     {
@@ -579,6 +598,25 @@
       "prompt": {
         "ua": "Що можна юзати як ключ / індекс? Спочатку — приклади, не абстракції.",
         "en": "Що можна юзати як ключ / індекс? Спочатку — приклади, не абстракції."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P9b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P9b",
+      "tag": "PY · drag MATCH",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Закріпи MATCH: сімʼя доступу",
+        "en": "Закріпи MATCH: сімʼя доступу"
+      },
+      "prompt": {
+        "ua": "Після MATCH типів — куди патерн доступу?",
+        "en": "Після MATCH типів — куди патерн доступу?"
       }
     },
     {
@@ -1342,6 +1380,25 @@
       }
     },
     {
+      "id": "gym-13-cloud-storage-de-A1b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A1b",
+      "tag": "☁️ · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Закріпи MATCH: вендор-кошик",
+        "en": "Закріпи MATCH: вендор-кошик"
+      },
+      "prompt": {
+        "ua": "Після study — куди термін «живе» у трійці хмар (патерн, не бренд).",
+        "en": "Після study — куди термін «живе» у трійці хмар (патерн, не бренд)."
+      }
+    },
+    {
       "id": "gym-13-cloud-storage-de-A2",
       "archetype": "universal",
       "kind": "gym",
@@ -1491,6 +1548,25 @@
       "prompt": {
         "ua": "Airflow-терміни на інтервʼю + коли згадати Cron.",
         "en": "Airflow-терміни на інтервʼю + коли згадати Cron."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O1b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O1b",
+      "tag": "drag · MATCH",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Закріпи MATCH: orch термін",
+        "en": "Закріпи MATCH: orch термін"
+      },
+      "prompt": {
+        "ua": "Після MATCH study — розклади чіпи.",
+        "en": "Після MATCH study — розклади чіпи."
       }
     },
     {
@@ -2004,6 +2080,25 @@
       "prompt": {
         "ua": "Терміни prod data platform.",
         "en": "Терміни prod data platform."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E1b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E1b",
+      "tag": "drag · MATCH",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Закріпи MATCH: governance",
+        "en": "Закріпи MATCH: governance"
+      },
+      "prompt": {
+        "ua": "Після MATCH study — розклади чіпи.",
+        "en": "Після MATCH study — розклади чіпи."
       }
     },
     {

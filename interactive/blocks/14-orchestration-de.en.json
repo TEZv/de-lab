@@ -175,6 +175,52 @@
       ]
     },
     {
+      "id": "O1b",
+      "type": "drag_buckets",
+      "tag": "drag · MATCH",
+      "title": "Lock MATCH: orch term",
+      "instruction": "After MATCH study — sort chips.",
+      "buckets": [
+        {
+          "id": "g",
+          "icon": "🕸",
+          "title": "Graph",
+          "color": "#3d9a6a"
+        },
+        {
+          "id": "w",
+          "icon": "👂",
+          "title": "Wait",
+          "color": "#c77dff"
+        },
+        {
+          "id": "c",
+          "icon": "🕒",
+          "title": "Cron",
+          "color": "#8b9cb3"
+        }
+      ],
+      "items": [
+        {
+          "text": "DAG",
+          "bucket": "g"
+        },
+        {
+          "text": "Operator",
+          "bucket": "g"
+        },
+        {
+          "text": "Sensor",
+          "bucket": "w"
+        },
+        {
+          "text": "crontab 5 fields",
+          "bucket": "c"
+        }
+      ],
+      "recallMapRef": "📍 After O1 MATCH."
+    },
+    {
       "id": "O2",
       "type": "drag_order",
       "tag": "⚙️ · 2/7",

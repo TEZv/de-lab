@@ -6,46 +6,45 @@
     {
       "id": "P0",
       "type": "theory",
-      "tag": "PY · карта",
+      "tag": "PY · map",
       "title": "Pure Python vs Pandas",
-      "instruction": "Screenings may ban import pandas — keep both templates. Families of types first, then tools.",
+      "instruction": "Screening may ban pandas — keep both templates. First: who has order and [i], who is key-only.",
       "vizs": [
         {
           "type": "typeFamily",
-          "title": "3️⃣ data families — remember as a picture",
+          "title": "3️⃣ families — two axes: order and [i]",
           "families": [
             {
               "icon": "📚",
               "title": "Sequence",
-              "types": "list · tuple · str",
+              "types": "list · tuple · str · range",
               "color": "#5b8def",
               "traits": [
                 {
                   "yes": true,
                   "label": "order",
-                  "value": "yes (0,1,2…)"
+                  "value": "YES — seats 0,1,2…"
                 },
                 {
                   "yes": true,
                   "label": "access",
-                  "value": "[i] or [start:stop]"
+                  "value": "[i] / slice"
                 },
                 {
                   "yes": true,
-                  "label": "duplicates",
-                  "value": "OK"
+                  "label": "tuple",
+                  "value": "also sequence (immutable)"
                 }
               ],
-              "holdLabel": "element can be",
+              "holdLabel": "element OK",
               "canHold": [
                 "int",
                 "str",
                 "list",
                 "dict",
-                "set",
                 "tuple"
               ],
-              "noHoldLabel": "index CANNOT be",
+              "noHoldLabel": "index NOT",
               "cannotHold": [
                 "dict",
                 "set",
@@ -54,27 +53,27 @@
             },
             {
               "icon": "🗝️",
-              "title": "Mapping · dict",
+              "title": "Mapping",
               "types": "dict",
               "color": "#3d9a6a",
               "traits": [
                 {
+                  "yes": true,
+                  "label": "iteration order",
+                  "value": "YES since 3.7 (insertion)"
+                },
+                {
                   "yes": false,
-                  "label": "order",
-                  "value": "not for indexing (key!)"
+                  "label": "access [0]",
+                  "value": "NO — [key] only"
                 },
                 {
                   "yes": true,
-                  "label": "access",
-                  "value": "[key] · .get(key, 0)"
-                },
-                {
-                  "yes": false,
                   "label": "key",
-                  "value": "unique"
+                  "value": "unique · hashable"
                 }
               ],
-              "holdLabel": "key (hashable)",
+              "holdLabel": "key OK",
               "canHold": [
                 "str",
                 "int",
@@ -82,7 +81,7 @@
                 "tuple",
                 "bool"
               ],
-              "noHoldLabel": "key CANNOT be",
+              "noHoldLabel": "key NOT",
               "cannotHold": [
                 "list",
                 "dict",
@@ -91,14 +90,14 @@
             },
             {
               "icon": "🎯",
-              "title": "Set · unique",
+              "title": "Set",
               "types": "set · frozenset",
               "color": "#c77dff",
               "traits": [
                 {
                   "yes": false,
                   "label": "order",
-                  "value": "no index"
+                  "value": "NOT guaranteed"
                 },
                 {
                   "yes": false,
@@ -108,16 +107,16 @@
                 {
                   "yes": true,
                   "label": "uniqueness",
-                  "value": "automatic"
+                  "value": "auto"
                 }
               ],
-              "holdLabel": "set member",
+              "holdLabel": "member OK",
               "canHold": [
                 "str",
                 "int",
                 "tuple"
               ],
-              "noHoldLabel": "member CANNOT be",
+              "noHoldLabel": "member NOT",
               "cannotHold": [
                 "list",
                 "dict",
@@ -125,76 +124,84 @@
               ]
             }
           ],
-          "footnote": "hashable = can be dict key / set member. list and dict are mutable → not hashable."
+          "footnote": "Not only tuple has order. list+tuple+str = sequence. dict keeps insertion order, but d[0] means key 0, not «first». set: no order, no index."
         },
         {
           "type": "accessRules",
-          "title": "Access: who needs what",
-          "colA": "you write",
-          "colB": "you need",
-          "colC": "live example",
+          "title": "Has order? Can [i]?",
+          "colA": "type",
+          "colB": "order",
+          "colC": "access",
           "rows": [
             {
               "icon": "📚",
-              "who": "list[i]",
-              "need": "i = int or slice",
-              "example": "a[0] · a[-1] · a[1:3]",
+              "who": "list",
+              "need": "order YES",
+              "example": "a[0] · a[1:3] ✓",
+              "color": "#5b8def"
+            },
+            {
+              "icon": "🔒",
+              "who": "tuple",
+              "need": "order YES (like list)",
+              "example": "t[0] ✓ · assign ✗",
+              "color": "#4ecdc4"
+            },
+            {
+              "icon": "🔤",
+              "who": "str",
+              "need": "order YES",
+              "example": "s[0] · s[::-1] ✓",
               "color": "#5b8def"
             },
             {
               "icon": "🗝️",
-              "who": "dict[k]",
-              "need": "k = hashable",
-              "example": "d['a'] · d[(1,2)]",
+              "who": "dict",
+              "need": "insert order on for",
+              "example": "d['a'] ✓ · d[0] only if key is 0",
               "color": "#3d9a6a"
             },
             {
-              "icon": "💥",
-              "who": "list[set/dict]",
-              "need": "never",
-              "example": "a[{1}] → TypeError",
-              "color": "#ff6b6b"
-            },
-            {
-              "icon": "🧪",
-              "who": "isinstance",
-              "need": "before parsing",
-              "example": "isinstance(x, dict)",
-              "color": "#e8a84b"
+              "icon": "🎯",
+              "who": "set",
+              "need": "order NO",
+              "example": "set[i] → TypeError",
+              "color": "#c77dff"
             }
-          ]
+          ],
+          "footnote": "Interview line: sequence = int index; dict = key; set = neither."
         },
         {
           "type": "splitCompare",
           "columns": [
             {
-              "title": "🐼 Pandas (when allowed)",
+              "title": "🐼 Pandas",
               "color": "#5b8def",
               "items": [
-                "df.groupby('dept').agg(...)",
-                "pd.merge(..., how='left')",
-                "clean = df.fillna(0)  # присвой!"
+                "groupby + agg mean",
+                "merge how='left'",
+                "fillna with assign"
               ]
             },
             {
-              "title": "🐍 Pure Python (screening)",
+              "title": "🐍 Pure Python",
               "color": "#e8a84b",
               "items": [
-                "counts[k] = counts.get(k,0)+1",
-                "for / map / \" \".join(...)",
-                "if x is None: ..."
+                "counts.get(k,0)+1",
+                "for / join",
+                "if x is None"
               ]
             }
           ]
         },
         {
           "type": "conceptCards",
-          "title": "✅ / ❌ mini cheat-sheet",
+          "title": "Images",
           "cards": [
             {
               "icon": "📚",
-              "title": "list",
-              "badge": "sequence",
+              "title": "list/tuple/str",
+              "badge": "numbered queue",
               "color": "#5b8def",
               "rows": [
                 {
@@ -203,64 +210,64 @@
                 },
                 {
                   "ok": true,
-                  "text": "words[::-1]"
+                  "text": "(1,2)[1]→2"
                 },
                 {
                   "ok": false,
-                  "text": "words[{'a':1}]"
+                  "text": "words[{1}]"
                 }
               ]
             },
             {
               "icon": "🗝️",
               "title": "dict",
-              "badge": "mapping",
+              "badge": "tagged lockers",
               "color": "#3d9a6a",
+              "hint": "tag queue ≠ index",
               "rows": [
                 {
                   "ok": true,
-                  "text": "counts['apple']"
+                  "text": "d['a']"
                 },
                 {
                   "ok": true,
-                  "text": "key = (1,'a')"
+                  "text": "for k in d"
                 },
                 {
                   "ok": false,
-                  "text": "key = [1,'a']"
+                  "text": "d[0]=«first»"
                 }
               ]
             },
             {
-              "icon": "🐼",
-              "title": "groupby",
-              "badge": "pandas",
+              "icon": "🎯",
+              "title": "set",
+              "badge": "bag",
               "color": "#c77dff",
               "rows": [
                 {
                   "ok": true,
-                  "text": ".agg(..., 'mean')"
-                },
-                {
-                  "ok": true,
-                  "text": ".reset_index()"
+                  "text": "{1,2,2}→{1,2}"
                 },
                 {
                   "ok": false,
-                  "text": "avg замість mean"
+                  "text": "s[0]"
+                },
+                {
+                  "ok": false,
+                  "text": "key=set"
                 }
               ]
             }
-          ],
-          "footnote": "One image: list = numbered seats · dict = locker with a tag · set = bag of uniques."
+          ]
         }
       ],
       "bullets": [],
       "recallTips": [
-        "📚 sequence → int/slice index",
-        "🗝️ dict → hashable key (not list/dict/set)",
-        "🎯 set → no index; hashable members",
-        "🐍 counter dict · 🐼 groupby"
+        "📚 list+tuple+str = sequence ([i])",
+        "🗝️ dict: insertion order yes; access [key] only",
+        "🎯 set: no order, no index",
+        "🐍 counter · 🐼 groupby"
       ]
     },
     {
@@ -271,47 +278,32 @@
       "instruction": "Lock P0 with your hands: each type → Sequence / Mapping / Set.",
       "bucketTip": "Drag chips from the pool into three buckets.",
       "studyViz": {
-        "type": "typeFamily",
-        "title": "Hint map (if you forgot)",
-        "families": [
+        "type": "accessRules",
+        "title": "Before drag: order ≠ only tuple",
+        "colA": "type",
+        "colB": "order?",
+        "colC": "[i]?",
+        "rows": [
           {
             "icon": "📚",
-            "title": "Sequence",
-            "types": "order + index",
-            "color": "#5b8def",
-            "traits": [
-              {
-                "yes": true,
-                "label": "index",
-                "value": "int/slice"
-              }
-            ]
+            "who": "list/tuple/str",
+            "need": "YES",
+            "example": "YES",
+            "color": "#5b8def"
           },
           {
             "icon": "🗝️",
-            "title": "Mapping",
-            "types": "key → value",
-            "color": "#3d9a6a",
-            "traits": [
-              {
-                "yes": true,
-                "label": "key",
-                "value": "hashable"
-              }
-            ]
+            "who": "dict",
+            "need": "insert YES",
+            "example": "NO (key)",
+            "color": "#3d9a6a"
           },
           {
             "icon": "🎯",
-            "title": "Set",
-            "types": "uniques",
-            "color": "#c77dff",
-            "traits": [
-              {
-                "yes": false,
-                "label": "index",
-                "value": "none"
-              }
-            ]
+            "who": "set",
+            "need": "NO",
+            "example": "NO",
+            "color": "#c77dff"
           }
         ]
       },
@@ -365,11 +357,73 @@
         }
       ],
       "recallTips": [
-        "📚 int index",
-        "🗝️ hashable key",
-        "🎯 no set[i]"
+        "tuple = immutable sequence",
+        "dict ≠ no order (has insert order)",
+        "set = no [i]"
       ],
       "recallMapRef": "📍 Map: P0 «Pure Python vs Pandas»."
+    },
+    {
+      "id": "P0c",
+      "type": "drag_buckets",
+      "tag": "PY · drag 2",
+      "title": "Order vs index — sort the claims",
+      "instruction": "Lock the confusion: what is true for sequence / dict / set.",
+      "buckets": [
+        {
+          "id": "seq",
+          "icon": "📚",
+          "title": "Sequence",
+          "hint": "list/tuple/str",
+          "color": "#5b8def"
+        },
+        {
+          "id": "dict",
+          "icon": "🗝️",
+          "title": "dict",
+          "hint": "mapping",
+          "color": "#3d9a6a"
+        },
+        {
+          "id": "set",
+          "icon": "🎯",
+          "title": "set",
+          "hint": "unique",
+          "color": "#c77dff"
+        }
+      ],
+      "items": [
+        {
+          "text": "has a[0] by position",
+          "bucket": "seq"
+        },
+        {
+          "text": "tuple also has order",
+          "bucket": "seq"
+        },
+        {
+          "text": "for keeps insert order",
+          "bucket": "dict"
+        },
+        {
+          "text": "d[0] = key 0, not «first»",
+          "bucket": "dict"
+        },
+        {
+          "text": "no guaranteed order",
+          "bucket": "set"
+        },
+        {
+          "text": "no s[i]",
+          "bucket": "set"
+        }
+      ],
+      "recallTips": [
+        "sequence=[i]",
+        "dict=key (+insert order)",
+        "set=neither"
+      ],
+      "recallMapRef": "📍 P0 order map."
     },
     {
       "id": "P1",
@@ -770,6 +824,56 @@
           "studyHint": "↑ .get()"
         }
       ]
+    },
+    {
+      "id": "P9b",
+      "type": "drag_buckets",
+      "tag": "PY · drag MATCH",
+      "title": "Lock MATCH: access family",
+      "instruction": "After type MATCH — where does each access pattern live?",
+      "buckets": [
+        {
+          "id": "seq",
+          "icon": "📚",
+          "title": "Sequence",
+          "color": "#5b8def"
+        },
+        {
+          "id": "map",
+          "icon": "🗝️",
+          "title": "dict",
+          "color": "#3d9a6a"
+        },
+        {
+          "id": "chk",
+          "icon": "🧪",
+          "title": "Check",
+          "color": "#e8a84b"
+        }
+      ],
+      "items": [
+        {
+          "text": "list[i]",
+          "bucket": "seq"
+        },
+        {
+          "text": "word[::-1]",
+          "bucket": "seq"
+        },
+        {
+          "text": "dict[k]",
+          "bucket": "map"
+        },
+        {
+          "text": "counts.get(k,0)",
+          "bucket": "map"
+        },
+        {
+          "text": "isinstance(x, dict)",
+          "bucket": "chk"
+        }
+      ],
+      "recallMapRef": "📍 After P9 MATCH."
     },
     {
       "id": "P10",

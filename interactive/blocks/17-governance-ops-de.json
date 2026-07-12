@@ -191,6 +191,52 @@
       ]
     },
     {
+      "id": "E1b",
+      "type": "drag_buckets",
+      "tag": "drag · MATCH",
+      "title": "Закріпи MATCH: governance",
+      "instruction": "Після MATCH study — розклади чіпи.",
+      "buckets": [
+        {
+          "id": "g",
+          "icon": "🔗",
+          "title": "Graph/docs",
+          "color": "#5b8def"
+        },
+        {
+          "id": "s",
+          "icon": "📟",
+          "title": "Signal",
+          "color": "#e8a84b"
+        },
+        {
+          "id": "a",
+          "icon": "🚑",
+          "title": "Action",
+          "color": "#ff6b6b"
+        }
+      ],
+      "items": [
+        {
+          "text": "Lineage",
+          "bucket": "g"
+        },
+        {
+          "text": "Data catalog",
+          "bucket": "g"
+        },
+        {
+          "text": "freshness miss",
+          "bucket": "s"
+        },
+        {
+          "text": "Runbook",
+          "bucket": "a"
+        }
+      ],
+      "recallMapRef": "📍 After E1 MATCH."
+    },
+    {
       "id": "E2",
       "type": "scenario",
       "tag": "🛡️ · 2/7",
