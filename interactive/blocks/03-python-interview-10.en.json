@@ -1,0 +1,690 @@
+{
+  "id": "03-python-interview-10",
+  "title": "Python Interview · 10 задач",
+  "subtitle": "types · counter dict · slices · recursion · pandas · TypeError trap",
+  "levels": [
+    {
+      "id": "P0",
+      "type": "theory",
+      "tag": "PY · карта",
+      "title": "Pure Python vs Pandas",
+      "instruction": "Screenings may ban import pandas — keep both templates. Families of types first, then tools.",
+      "vizs": [
+        {
+          "type": "typeFamily",
+          "title": "3️⃣ data families — remember as a picture",
+          "families": [
+            {
+              "icon": "📚",
+              "title": "Sequence",
+              "types": "list · tuple · str",
+              "color": "#5b8def",
+              "traits": [
+                {
+                  "yes": true,
+                  "label": "order",
+                  "value": "yes (0,1,2…)"
+                },
+                {
+                  "yes": true,
+                  "label": "access",
+                  "value": "[i] or [start:stop]"
+                },
+                {
+                  "yes": true,
+                  "label": "duplicates",
+                  "value": "OK"
+                }
+              ],
+              "holdLabel": "element can be",
+              "canHold": [
+                "int",
+                "str",
+                "list",
+                "dict",
+                "set",
+                "tuple"
+              ],
+              "noHoldLabel": "index CANNOT be",
+              "cannotHold": [
+                "dict",
+                "set",
+                "list"
+              ]
+            },
+            {
+              "icon": "🗝️",
+              "title": "Mapping · dict",
+              "types": "dict",
+              "color": "#3d9a6a",
+              "traits": [
+                {
+                  "yes": false,
+                  "label": "order",
+                  "value": "not for indexing (key!)"
+                },
+                {
+                  "yes": true,
+                  "label": "access",
+                  "value": "[key] · .get(key, 0)"
+                },
+                {
+                  "yes": false,
+                  "label": "key",
+                  "value": "unique"
+                }
+              ],
+              "holdLabel": "key (hashable)",
+              "canHold": [
+                "str",
+                "int",
+                "float",
+                "tuple",
+                "bool"
+              ],
+              "noHoldLabel": "key CANNOT be",
+              "cannotHold": [
+                "list",
+                "dict",
+                "set"
+              ]
+            },
+            {
+              "icon": "🎯",
+              "title": "Set · unique",
+              "types": "set · frozenset",
+              "color": "#c77dff",
+              "traits": [
+                {
+                  "yes": false,
+                  "label": "order",
+                  "value": "no index"
+                },
+                {
+                  "yes": false,
+                  "label": "access",
+                  "value": "no set[i]"
+                },
+                {
+                  "yes": true,
+                  "label": "uniqueness",
+                  "value": "automatic"
+                }
+              ],
+              "holdLabel": "set member",
+              "canHold": [
+                "str",
+                "int",
+                "tuple"
+              ],
+              "noHoldLabel": "member CANNOT be",
+              "cannotHold": [
+                "list",
+                "dict",
+                "set"
+              ]
+            }
+          ],
+          "footnote": "hashable = can be dict key / set member. list and dict are mutable → not hashable."
+        },
+        {
+          "type": "accessRules",
+          "title": "Access: who needs what",
+          "colA": "you write",
+          "colB": "you need",
+          "colC": "live example",
+          "rows": [
+            {
+              "icon": "📚",
+              "who": "list[i]",
+              "need": "i = int or slice",
+              "example": "a[0] · a[-1] · a[1:3]",
+              "color": "#5b8def"
+            },
+            {
+              "icon": "🗝️",
+              "who": "dict[k]",
+              "need": "k = hashable",
+              "example": "d['a'] · d[(1,2)]",
+              "color": "#3d9a6a"
+            },
+            {
+              "icon": "💥",
+              "who": "list[set/dict]",
+              "need": "never",
+              "example": "a[{1}] → TypeError",
+              "color": "#ff6b6b"
+            },
+            {
+              "icon": "🧪",
+              "who": "isinstance",
+              "need": "before parsing",
+              "example": "isinstance(x, dict)",
+              "color": "#e8a84b"
+            }
+          ]
+        },
+        {
+          "type": "splitCompare",
+          "columns": [
+            {
+              "title": "🐼 Pandas (when allowed)",
+              "color": "#5b8def",
+              "items": [
+                "df.groupby('dept').agg(...)",
+                "pd.merge(..., how='left')",
+                "clean = df.fillna(0)  # присвой!"
+              ]
+            },
+            {
+              "title": "🐍 Pure Python (screening)",
+              "color": "#e8a84b",
+              "items": [
+                "counts[k] = counts.get(k,0)+1",
+                "for / map / \" \".join(...)",
+                "if x is None: ..."
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "✅ / ❌ mini cheat-sheet",
+          "cards": [
+            {
+              "icon": "📚",
+              "title": "list",
+              "badge": "sequence",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "words[0]"
+                },
+                {
+                  "ok": true,
+                  "text": "words[::-1]"
+                },
+                {
+                  "ok": false,
+                  "text": "words[{'a':1}]"
+                }
+              ]
+            },
+            {
+              "icon": "🗝️",
+              "title": "dict",
+              "badge": "mapping",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "counts['apple']"
+                },
+                {
+                  "ok": true,
+                  "text": "key = (1,'a')"
+                },
+                {
+                  "ok": false,
+                  "text": "key = [1,'a']"
+                }
+              ]
+            },
+            {
+              "icon": "🐼",
+              "title": "groupby",
+              "badge": "pandas",
+              "color": "#c77dff",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": ".agg(..., 'mean')"
+                },
+                {
+                  "ok": true,
+                  "text": ".reset_index()"
+                },
+                {
+                  "ok": false,
+                  "text": "avg замість mean"
+                }
+              ]
+            }
+          ],
+          "footnote": "One image: list = numbered seats · dict = locker with a tag · set = bag of uniques."
+        }
+      ],
+      "bullets": [],
+      "recallTips": [
+        "📚 sequence → int/slice index",
+        "🗝️ dict → hashable key (not list/dict/set)",
+        "🎯 set → no index; hashable members",
+        "🐍 counter dict · 🐼 groupby"
+      ]
+    },
+    {
+      "id": "P1",
+      "type": "fill_blanks",
+      "tag": "PY · 1/10",
+      "title": "Паліндром",
+      "instruction": "Перевірка слова з обох боків.",
+      "template": "def is_palindrome(word):\n    clean = word.____()\n    if clean == clean[____]:\n        return True\n    else:\n        return ____",
+      "answers": [
+        "lower",
+        "::-1",
+        "False"
+      ],
+      "wordBank": [
+        "lower",
+        "upper",
+        "::-1",
+        "False",
+        "True",
+        "None"
+      ],
+      "hints": [
+        "Нормалізуй регістр.",
+        "Зріз [::-1] перевертає.",
+        "Повертай bool, не саме слово."
+      ]
+    },
+    {
+      "id": "P2",
+      "type": "fill_blanks",
+      "tag": "PY · 2/10",
+      "title": "Лічильник у dict",
+      "instruction": "Скільки разів зустрічається кожен бренд.",
+      "template": "counts = {}\nfor car in cars:\n    if car in counts:\n        counts[car] += ____\n    else:\n        counts[car] = ____",
+      "answers": [
+        "1",
+        "1"
+      ],
+      "wordBank": [
+        "1",
+        "0",
+        "car",
+        "True"
+      ],
+      "hints": [
+        "Вперше = 1, далі += 1.",
+        "Альтернатива: counts.get(car, 0) + 1."
+      ]
+    },
+    {
+      "id": "P3",
+      "type": "fill_blanks",
+      "tag": "PY · 3/10",
+      "title": "Рекурсія · факторіал",
+      "instruction": "Базовий випадок + виклик себе.",
+      "template": "def factorial(n):\n    if n == 1:\n        return 1\n    else:\n        return n * ____(n - 1)",
+      "answers": [
+        "factorial"
+      ],
+      "wordBank": [
+        "factorial",
+        "n",
+        "loop",
+        "return"
+      ],
+      "hints": [
+        "Функція викликає себе по імені.",
+        "Без базового випадку → StackOverflow."
+      ]
+    },
+    {
+      "id": "P4",
+      "type": "whats_wrong",
+      "tag": "PY · 4/10 · hardcore",
+      "title": "TypeError: list indices … not set",
+      "instruction": "Класична пастка live-coding.",
+      "buggyCode": "a = [[16,'A'], (5,'R'), {2:'O'}, {3,'N'}, 7, 'T']\nfor item in a:\n    if item in a:\n        a[item] += 1   # 💥",
+      "prompt": "Чому падає?",
+      "options": [
+        "a — list; a[item] потребує int-індекс. item=set/dict → TypeError. Для лічильника потрібен counts={}",
+        "Треба було написати a.append(item)",
+        "set не можна класти у list взагалі",
+        "+= 1 заборонено для чисел у Python"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Паттерн лічильника — для dict, не для модифікації list через складний обʼєкт як індекс.",
+      "explanation": "isinstance + розбір типів, або порожній dict."
+    },
+    {
+      "id": "P5",
+      "type": "fill_blanks",
+      "tag": "PY · 5/10",
+      "title": "Pandas groupby + mean",
+      "instruction": "Середня зарплата по відділу. Памʼятай: mean ≠ avg.",
+      "mission": {
+        "emoji": "💼",
+        "title": "HR-звіт",
+        "brief": "Є таблиця співробітників. Треба середня salary по department.",
+        "ask": "Заповни ланцюжок groupby → agg(mean) → reset_index."
+      },
+      "sampleTable": {
+        "headers": [
+          "employee_id",
+          "department",
+          "salary"
+        ],
+        "rows": [
+          [
+            "e1",
+            "IT",
+            "3000"
+          ],
+          [
+            "e2",
+            "IT",
+            "3500"
+          ],
+          [
+            "e3",
+            "HR",
+            "2100"
+          ],
+          [
+            "e4",
+            "Sales",
+            "1800"
+          ],
+          [
+            "e5",
+            "Sales",
+            "2200"
+          ]
+        ],
+        "columnGlossary": {
+          "employee_id": "ID співробітника (не групуємо)",
+          "department": "Ключ groupby — відділ",
+          "salary": "Число для agg mean"
+        },
+        "caption": "Після agg: IT→3250, HR→2100, Sales→2000."
+      },
+      "controlTip": "Таблиця й місія — вище. Код нижче.",
+      "template": "result = df.____('department')\n    .____(mean_salary=('salary', '____'))\n    .____()",
+      "answers": [
+        "groupby",
+        "agg",
+        "mean",
+        "reset_index"
+      ],
+      "wordBank": [
+        "groupby",
+        "agg",
+        "mean",
+        "avg",
+        "sum",
+        "reset_index",
+        "merge"
+      ],
+      "hints": [
+        "SQL AVG → Pandas 'mean'.",
+        "groupby робить ключ індексом → reset_index()."
+      ]
+    },
+    {
+      "id": "P6",
+      "type": "fill_blanks",
+      "tag": "PY · 6/10",
+      "title": "pd.merge = LEFT JOIN",
+      "instruction": "users ⟕ orders по user_id.",
+      "mission": {
+        "emoji": "🔗",
+        "title": "Злиття DataFrame",
+        "brief": "Ліва таблиця users — усі користувачі лишаються. orders додає колонки справа.",
+        "ask": "Заповни merge: ліва, права, ключ, how='left'."
+      },
+      "joinTables": [
+        {
+          "title": "df_users",
+          "headers": [
+            "user_id",
+            "name"
+          ],
+          "rows": [
+            [
+              "u1",
+              "Anna"
+            ],
+            [
+              "u2",
+              "Bob"
+            ],
+            [
+              "u3",
+              "Cara"
+            ]
+          ],
+          "columnGlossary": {
+            "user_id": "Ключ merge",
+            "name": "Атрибут user"
+          }
+        },
+        {
+          "title": "df_orders",
+          "headers": [
+            "order_id",
+            "user_id",
+            "amount"
+          ],
+          "rows": [
+            [
+              "o100",
+              "u1",
+              "50"
+            ],
+            [
+              "o101",
+              "u1",
+              "30"
+            ],
+            [
+              "o200",
+              "u3",
+              "80"
+            ]
+          ],
+          "columnGlossary": {
+            "order_id": "ID замовлення",
+            "user_id": "FK → users",
+            "amount": "Сума"
+          }
+        }
+      ],
+      "joinCaption": "pd.merge(..., how='left') = SQL LEFT JOIN. u2 без orders → NaN у колонках orders.",
+      "controlTip": "Дві таблиці вище — заповни merge нижче.",
+      "template": "merged = pd.merge(\n    ____,\n    ____,\n    on='____',\n    how='____'\n)",
+      "answers": [
+        "df_users",
+        "df_orders",
+        "user_id",
+        "left"
+      ],
+      "wordBank": [
+        "df_users",
+        "df_orders",
+        "user_id",
+        "left",
+        "inner",
+        "right",
+        "outer"
+      ],
+      "hints": [
+        "Ліва таблиця — куди джойнимо.",
+        "how='left' зберігає всіх users."
+      ]
+    },
+    {
+      "id": "P7",
+      "type": "multi_choice",
+      "tag": "PY · 7/10",
+      "title": "Що далі з res?",
+      "question": "Після groupby+agg ти маєш res. Як використати далі?",
+      "options": [
+        "res — звичайний DataFrame: filter / sort / merge назад / to_csv",
+        "res можна лише print; далі мерджити не можна",
+        "reset_index знищує дані",
+        "agg завжди повертає list"
+      ],
+      "correctIndex": 0,
+      "explanation": "res.sort_values(...).head(10); df.merge(res, on='k'); res.to_csv(...)."
+    },
+    {
+      "id": "P8",
+      "type": "whats_wrong",
+      "tag": "PY · 8/10",
+      "title": "fillna / dropna без присвоєння",
+      "buggyCode": "df.dropna()\ndf.fillna(0)\nprint(df)  # NULL все ще тут!",
+      "prompt": "У чому підвох?",
+      "options": [
+        "Методи повертають новий DF; треба clean = df.dropna() або inplace=True",
+        "dropna видаляє лише колонки, не рядки",
+        "fillna не працює з числовими NULL",
+        "Треба спочатку groupby"
+      ],
+      "correctIndex": 0,
+      "explainOk": "Без присвоєння / inplace оригінал не змінюється.",
+      "explanation": "На інтервʼю кажи: clean = df.dropna(subset=['amount'])."
+    },
+    {
+      "id": "P9",
+      "type": "match_pairs",
+      "tag": "PY · 9/10",
+      "title": "MATCH · types",
+      "instruction": "What can be a key / index? See families first.",
+      "studyIntro": "<strong>Step 1 · three families.</strong> Sequence has seats 0,1,2… Mapping = tagged locker. Set = bag without index. Then pairs.",
+      "studyViz": {
+        "type": "typeFamily",
+        "title": "Before MATCH — who is sequential",
+        "families": [
+          {
+            "icon": "📚",
+            "title": "list / str",
+            "types": "sequence",
+            "color": "#5b8def",
+            "traits": [
+              {
+                "yes": true,
+                "label": "index",
+                "value": "int / slice"
+              },
+              {
+                "yes": false,
+                "label": "index",
+                "value": "dict/set → TypeError"
+              }
+            ],
+            "canHold": [
+              "anything"
+            ],
+            "cannotHold": [
+              "— as index"
+            ]
+          },
+          {
+            "icon": "🗝️",
+            "title": "dict",
+            "types": "mapping",
+            "color": "#3d9a6a",
+            "traits": [
+              {
+                "yes": true,
+                "label": "key",
+                "value": "str/int/tuple"
+              },
+              {
+                "yes": false,
+                "label": "key",
+                "value": "list/dict/set"
+              }
+            ],
+            "canHold": [
+              "value: anything"
+            ],
+            "cannotHold": [
+              "list as key"
+            ]
+          },
+          {
+            "icon": "🎯",
+            "title": "set",
+            "types": "unique",
+            "color": "#c77dff",
+            "traits": [
+              {
+                "yes": false,
+                "label": "index",
+                "value": "no set[i]"
+              },
+              {
+                "yes": true,
+                "label": "member",
+                "value": "hashable only"
+              }
+            ],
+            "canHold": [
+              "str",
+              "int",
+              "tuple"
+            ],
+            "cannotHold": [
+              "list",
+              "dict"
+            ]
+          }
+        ]
+      },
+      "pairs": [
+        {
+          "left": "list[i]",
+          "right": "int only (or slice)",
+          "studyHint": "↑ list"
+        },
+        {
+          "left": "dict[k]",
+          "right": "hashable key (str/int/tuple)",
+          "studyHint": "↑ dict"
+        },
+        {
+          "left": "isinstance(x, dict)",
+          "right": "type check before parsing"
+        },
+        {
+          "left": "word[::-1]",
+          "right": "reversed string",
+          "studyHint": "↑ slice"
+        },
+        {
+          "left": "counts.get(k, 0)",
+          "right": "counter without if/else",
+          "studyHint": "↑ .get()"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "type": "drag_order",
+      "tag": "PY · 10/10",
+      "title": "Розбір брудного списку (hah trick)",
+      "instruction": "Порядок кроків для парсингу mixed types → clean_dict.",
+      "recallIntro": "Алгоритм «hah trick» — спочатку прочитай кроки, потім розстав.",
+      "recallTips": [
+        "Порожній clean_dict = {}",
+        "for item: isinstance — dict чи list/tuple?",
+        "dict → витягни key/value (вкладений 'hah, trick')",
+        "list/tuple → [0]=key, [1]=value",
+        "В кінці — sort keys і зібрати результат"
+      ],
+      "recallMapRef": "📍 Карта: рівень P0 «Чистий Python vs Pandas» у цьому блоці.",
+      "items": [
+        "Створити clean_dict = {}",
+        "for item in a: перевірити isinstance",
+        "dict → витягти key/value (у т.ч. вкладений 'hah, trick')",
+        "list/tuple → item[0]=key, item[1]=value",
+        "Відсортувати ключі й зібрати рядок/результат"
+      ]
+    }
+  ]
+}

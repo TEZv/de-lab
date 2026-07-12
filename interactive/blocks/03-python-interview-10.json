@@ -8,25 +8,143 @@
       "type": "theory",
       "tag": "PY · карта",
       "title": "Чистий Python vs Pandas",
-      "instruction": "На скрінінгу можуть заборонити import pandas — май обидва шаблони.",
-      "viz": {
-        "type": "splitCompare",
-        "columns": [
-          { "title": "🐼 Pandas", "color": "#5b8def", "items": ["groupby + agg + mean", "pd.merge(how=left)", "fillna / dropna"] },
-          { "title": "🐍 Чистий Python", "color": "#e8a84b", "items": ["dict counter += 1", "loop / map join", "if x is None"] }
-        ]
-      },
-      "bullets": [
-        "list[i] — i має бути int",
-        "dict[key] — key може бути str/int/tuple",
-        "set / dict як індекс списку → TypeError",
-        "isinstance(x, dict/list/tuple) — розбір брудних даних"
+      "instruction": "На скрінінгу можуть заборонити import pandas — май обидва шаблони. Спочатку сімʼї типів, потім інструменти.",
+      "vizs": [
+        {
+          "type": "typeFamily",
+          "title": "3️⃣ сімʼї даних — запамʼятай картинкою",
+          "families": [
+            {
+              "icon": "📚",
+              "title": "Sequence · послідовність",
+              "types": "list · tuple · str",
+              "color": "#5b8def",
+              "traits": [
+                { "yes": true, "label": "порядок", "value": "є (0,1,2…)" },
+                { "yes": true, "label": "доступ", "value": "[i] або [start:stop]" },
+                { "yes": true, "label": "дублікати", "value": "OK" }
+              ],
+              "holdLabel": "елемент може бути",
+              "canHold": ["int", "str", "list", "dict", "set", "tuple"],
+              "noHoldLabel": "індекс НЕ може бути",
+              "cannotHold": ["dict", "set", "list"]
+            },
+            {
+              "icon": "🗝️",
+              "title": "Mapping · словник",
+              "types": "dict",
+              "color": "#3d9a6a",
+              "traits": [
+                { "yes": false, "label": "порядок", "value": "не для індексу (ключ!)" },
+                { "yes": true, "label": "доступ", "value": "[key] · .get(key, 0)" },
+                { "yes": false, "label": "ключ", "value": "унікальний" }
+              ],
+              "holdLabel": "ключ (hashable)",
+              "canHold": ["str", "int", "float", "tuple", "bool"],
+              "noHoldLabel": "ключ НЕ може бути",
+              "cannotHold": ["list", "dict", "set"]
+            },
+            {
+              "icon": "🎯",
+              "title": "Set · унікальні",
+              "types": "set · frozenset",
+              "color": "#c77dff",
+              "traits": [
+                { "yes": false, "label": "порядок", "value": "немає індексу" },
+                { "yes": false, "label": "доступ", "value": "немає set[i]" },
+                { "yes": true, "label": "унікальність", "value": "автоматична" }
+              ],
+              "holdLabel": "член set",
+              "canHold": ["str", "int", "tuple"],
+              "noHoldLabel": "член НЕ може бути",
+              "cannotHold": ["list", "dict", "set"]
+            }
+          ],
+          "footnote": "hashable = можна як ключ dict / член set. list і dict — mutable → не hashable."
+        },
+        {
+          "type": "accessRules",
+          "title": "Доступ: хто що вимагає",
+          "colA": "що пишеш",
+          "colB": "що треба",
+          "colC": "живий приклад",
+          "rows": [
+            { "icon": "📚", "who": "list[i]", "need": "i = int або slice", "example": "a[0] · a[-1] · a[1:3]", "color": "#5b8def" },
+            { "icon": "🗝️", "who": "dict[k]", "need": "k = hashable", "example": "d['a'] · d[(1,2)]", "color": "#3d9a6a" },
+            { "icon": "💥", "who": "list[set/dict]", "need": "ніколи", "example": "a[{1}] → TypeError", "color": "#ff6b6b" },
+            { "icon": "🧪", "who": "isinstance", "need": "перед парсингом", "example": "isinstance(x, dict)", "color": "#e8a84b" }
+          ]
+        },
+        {
+          "type": "splitCompare",
+          "columns": [
+            {
+              "title": "🐼 Pandas (коли можна)",
+              "color": "#5b8def",
+              "items": [
+                "df.groupby('dept').agg(...)",
+                "pd.merge(..., how='left')",
+                "clean = df.fillna(0)  # присвой!"
+              ]
+            },
+            {
+              "title": "🐍 Чистий Python (скрінінг)",
+              "color": "#e8a84b",
+              "items": [
+                "counts[k] = counts.get(k,0)+1",
+                "for / map / ' '.join(...)",
+                "if x is None: ..."
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "✅ / ❌ міні-шпаргалка",
+          "cards": [
+            {
+              "icon": "📚",
+              "title": "list",
+              "badge": "sequence",
+              "color": "#5b8def",
+              "rows": [
+                { "ok": true, "text": "words[0]" },
+                { "ok": true, "text": "words[::-1]" },
+                { "ok": false, "text": "words[{'a':1}]" }
+              ]
+            },
+            {
+              "icon": "🗝️",
+              "title": "dict",
+              "badge": "mapping",
+              "color": "#3d9a6a",
+              "rows": [
+                { "ok": true, "text": "counts['apple']" },
+                { "ok": true, "text": "key = (1,'a')" },
+                { "ok": false, "text": "key = [1,'a']" }
+              ]
+            },
+            {
+              "icon": "🐼",
+              "title": "groupby",
+              "badge": "pandas",
+              "color": "#c77dff",
+              "rows": [
+                { "ok": true, "text": ".agg(..., 'mean')" },
+                { "ok": true, "text": ".reset_index()" },
+                { "ok": false, "text": "avg замість mean" }
+              ]
+            }
+          ],
+          "footnote": "Один образ: list = черга місць · dict = шухляда з біркою · set = мішок унікальних."
+        }
       ],
+      "bullets": [],
       "recallTips": [
-        "list[i] — лише int або slice [start:stop]",
-        "dict[key] — key має бути hashable",
-        "set/dict як індекс list → TypeError",
-        "чистий Python: dict лічильник; Pandas: groupby"
+        "📚 sequence → індекс int/slice",
+        "🗝️ dict → ключ hashable (не list/dict/set)",
+        "🎯 set → без індексу; члени hashable",
+        "🐍 counter dict · 🐼 groupby"
       ]
     },
     {
@@ -195,29 +313,46 @@
       "tag": "PY · 9/10",
       "title": "MATCH · типи",
       "instruction": "Що можна юзати як ключ / індекс? Спочатку — приклади, не абстракції.",
-      "studyIntro": "<strong>Крок 1 · побач різницю list vs dict.</strong> Зліва — позиція (int), справа — ключ (hashable). Потім пари.",
+      "studyIntro": "<strong>Крок 1 · три сімʼї.</strong> Sequence має місця 0,1,2… Mapping — ключ-бірка. Set — мішок без індексу. Потім пари.",
       "studyViz": {
-        "type": "splitCompare",
-        "columns": [
+        "type": "typeFamily",
+        "title": "Перед MATCH — хто послідовний",
+        "families": [
           {
-            "title": "list[i] · позиція",
+            "icon": "📚",
+            "title": "list / str",
+            "types": "sequence",
             "color": "#5b8def",
-            "items": [
-              "words[0] → 'hello' (int index)",
-              "words[-1] → останній",
-              "words[::-1] → reverse slice",
-              "list[{'a':1}] → TypeError ❌"
-            ]
+            "traits": [
+              { "yes": true, "label": "індекс", "value": "int / slice" },
+              { "yes": false, "label": "індекс", "value": "dict/set → TypeError" }
+            ],
+            "canHold": ["будь-що"],
+            "cannotHold": ["— як індекс"]
           },
           {
-            "title": "dict[k] · ключ",
+            "icon": "🗝️",
+            "title": "dict",
+            "types": "mapping",
             "color": "#3d9a6a",
-            "items": [
-              "counts['apple'] → 3 (str key)",
-              "counts.get('pear', 0) → без KeyError",
-              "key = tuple → OK (hashable)",
-              "key = list → TypeError ❌"
-            ]
+            "traits": [
+              { "yes": true, "label": "ключ", "value": "str/int/tuple" },
+              { "yes": false, "label": "ключ", "value": "list/dict/set" }
+            ],
+            "canHold": ["value: будь-що"],
+            "cannotHold": ["list як key"]
+          },
+          {
+            "icon": "🎯",
+            "title": "set",
+            "types": "unique",
+            "color": "#c77dff",
+            "traits": [
+              { "yes": false, "label": "індекс", "value": "немає set[i]" },
+              { "yes": true, "label": "член", "value": "лише hashable" }
+            ],
+            "canHold": ["str", "int", "tuple"],
+            "cannotHold": ["list", "dict"]
           }
         ]
       },
