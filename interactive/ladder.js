@@ -192,7 +192,7 @@
     archer: { id: 'archer', lab: 'devops-lab', label: 'DevOps Archer', weapon: 'bow' },
   };
 
-  /** AI path sits on Data — layer 1 = DE Lab (stub for T1). */
+  /** AI path sits on Data — layer 1 = DE Lab (stub for Mentorship T1). */
   const AI_SKILL_LAYERS = [
     { n: 1, title: 'Data fundamentals', href: 'https://de-lab-interview-gym.web.app', note: 'DE Lab · Mage Gym' },
     { n: 2, title: 'AI fundamentals', href: null, note: 'soon' },
@@ -202,7 +202,7 @@
     { n: 6, title: 'LLMs', href: null, note: 'soon' },
     { n: 7, title: 'RAG & knowledge', href: null, note: 'soon' },
     { n: 8, title: 'AI agents', href: null, note: 'soon' },
-    { n: 9, title: 'Production AI', href: null, note: 'soon' },
+    { n: 9, title: 'Production AI', href: 'https://devops-lab-gym.web.app/#/block/06-prod-devops/R0', note: 'bridge · Ops prod' },
     { n: 10, title: 'AI systems engineer', href: null, note: 'soon' },
   ];
 

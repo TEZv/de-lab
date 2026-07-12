@@ -1025,6 +1025,58 @@ button.marked { background: var(--good); }
   font-weight: 600;
 }
 
+/* AI path stub (Mentorship T1) */
+.ai-map-card { margin-top: 16px; }
+.ai-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.ai-map-badge {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  color: var(--accent);
+  background: rgba(91, 141, 239, 0.12);
+}
+.ai-map-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+.ai-map-step {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #121a28;
+  font-size: 13px;
+}
+.ai-map-step.live {
+  border-color: color-mix(in srgb, var(--good) 45%, var(--line));
+  background: linear-gradient(135deg, #152018, #121a28);
+}
+.ai-map-step.live a { color: var(--ink); text-decoration: none; }
+.ai-map-step.live a:hover { color: var(--accent); }
+.ai-map-step.soon { opacity: 0.72; }
+.ai-map-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
 /* Skill staircase (blocks, not flat grid) */
 .stair-card { overflow: hidden; }
 .stair-header {

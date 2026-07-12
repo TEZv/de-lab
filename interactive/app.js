@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260711k';
+const BUILD = '20260712a';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DEVOPS_GYM_URL = 'https://devops-lab-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
@@ -492,6 +492,34 @@ function wireHero(root) {
   });
 }
 
+function renderAiMapStub() {
+  const layers = (window.LabLadder && LabLadder.AI_SKILL_LAYERS) || [];
+  if (!layers.length) return '';
+  const steps = layers.map((layer) => {
+    const live = !!layer.href;
+    const cls = live ? 'ai-map-step live' : 'ai-map-step soon';
+    const inner = live
+      ? `<a href="${PrepLevelsEngine.escapeHtml(layer.href)}" target="_blank" rel="noopener"><strong>${layer.n}. ${PrepLevelsEngine.escapeHtml(layer.title)}</strong></a>`
+      : `<strong>${layer.n}. ${PrepLevelsEngine.escapeHtml(layer.title)}</strong>`;
+    const note = layer.note
+      ? `<span class="ai-map-note">${PrepLevelsEngine.escapeHtml(layer.note === 'soon' ? t('soon') : layer.note)}</span>`
+      : '';
+    return `<li class="${cls}">${inner}${note}</li>`;
+  }).join('');
+  return `
+    <section class="pl-card ai-map-card">
+      <div class="ai-map-header">
+        <div>
+          <p class="hub-eyebrow">${t('aiMapEyebrow')}</p>
+          <h2>${t('aiMapTitle')}</h2>
+          <p style="color:var(--muted)">${t('aiMapLede')}</p>
+        </div>
+        <span class="ai-map-badge" aria-hidden="true">T1</span>
+      </div>
+      <ol class="ai-map-steps">${steps}</ol>
+    </section>`;
+}
+
 function renderHome(root) {
   const homeBody = t('homeBody')
     .replace('{deQuest}', DE_QUEST_MD)
@@ -501,6 +529,7 @@ function renderHome(root) {
     ${renderHeroCabin()}
     ${renderCareerPicker()}
     ${renderStaircase()}
+    ${renderAiMapStub()}
     <section class="pl-card">
       <h2>${t('homeTitle')}</h2>
       <p style="color:var(--muted)">${homeBody}</p>
