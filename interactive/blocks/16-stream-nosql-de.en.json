@@ -269,7 +269,13 @@
       "hints": [
         "$match: drop null temp.",
         "$group + $avg — like GROUP BY + AVG."
-      ]
+      ],
+      "given": {
+        "label": "Given · full prompt",
+        "note": "Use the table above as input; blanks complete the code/SQL below.",
+        "code": "# Context\nDocuments in Mongo, not relational. Need avg temp_c per device.\n\ndevice_id | temp_c | ts\n--- | --- | ---\nd1 | 21 | 10:00\nd1 | 23 | 10:05\nd2 | 85 | 10:00\n# Mongo — one doc per reading; agg like SQL GROUP BY.",
+        "expect": "Fill aggregation pipeline."
+      }
     },
     {
       "id": "D4",

@@ -269,7 +269,13 @@
       "hints": [
         "$match: відкинути null temp.",
         "$group + $avg — аналог GROUP BY + AVG."
-      ]
+      ],
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
+        "code": "# Контекст\nДокументи в Mongo, не реляційна схема. Треба avg temp_c по device.\n\ndevice_id | temp_c | ts\n--- | --- | ---\nd1 | 21 | 10:00\nd1 | 23 | 10:05\nd2 | 85 | 10:00\n# У Mongo — один doc на reading; agg як SQL GROUP BY.",
+        "expect": "Заповни pipeline aggregation."
+      }
     },
     {
       "id": "D4",

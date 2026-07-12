@@ -246,7 +246,13 @@
       "hints": [
         "Watermark — остання успішна межа, не «сьогодні 00:00» без узгодження.",
         "Літерал timestamp у лапках для SQL."
-      ]
+      ],
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
+        "code": "# Контекст\nВчора watermark = 2026-07-10 23:00:00. Тягнемо лише свіжіші події.\n\nevent_id | updated_at | payload\n--- | --- | ---\ne1 | 2026-07-10 22:00 | old\ne2 | 2026-07-11 01:00 | new\ne3 | 2026-07-11 03:00 | new\n# e1 ≤ watermark → не беремо. e2, e3 → у delta.",
+        "expect": "Заповни поріг у WHERE."
+      }
     },
     {
       "id": "C3",
@@ -301,7 +307,13 @@
       "hints": [
         "Новий watermark = max(updated_at) з обробленого batch.",
         "rows_loaded — з лічильника цього run."
-      ]
+      ],
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
+        "code": "# Контекст\nWatermark пишемо лише коли core.events і mart узгоджені.\n\npipeline | watermark_ts | rows_loaded\n--- | --- | ---\nevents_to_core | 2026-07-10 23:00:00 | 1200\nevents_to_core | 2026-07-11 03:00:00 | 85\n# Другий рядок — після сьогоднішнього run (max updated_at у batch).",
+        "expect": "Заповни UPDATE state table."
+      }
     },
     {
       "id": "C4",

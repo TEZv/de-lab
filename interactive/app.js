@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'de-lab-interactive-v3';
-const BUILD = '20260712d';
+const BUILD = '20260712j';
 const GYM_URL = 'https://de-lab-interview-gym.web.app';
 const DEVOPS_GYM_URL = 'https://devops-lab-gym.web.app';
 const DE_QUEST_MD = 'https://github.com/TEZv/de-lab/blob/main/CHALLENGES.md';
@@ -132,8 +132,12 @@ function resolveBlockFile(id) {
   return aliases[id] || id;
 }
 
+function isLevelDone(entry) {
+  return entry === true || !!(entry && entry.done);
+}
+
 function countDone(prog) {
-  return Object.keys(prog || {}).filter((k) => prog[k]).length;
+  return Object.keys(prog || {}).filter((k) => isLevelDone(prog[k])).length;
 }
 
 function allBlocks() {
@@ -659,12 +663,15 @@ async function renderBlock(root, blockId, levelId) {
 
   const level = block.levels.find((l) => l.id === currentId) || block.levels[0];
   body.innerHTML = '';
-  PrepLevelsEngine.renderLevel(body, level, (lid) => {
+  PrepLevelsEngine.renderLevel(body, level, (lid, snapshot) => {
     const all = loadProgress();
-    all[blockId] = { ...(all[blockId] || {}), [lid]: true };
+    all[blockId] = {
+      ...(all[blockId] || {}),
+      [lid]: { done: true, at: Date.now(), snapshot: snapshot || null },
+    };
     saveProgress(all);
     paintTabs(all);
-  });
+  }, prog[level.id]);
 }
 
 function paintShareCard(canvas, rank, scores) {

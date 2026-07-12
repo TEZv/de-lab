@@ -334,7 +334,13 @@
       "hints": [
         "Сирі дані → bronze (або raw).",
         "Партиція = папки year/month/day у key."
-      ]
+      ],
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
+        "code": "# Контекст\nКомпанія кладе parquet по днях. Аналітик читає лише потрібний prefix — менше cost.\n\nprefix | зона | навіщо\n--- | --- | ---\nbronze/orders/ | raw | як приїхало з API\nsilver/orders/ | curated | після DQ\ngold/mart_revenue/ | mart | для BI\n# Hive-style: year= / month= / day= у шляху — partition, не колонка в кожному файлі окремо.",
+        "expect": "Заповни зону lake і ключі партиції в шляху."
+      }
     },
     {
       "id": "A3",

@@ -1,7 +1,7 @@
 {
   "id": "12-sku-minprice-mission",
-  "title": "Місія: найдешевший SKU",
-  "subtitle": "Універсальний публічний патерн (min у групі + фільтр). Аналог «каталог / прайс», без fantasy-брендів і без роботодавців.",
+  "title": "12-sku-minprice-mission",
+  "subtitle": "EN draft — fill levels localized; other levels may still follow UA structure.",
   "levels": [
     {
       "id": "K1",
@@ -142,12 +142,12 @@
       "id": "K4",
       "type": "fill_blanks",
       "tag": "4 · SQL",
-      "title": "Запиши кістяк",
+      "title": "K4 · drill",
       "mission": {
         "emoji": "⌨️",
-        "title": "Той самий патерн",
+        "title": "K4",
         "brief": "PARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC",
-        "ask": "Заповни."
+        "ask": "Fill the blanks below."
       },
       "template": "WITH ranked AS (\n  SELECT sku_id, power, age, price,\n    ROW_NUMBER() OVER(\n      PARTITION BY ____, ____\n      ORDER BY price ____\n    ) AS rn\n  FROM sku_prices\n  WHERE is_active = ____\n)\nSELECT sku_id, power, age, price\nFROM ranked\nWHERE rn = ____\nORDER BY power ____, age DESC;",
       "answers": [
@@ -176,10 +176,10 @@
       "revealOnFail": false,
       "controlTip": "Логіка вже в місіях 1–3.",
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Спочатку прочитай повну умову (і таблицю вище, якщо є), потім заповни ____.",
-        "code": "# Контекст\nPARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC\n\n# Задача\nЗаповни.\n# Кістяк нижче — заповни ____",
-        "expect": "Заповни."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: K4 (4 · SQL)\n# Контекст\nPARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC\n\n# Задача\nЗаповни.\n# Кістяк нижче — заповни ____",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {

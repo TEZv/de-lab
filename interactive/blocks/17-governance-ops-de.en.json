@@ -317,7 +317,13 @@
       "hints": [
         "description — business language from table.",
         "accepted_values for 0/1 flag."
-      ]
+      ],
+      "given": {
+        "label": "Given · full prompt",
+        "note": "Use the table above as input; blanks complete the code/SQL below.",
+        "code": "# Context\nDocument column in dbt — description + tests.\n\ncolumn | business meaning | test\n--- | --- | ---\nuser_id | User PK | unique, not_null\nis_active | 1 = active subscription today | accepted_values: [0,1]\nmrr | Monthly revenue USD | not_null where is_active=1\n# Docs live next to code — not Confluence-only.",
+        "expect": "Fill YAML fragment."
+      }
     },
     {
       "id": "E4",

@@ -431,6 +431,18 @@
       "tag": "PY · 1/10",
       "title": "Паліндром",
       "instruction": "Перевірка слова з обох боків.",
+      "mission": {
+        "emoji": "🔁",
+        "title": "Чи слово читається однаково назад?",
+        "brief": "Напиши функцію: приймає рядок, повертає True/False.",
+        "ask": "Спочатку lower(), потім порівняй із зрізом [::-1]. Якщо ні — поверни False."
+      },
+      "given": {
+        "label": "Дано · приклади",
+        "note": "Спочатку подивись повний вхід і очікуваний результат, потім заповни ____.",
+        "code": "is_palindrome('Level')  → True   # Level / leveL після lower\nis_palindrome('Python') → False",
+        "expect": "функція повертає bool, не сам рядок"
+      },
       "template": "def is_palindrome(word):\n    clean = word.____()\n    if clean == clean[____]:\n        return True\n    else:\n        return ____",
       "answers": [
         "lower",
@@ -449,7 +461,18 @@
         "Нормалізуй регістр.",
         "Зріз [::-1] перевертає.",
         "Повертай bool, не саме слово."
-      ]
+      ],
+      "resultTrace": {
+        "title": "Що поверне функція",
+        "input": "is_palindrome('Level')",
+        "steps": [
+          "clean = 'level' (lower)",
+          "clean[::-1] = 'level'",
+          "'level' == 'level' → True"
+        ],
+        "output": "True",
+        "note": "Якщо слово не паліндром — гілка else → False."
+      }
     },
     {
       "id": "P2",
@@ -457,6 +480,18 @@
       "tag": "PY · 2/10",
       "title": "Лічильник у dict",
       "instruction": "Скільки разів зустрічається кожен бренд.",
+      "mission": {
+        "emoji": "🚗",
+        "title": "Порахуй бренди в списку",
+        "brief": "Є список назв машин. Потрібен словник: бренд → скільки разів він зустрівся.",
+        "ask": "Почни з порожнього {}. Якщо бренду ще немає — постав 1. Якщо вже є — додай 1."
+      },
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Порожній {} на старті — нормально: ще жодного бренду не бачили. Цикл сам наповнить словник.",
+        "code": "cars = ['BMW', 'Audi', 'BMW']\ncounts = {}          # старт\n# після правильного циклу має бути:\n# counts == {'BMW': 2, 'Audi': 1}",
+        "expect": "обидва ____ — це число 1 (перший раз = 1, далі += 1)"
+      },
       "template": "counts = {}\nfor car in cars:\n    if car in counts:\n        counts[car] += ____\n    else:\n        counts[car] = ____",
       "answers": [
         "1",
@@ -471,7 +506,19 @@
       "hints": [
         "Вперше = 1, далі += 1.",
         "Альтернатива: counts.get(car, 0) + 1."
-      ]
+      ],
+      "resultTrace": {
+        "title": "Чому порожній {} — нормально",
+        "input": "cars = ['BMW', 'Audi', 'BMW']\ncounts = {}",
+        "steps": [
+          "старт: counts порожній — ще жодного бренду не бачили",
+          "car='BMW' немає в counts → else: counts['BMW'] = 1 → {'BMW': 1}",
+          "car='Audi' немає → else: counts['Audi'] = 1 → {'BMW': 1, 'Audi': 1}",
+          "car='BMW' ВЖЕ є → if: counts['BMW'] += 1 → {'BMW': 2, 'Audi': 1}"
+        ],
+        "output": "{'BMW': 2, 'Audi': 1}",
+        "note": "Порожній dict = «ще нуль ключів». Перший раз ключ створюємо (= 1), далі лише збільшуємо (+= 1)."
+      }
     },
     {
       "id": "P3",
@@ -479,6 +526,18 @@
       "tag": "PY · 3/10",
       "title": "Рекурсія · факторіал",
       "instruction": "Базовий випадок + виклик себе.",
+      "mission": {
+        "emoji": "🧮",
+        "title": "Факторіал через рекурсію",
+        "brief": "n! = n × (n-1) × … × 1. Функція викликає себе, доки не дійде до бази.",
+        "ask": "У return підстав імʼя цієї ж функції (не loop)."
+      },
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Без базового випадку (n == 1) рекурсія ніколи не зупиниться.",
+        "code": "factorial(1) → 1\nfactorial(3) → 3 * factorial(2) → 3 * 2 * factorial(1) → 6",
+        "expect": "у ____ має бути імʼя функції: factorial"
+      },
       "template": "def factorial(n):\n    if n == 1:\n        return 1\n    else:\n        return n * ____(n - 1)",
       "answers": [
         "factorial"
@@ -492,7 +551,18 @@
       "hints": [
         "Функція викликає себе по імені.",
         "Без базового випадку → StackOverflow."
-      ]
+      ],
+      "resultTrace": {
+        "title": "Розгортання викликів",
+        "input": "factorial(3)",
+        "steps": [
+          "factorial(3) → 3 * factorial(2)",
+          "factorial(2) → 2 * factorial(1)",
+          "factorial(1) → 1 (база)",
+          "назад: 2*1=2, потім 3*2=6"
+        ],
+        "output": "6"
+      }
     },
     {
       "id": "P4",
@@ -584,7 +654,23 @@
       "hints": [
         "SQL AVG → Pandas 'mean'.",
         "groupby робить ключ індексом → reset_index()."
-      ]
+      ],
+      "resultTrace": {
+        "title": "Що вийде з таблиці вище",
+        "input": "df з 5 рядків (IT×2, HR×1, Sales×2)",
+        "steps": [
+          "groupby('department') — 3 групи",
+          "agg mean по salary: IT=(3000+3500)/2=3250, HR=2100, Sales=2000",
+          "reset_index() — department знову колонка, не індекс"
+        ],
+        "output": "department | mean_salary\nIT         | 3250\nHR         | 2100\nSales      | 2000"
+      },
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
+        "code": "# Контекст\nЄ таблиця співробітників. Треба середня salary по department.\n\ndf з 5 рядків (IT×2, HR×1, Sales×2)\n\nemployee_id | department | salary\n--- | --- | ---\ne1 | IT | 3000\ne2 | IT | 3500\ne3 | HR | 2100\ne4 | Sales | 1800\ne5 | Sales | 2200\n# Після agg: IT→3250, HR→2100, Sales→2000.",
+        "expect": "Заповни ланцюжок groupby → agg(mean) → reset_index."
+      }
     },
     {
       "id": "P6",
@@ -676,7 +762,13 @@
       "hints": [
         "Ліва таблиця — куди джойнимо.",
         "how='left' зберігає всіх users."
-      ]
+      ],
+      "given": {
+        "label": "Дано · повна умова",
+        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
+        "code": "# Контекст\nЛіва таблиця users — усі користувачі лишаються. orders додає колонки справа.\n\n# df_users\nuser_id | name\n--- | ---\nu1 | Anna\nu2 | Bob\nu3 | Cara\n\n# df_orders\norder_id | user_id | amount\n--- | --- | ---\no100 | u1 | 50\no101 | u1 | 30\no200 | u3 | 80",
+        "expect": "Заповни merge: ліва, права, ключ, how='left'."
+      }
     },
     {
       "id": "P7",

@@ -81,8 +81,8 @@
       "id": "T1",
       "type": "fill_blanks",
       "tag": "AE · 1",
-      "title": "Три шари",
-      "instruction": "ROI-звіт: кліки Ads + платежі.",
+      "title": "T1 · drill",
+      "instruction": "Fill the blanks in the snippet below.",
       "template": "Сирі логи без змін → ____\nОчищення + факти → ____\nФінальна вітрина для Tableau → ____",
       "answers": [
         "STAGING",
@@ -103,15 +103,15 @@
       ],
       "mission": {
         "emoji": "🎯",
-        "title": "Три шари",
-        "brief": "ROI-звіт: кліки Ads + платежі.",
-        "ask": "Заповни пропуски нижче."
+        "title": "T1",
+        "brief": "Complete the fill-blanks exercise.",
+        "ask": "Fill the blanks below."
       },
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Спочатку прочитай повну умову (і таблицю вище, якщо є), потім заповни ____.",
-        "code": "# Контекст\nROI-звіт: кліки Ads + платежі.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
-        "expect": "Заповни пропуски нижче."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: T1 (AE · 1)\n# Контекст\nROI-звіт: кліки Ads + платежі.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {
@@ -138,7 +138,7 @@
       "type": "fill_blanks",
       "tag": "AE · 3",
       "title": "SCD Type 2",
-      "instruction": "Зберегти історію статусу юзера Free→Premium.",
+      "instruction": "Fill the blanks in the snippet below.",
       "template": "CREATE TABLE dim_users (\n  user_id INT,\n  user_status VARCHAR,\n  ____ DATE,\n  ____ DATE,\n  ____ BOOLEAN\n);",
       "answers": [
         "valid_from",
@@ -159,14 +159,14 @@
       "mission": {
         "emoji": "🎯",
         "title": "SCD Type 2",
-        "brief": "Зберегти історію статусу юзера Free→Premium.",
-        "ask": "Заповни пропуски нижче."
+        "brief": "Complete the fill-blanks exercise.",
+        "ask": "Fill the blanks below."
       },
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Спочатку прочитай повну умову (і таблицю вище, якщо є), потім заповни ____.",
-        "code": "# Контекст\nЗберегти історію статусу юзера Free→Premium.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
-        "expect": "Заповни пропуски нижче."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: T3 (AE · 3)\n# Контекст\nЗберегти історію статусу юзера Free→Premium.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {
@@ -254,8 +254,8 @@
       "id": "T7",
       "type": "fill_blanks",
       "tag": "AE · 7 · A/B",
-      "title": "Гіпотези A/B",
-      "instruction": "Мінімум статистики для Analytics Engineer.",
+      "title": "T7 · drill",
+      "instruction": "Fill the blanks in the snippet below.",
       "template": "____ = різниці немає (контроль = тест)\n____ = різниця є\np < 0.05 → ____ H0\nType I = false ____\nType II = false ____",
       "answers": [
         "H0",
@@ -279,15 +279,15 @@
       ],
       "mission": {
         "emoji": "🎯",
-        "title": "Гіпотези A/B",
-        "brief": "Мінімум статистики для Analytics Engineer.",
-        "ask": "Заповни пропуски нижче."
+        "title": "T7",
+        "brief": "Complete the fill-blanks exercise.",
+        "ask": "Fill the blanks below."
       },
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Спочатку прочитай повну умову (і таблицю вище, якщо є), потім заповни ____.",
-        "code": "# Контекст\nМінімум статистики для Analytics Engineer.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
-        "expect": "Заповни пропуски нижче."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: T7 (AE · 7 · A/B)\n# Контекст\nМінімум статистики для Analytics Engineer.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {

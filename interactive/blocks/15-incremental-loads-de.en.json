@@ -246,7 +246,13 @@
       "hints": [
         "Watermark = last successful boundary.",
         "SQL timestamp literal in quotes."
-      ]
+      ],
+      "given": {
+        "label": "Given · full prompt",
+        "note": "Use the table above as input; blanks complete the code/SQL below.",
+        "code": "# Context\nYesterday watermark = 2026-07-10 23:00:00. Pull only newer events.\n\nevent_id | updated_at | payload\n--- | --- | ---\ne1 | 2026-07-10 22:00 | old\ne2 | 2026-07-11 01:00 | new\ne3 | 2026-07-11 03:00 | new\n# e1 ≤ watermark → skip. e2, e3 → in delta.",
+        "expect": "Fill threshold in WHERE."
+      }
     },
     {
       "id": "C3",
@@ -301,7 +307,13 @@
       "hints": [
         "New watermark = max(updated_at) from batch.",
         "rows_loaded from this run counter."
-      ]
+      ],
+      "given": {
+        "label": "Given · full prompt",
+        "note": "Use the table above as input; blanks complete the code/SQL below.",
+        "code": "# Context\nWrite watermark only when core.events and mart are aligned.\n\npipeline | watermark_ts | rows_loaded\n--- | --- | ---\nevents_to_core | 2026-07-10 23:00:00 | 1200\nevents_to_core | 2026-07-11 03:00:00 | 85\n# Second row — after today's run (max updated_at in batch).",
+        "expect": "Fill UPDATE state table."
+      }
     },
     {
       "id": "C4",

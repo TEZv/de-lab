@@ -1,7 +1,7 @@
 {
   "id": "01-window-functions",
-  "title": "Віконні · заклинання OVER",
-  "subtitle": "Маг DE: спочатку місія (таблиця) → потім ____ у ритуалі SQL",
+  "title": "01-window-functions",
+  "subtitle": "EN draft — fill levels localized; other levels may still follow UA structure.",
   "levels": [
     {
       "id": "L1",
@@ -40,13 +40,13 @@
       "id": "L2",
       "type": "fill_blanks",
       "tag": "L2 · місія LAG",
-      "title": "Місія: попередня покупка",
-      "instruction": "Не «заповни бланк» — розкажи бізнес-питання.",
+      "title": "L2 · drill",
+      "instruction": "Fill the blanks in the snippet below.",
       "mission": {
         "emoji": "💳",
         "title": "Product analytics",
-        "brief": "Менеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна.",
-        "ask": "Яка колонка порівнюється з минулим? Хто = партиція? Що = час?"
+        "brief": "Complete the fill-blanks exercise.",
+        "ask": "Fill the blanks below."
       },
       "sampleTable": {
         "headers": [
@@ -115,10 +115,10 @@
       ],
       "controlTip": "Місія й таблиця — вище. Нижче лише кістяк SQL.",
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
-        "code": "# Контекст\nМенеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна.\n\nuser_id | paid_at | amount | prev (очікуємо)\n--- | --- | --- | ---\n7 | 01-01 | 10 | NULL\n7 | 01-05 | 40 | 10\n7 | 01-09 | 15 | 40\n9 | 01-03 | 20 | NULL\n# LAG дивиться «вгору» всередині user_id після сортування по paid_at.",
-        "expect": "Яка колонка порівнюється з минулим? Хто = партиція? Що = час?"
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: L2 (L2 · місія LAG)\n# Контекст\nМенеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна.\n\nuser_id | paid_at | amount | prev (очікуємо)\n--- | --- | --- | ---\n7 | 01-01 | 10 | NULL\n7 | 01-05 | 40 | 10\n7 | 01-09 | 15 | 40\n9 | 01-03 | 20 | NULL\n# LAG дивиться «вгору» всередині user_id після сортування по paid_at.",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {

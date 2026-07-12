@@ -1,7 +1,7 @@
 {
   "id": "22-sim-media",
   "title": "Work sim · Media / Content",
-  "subtitle": "Очистка логів переглядів і звіт для редакції.",
+  "subtitle": "EN draft — fill levels localized; other levels may still follow UA structure.",
   "levels": [
     {
       "id": "E1",
@@ -30,12 +30,12 @@
       "id": "E2",
       "type": "fill_blanks",
       "tag": "SQL",
-      "title": "COALESCE для NULL seconds",
+      "title": "E2 · drill",
       "mission": {
         "emoji": "🧹",
-        "title": "NULL у staging",
-        "brief": "До фільтра bot/seconds треба замінити NULL seconds на 0 для звітів.",
-        "ask": "Заповни COALESCE у SELECT."
+        "title": "E2",
+        "brief": "Complete the blanks.",
+        "ask": "Fill the blanks below."
       },
       "sampleTable": {
         "headers": [
@@ -80,10 +80,10 @@
         "Паралельно ticket джерелу."
       ],
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
-        "code": "# Контекст\nДо фільтра bot/seconds треба замінити NULL seconds на 0 для звітів.\n\nview_id | seconds\n--- | ---\n5 | NULL\n1 | 30\n4 | 60\n# Рядок 5 — типовий кейс для COALESCE перед WHERE.",
-        "expect": "Заповни COALESCE у SELECT."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: E2 (SQL)\n# Контекст\nДо фільтра bot/seconds треба замінити NULL seconds на 0 для звітів.\n\nview_id | seconds\n--- | ---\n5 | NULL\n1 | 30\n4 | 60\n# Рядок 5 — типовий кейс для COALESCE перед WHERE.",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {

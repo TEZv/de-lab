@@ -1,7 +1,7 @@
 {
   "id": "11-interview-skills-universal",
-  "title": "Універсальні мʼязи скрінінгу",
-  "subtitle": "Те, що перевіряють майже скрізь: SQL вікна, pandas, шари DWH, DQ. Коротко й з таблицями.",
+  "title": "11-interview-skills-universal",
+  "subtitle": "EN draft — fill levels localized; other levels may still follow UA structure.",
   "levels": [
     {
       "id": "U1",
@@ -43,12 +43,12 @@
       "id": "U3",
       "type": "fill_blanks",
       "tag": "Python",
-      "title": "Pandas mean (не avg!)",
+      "title": "U3 · drill",
       "mission": {
         "emoji": "🐍",
-        "title": "Пастка скрінінгу",
-        "brief": "SQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.",
-        "ask": "Збери рядок."
+        "title": "U3",
+        "brief": "Complete the blanks.",
+        "ask": "Fill the blanks below."
       },
       "sampleTable": {
         "headers": [
@@ -96,10 +96,10 @@
         "Після groupby ключ стає індексом."
       ],
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
-        "code": "# Контекст\nSQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.\n\ndepartment | salary\n--- | ---\nIT | 3000\nIT | 3500\nHR | 1500\n# Після agg: IT→3250, HR→1500.",
-        "expect": "Збери рядок."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: U3 (Python)\n# Контекст\nSQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.\n\ndepartment | salary\n--- | ---\nIT | 3000\nIT | 3500\nHR | 1500\n# Після agg: IT→3250, HR→1500.",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {

@@ -1,7 +1,7 @@
 {
   "id": "24-sim-fintech",
   "title": "Work sim · Fintech / Payments",
-  "subtitle": "Ідемпотентність і дедуп платежів.",
+  "subtitle": "EN draft — fill levels localized; other levels may still follow UA structure.",
   "levels": [
     {
       "id": "F1",
@@ -18,12 +18,12 @@
       "id": "F2",
       "type": "fill_blanks",
       "tag": "SQL",
-      "title": "Кістяк дедупа",
+      "title": "F2 · drill",
       "mission": {
         "emoji": "🏦",
         "title": "Payments dedup",
-        "brief": "staging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.",
-        "ask": "Заповни PARTITION BY, ORDER BY, rn."
+        "brief": "Complete the blanks.",
+        "ask": "Fill the blanks below."
       },
       "sampleTable": {
         "headers": [
@@ -85,10 +85,10 @@
         "Найсвіжіший апдейт."
       ],
       "given": {
-        "label": "Дано · повна умова",
-        "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
-        "code": "# Контекст\nstaging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.\n\npayment_id | amount | updated_at | лишити?\n--- | --- | --- | ---\np1 | 10 | 10:00 | —\np1 | 10 | 10:05 | ✓ newest\np2 | 20 | 10:01 | ✓ only\np3 | 15 | 10:03 | ✓ newest\n# Ті самі дані що F1 csv_lab.",
-        "expect": "Заповни PARTITION BY, ORDER BY, rn."
+        "label": "Given · full prompt",
+        "note": "Read the full prompt (and table above, if any), then fill ____.",
+        "code": "# Fill blanks in the skeleton below.\n# Task: F2 (SQL)\n# Контекст\nstaging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.\n\npayment_id | amount | updated_at | лишити?\n--- | --- | --- | ---\np1 | 10 | 10:00 | —\np1 | 10 | 10:05 | ✓ newest\np2 | 20 | 10:01 | ✓ only\np3 | 15 | 10:03 | ✓ newest\n# Ті самі дані що F1 csv_lab.",
+        "expect": "Fill every ____ to match the goal."
       }
     },
     {
