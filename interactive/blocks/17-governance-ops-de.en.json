@@ -8,21 +8,158 @@
       "type": "theory",
       "tag": "🛡️ · map",
       "title": "Governance without bureaucracy",
-      "instruction": "Senior DE: not only ETL — «what breaks at 3am and who knows what changed».",
-      "viz": {
-        "type": "dqGrid",
-        "checks": [
-          { "icon": "🔗", "label": "Lineage", "desc": "source → STG → core → mart", "color": "#5b8def" },
-          { "icon": "📋", "label": "Schema docs", "desc": "dbt schema.yml · catalog · owners", "color": "#3d9a6a" },
-          { "icon": "📟", "label": "Monitoring", "desc": "freshness · rowcount · null rate", "color": "#e8a84b" },
-          { "icon": "🚑", "label": "Runbook", "desc": "who · what · rollback · comms", "color": "#ff6b6b" }
-        ]
-      },
-      "bullets": [
-        "Data catalog (Atlan, DataHub, dbt docs) — «where is truth and who owns it»",
-        "Anomaly alert (0 rows, 2× rowcount) beats «yesterday was OK»",
-        "Schema change: version + communicate to analysts"
+      "instruction": "Senior DE: not only ETL — what breaks at 3 AM and who knows what changed.",
+      "vizs": [
+        {
+          "type": "dqGrid",
+          "checks": [
+            {
+              "icon": "🔗",
+              "label": "Lineage",
+              "desc": "source → mart",
+              "color": "#5b8def"
+            },
+            {
+              "icon": "📋",
+              "label": "Docs",
+              "desc": "owners · schema",
+              "color": "#3d9a6a"
+            },
+            {
+              "icon": "📟",
+              "label": "Monitor",
+              "desc": "freshness · nulls",
+              "color": "#e8a84b"
+            },
+            {
+              "icon": "🚑",
+              "label": "Runbook",
+              "desc": "who · rollback",
+              "color": "#ff6b6b"
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Memory cards",
+          "cards": [
+            {
+              "icon": "🔗",
+              "title": "Lineage",
+              "badge": "граф",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "who is downstream"
+                },
+                {
+                  "ok": false,
+                  "text": "tribal knowledge only"
+                }
+              ]
+            },
+            {
+              "icon": "🔔",
+              "title": "Alert",
+              "badge": "anomaly",
+              "color": "#e8a84b",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "0 rows / 2× count"
+                },
+                {
+                  "ok": false,
+                  "text": "yesterday was fine"
+                }
+              ]
+            },
+            {
+              "icon": "📣",
+              "title": "Schema change",
+              "badge": "comms",
+              "color": "#c77dff",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "version + tell analysts"
+                },
+                {
+                  "ok": false,
+                  "text": "silent alter"
+                }
+              ]
+            }
+          ],
+          "footnote": "Same ritual as Ops R0 — signal → action → learn."
+        }
+      ],
+      "bullets": [],
+      "recallTips": [
+        "lineage = graph",
+        "alert on anomaly",
+        "schema change = communicate"
       ]
+    },
+    {
+      "id": "E0b",
+      "type": "drag_buckets",
+      "tag": "🛡️ · drag",
+      "title": "Drag into governance bucket",
+      "instruction": "Tool vs process vs signal.",
+      "buckets": [
+        {
+          "id": "graph",
+          "icon": "🔗",
+          "title": "Graph / docs",
+          "color": "#5b8def"
+        },
+        {
+          "id": "signal",
+          "icon": "📟",
+          "title": "Signal",
+          "color": "#e8a84b"
+        },
+        {
+          "id": "action",
+          "icon": "🚑",
+          "title": "Action",
+          "color": "#ff6b6b"
+        }
+      ],
+      "items": [
+        {
+          "text": "dbt lineage",
+          "bucket": "graph"
+        },
+        {
+          "text": "data catalog owner",
+          "bucket": "graph"
+        },
+        {
+          "text": "freshness SLA miss",
+          "bucket": "signal"
+        },
+        {
+          "text": "null rate spike",
+          "bucket": "signal"
+        },
+        {
+          "text": "incident runbook",
+          "bucket": "action"
+        },
+        {
+          "text": "rollback + #incidents",
+          "bucket": "action"
+        }
+      ],
+      "recallTips": [
+        "docs/lineage",
+        "monitor signal",
+        "runbook action"
+      ],
+      "recallMapRef": "📍 Map: E0 · bridge Ops R0."
     },
     {
       "id": "E1",
@@ -31,11 +168,26 @@
       "title": "MATCH · governance ↔ meaning",
       "instruction": "Prod data platform terms.",
       "pairs": [
-        { "left": "Lineage", "right": "Graph: where column comes from / who is downstream" },
-        { "left": "Data catalog", "right": "Search tables, owners, SLA" },
-        { "left": "Schema registry", "right": "Avro/Protobuf versions for stream" },
-        { "left": "Runbook", "right": "Step-by-step on incident (not ad-hoc panic)" },
-        { "left": "SLA / freshness", "right": "Mart must be fresh by 08:00" }
+        {
+          "left": "Lineage",
+          "right": "Graph: where column comes from / who is downstream"
+        },
+        {
+          "left": "Data catalog",
+          "right": "Search tables, owners, SLA"
+        },
+        {
+          "left": "Schema registry",
+          "right": "Avro/Protobuf versions for stream"
+        },
+        {
+          "left": "Runbook",
+          "right": "Step-by-step on incident (not ad-hoc panic)"
+        },
+        {
+          "left": "SLA / freshness",
+          "right": "Mart must be fresh by 08:00"
+        }
       ]
     },
     {
@@ -47,9 +199,18 @@
       "scene": "Looker dashboard empty. STG fresh, mart_orders 0 rows. Finance pings Slack.",
       "bestIndex": 0,
       "choices": [
-        { "label": "Runbook: check DAG run / logs → last successful transform → STG vs mart rowcount → escalate with timeline", "feedback": "Structured triage — Senior expectation." },
-        { "label": "Silent rerun without documenting", "feedback": "May repeat; no root cause." },
-        { "label": "Drop mart table", "feedback": "Makes it worse." }
+        {
+          "label": "Runbook: check DAG run / logs → last successful transform → STG vs mart rowcount → escalate with timeline",
+          "feedback": "Structured triage — Senior expectation."
+        },
+        {
+          "label": "Silent rerun without documenting",
+          "feedback": "May repeat; no root cause."
+        },
+        {
+          "label": "Drop mart table",
+          "feedback": "Makes it worse."
+        }
       ]
     },
     {
@@ -58,22 +219,59 @@
       "tag": "🛡️ · 3/7",
       "title": "dbt · document column",
       "instruction": "Analyst asks: «what is is_active in mart_users?»",
-      "mission": { "emoji": "📝", "title": "schema.yml", "brief": "Document column in dbt — description + tests.", "ask": "Fill YAML fragment." },
+      "mission": {
+        "emoji": "📝",
+        "title": "schema.yml",
+        "brief": "Document column in dbt — description + tests.",
+        "ask": "Fill YAML fragment."
+      },
       "sampleTable": {
-        "headers": ["column", "business meaning", "test"],
-        "rows": [
-          ["user_id", "User PK", "unique, not_null"],
-          ["is_active", "1 = active subscription today", "accepted_values: [0,1]"],
-          ["mrr", "Monthly revenue USD", "not_null where is_active=1"]
+        "headers": [
+          "column",
+          "business meaning",
+          "test"
         ],
-        "columnGlossary": { "column": "Name in mart", "business meaning": "Text for catalog / BI", "test": "dbt DQ test" },
+        "rows": [
+          [
+            "user_id",
+            "User PK",
+            "unique, not_null"
+          ],
+          [
+            "is_active",
+            "1 = active subscription today",
+            "accepted_values: [0,1]"
+          ],
+          [
+            "mrr",
+            "Monthly revenue USD",
+            "not_null where is_active=1"
+          ]
+        ],
+        "columnGlossary": {
+          "column": "Name in mart",
+          "business meaning": "Text for catalog / BI",
+          "test": "dbt DQ test"
+        },
         "caption": "Docs live next to code — not Confluence-only."
       },
       "controlTip": "Column examples in table above.",
       "template": "models:\n  - name: mart_users\n    columns:\n      - name: is_active\n        description: ____\n        tests:\n          - ____:\n              values: [0, 1]",
-      "answers": ["1 = active subscription today", "accepted_values"],
-      "wordBank": ["1 = active subscription today", "accepted_values", "unique", "relationships", "not_null"],
-      "hints": ["description — business language from table.", "accepted_values for 0/1 flag."]
+      "answers": [
+        "1 = active subscription today",
+        "accepted_values"
+      ],
+      "wordBank": [
+        "1 = active subscription today",
+        "accepted_values",
+        "unique",
+        "relationships",
+        "not_null"
+      ],
+      "hints": [
+        "description — business language from table.",
+        "accepted_values for 0/1 flag."
+      ]
     },
     {
       "id": "E4",
@@ -81,7 +279,12 @@
       "tag": "🛡️ · 4/7",
       "title": "When to alert?",
       "instruction": "Nightly mart_orders: usually 50k–55k rows.",
-      "mission": { "emoji": "📟", "title": "Grafana / observability", "brief": "Today's load finished but rows = 200.", "ask": "Most useful alert rule?" },
+      "mission": {
+        "emoji": "📟",
+        "title": "Grafana / observability",
+        "brief": "Today's load finished but rows = 200.",
+        "ask": "Most useful alert rule?"
+      },
       "question": "Best prod alert?",
       "options": [
         "Rowcount outside 7-day band OR < 10% of median → page on-call",
@@ -98,7 +301,11 @@
       "tag": "🛡️ · 5/7",
       "title": "What's wrong with migration?",
       "instruction": "Friday deploy: rename column without warning.",
-      "mission": { "emoji": "💥", "title": "Breaking change", "brief": "Looker broken, notebook fails." },
+      "mission": {
+        "emoji": "💥",
+        "title": "Breaking change",
+        "brief": "Looker broken, notebook fails."
+      },
       "buggyCode": "-- deploy Friday 17:00\nALTER TABLE mart_revenue\n  RENAME COLUMN revenue_usd TO rev;\n\n-- no deprecation period\n-- no view shim\n-- no #data-engineering post",
       "prompt": "Main process mistake?",
       "options": [
@@ -117,7 +324,11 @@
       "tag": "🛡️ · 6/7",
       "title": "Incident runbook",
       "instruction": "P1: mart critical for finance, data stale 6h.",
-      "mission": { "emoji": "🚑", "title": "P1 response", "brief": "Arrange steps (not panic order)." },
+      "mission": {
+        "emoji": "🚑",
+        "title": "P1 response",
+        "brief": "Arrange steps (not panic order)."
+      },
       "items": [
         "Ack alert + assign incident lead",
         "Check DAG / pipeline last success time",
@@ -137,9 +348,18 @@
       "scene": "Compliance: «Where does mart_kpi.revenue come from?» You have dbt + Airflow.",
       "bestIndex": 1,
       "choices": [
-        { "label": "«Don't know, grep notebook»", "feedback": "Unprofessional in regulated context." },
-        { "label": "Catalog/dbt lineage: mart_kpi → stg_orders → raw.events + owner + last refresh", "feedback": "What governance stack is for." },
-        { "label": "Delete revenue column", "feedback": "Doesn't answer audit." }
+        {
+          "label": "«Don't know, grep notebook»",
+          "feedback": "Unprofessional in regulated context."
+        },
+        {
+          "label": "Catalog/dbt lineage: mart_kpi → stg_orders → raw.events + owner + last refresh",
+          "feedback": "What governance stack is for."
+        },
+        {
+          "label": "Delete revenue column",
+          "feedback": "Doesn't answer audit."
+        }
       ]
     }
   ]

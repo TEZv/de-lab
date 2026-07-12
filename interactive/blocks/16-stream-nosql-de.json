@@ -9,31 +9,151 @@
       "tag": "🌊 · карта",
       "title": "Batch vs stream",
       "instruction": "На інтервʼю не треба адмінити Kafka — достатньо знати, коли stream, а коли nightly batch.",
-      "viz": {
-        "type": "splitCompare",
-        "columns": [
-          {
-            "title": "📦 Batch",
-            "color": "#5b8def",
-            "items": ["файл / таблиця за період", "Airflow cron, incremental", "latency: хвилини–години OK"]
-          },
-          {
-            "title": "🌊 Stream",
-            "color": "#4ecdc4",
-            "items": ["події one-by-one", "Kafka / Kinesis / PubSub", "latency: секунди, alerts, fraud"]
-          }
-        ]
-      },
       "flow": [
-        { "title": "Producer", "desc": "сервіс публікує event" },
-        { "title": "Topic", "desc": "буфер / log (partitioned)" },
-        { "title": "Consumer", "desc": "читає offset, пише STG/DWH" },
-        { "title": "Mart", "desc": "batch aggregate або stream-table" }
+        {
+          "title": "Producer",
+          "desc": "сервіс публікує event"
+        },
+        {
+          "title": "Topic",
+          "desc": "буфер / log (partitioned)"
+        },
+        {
+          "title": "Consumer",
+          "desc": "читає offset, пише STG/DWH"
+        },
+        {
+          "title": "Mart",
+          "desc": "batch aggregate або stream-table"
+        }
       ],
-      "bullets": [
-        "Kafka ≈ distributed commit log: producer → topic → consumer group",
-        "MongoDB — document store; коли схема гнучка / nested JSON",
-        "DE часто: stream → bronze → batch silver (lambda/kappa hybrid)"
+      "bullets": [],
+      "vizs": [
+        {
+          "type": "splitCompare",
+          "columns": [
+            {
+              "title": "📦 Batch",
+              "color": "#5b8def",
+              "items": [
+                "файл / таблиця за період",
+                "Airflow cron, incremental",
+                "latency: хвилини–години OK"
+              ]
+            },
+            {
+              "title": "🌊 Stream",
+              "color": "#4ecdc4",
+              "items": [
+                "події one-by-one",
+                "Kafka / Kinesis / PubSub",
+                "latency: секунди, alerts, fraud"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Коли stream",
+          "cards": [
+            {
+              "icon": "📦",
+              "title": "Batch",
+              "badge": "hours OK",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "nightly mart"
+                },
+                {
+                  "ok": false,
+                  "text": "fraud <1s"
+                }
+              ]
+            },
+            {
+              "icon": "🌊",
+              "title": "Stream",
+              "badge": "seconds",
+              "color": "#4ecdc4",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "Kafka events"
+                },
+                {
+                  "ok": true,
+                  "text": "alerts/fraud"
+                }
+              ]
+            },
+            {
+              "icon": "🍃",
+              "title": "Mongo",
+              "badge": "docs",
+              "color": "#e8a84b",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "nested JSON"
+                },
+                {
+                  "ok": false,
+                  "text": "важкі SQL JOIN"
+                }
+              ]
+            }
+          ],
+          "footnote": "Часто: stream → bronze → batch silver."
+        }
+      ],
+      "recallTips": [
+        "batch vs потреба в latency",
+        "Kafka = log",
+        "hybrid lake"
+      ]
+    },
+    {
+      "id": "D0b",
+      "type": "drag_buckets",
+      "tag": "🌊 · drag",
+      "title": "Перетягни: batch чи stream",
+      "buckets": [
+        {
+          "id": "batch",
+          "icon": "📦",
+          "title": "Batch",
+          "color": "#5b8def"
+        },
+        {
+          "id": "stream",
+          "icon": "🌊",
+          "title": "Stream",
+          "color": "#4ecdc4"
+        }
+      ],
+      "items": [
+        {
+          "text": "daily finance close",
+          "bucket": "batch"
+        },
+        {
+          "text": "fraud score < 2s",
+          "bucket": "stream"
+        },
+        {
+          "text": "Airflow incremental mart",
+          "bucket": "batch"
+        },
+        {
+          "text": "click events → topic",
+          "bucket": "stream"
+        }
+      ],
+      "recallTips": [
+        "години OK → batch",
+        "секунди → stream"
       ]
     },
     {
@@ -43,11 +163,26 @@
       "title": "MATCH · stream + Mongo",
       "instruction": "Терміни «на чай» для Middle/Senior DE.",
       "pairs": [
-        { "left": "Kafka topic", "right": "Named log; partitions для паралелізму" },
-        { "left": "Consumer offset", "right": "«Дочитали до сюди» — не втратити прогрес" },
-        { "left": "MongoDB collection", "right": "≈ таблиця, але documents (JSON)" },
-        { "left": "Embedded document", "right": "Nested array/object в одному doc" },
-        { "left": "Window / micro-batch", "right": "Stream → агрегат за 5 хв (Spark/Flink)" }
+        {
+          "left": "Kafka topic",
+          "right": "Named log; partitions для паралелізму"
+        },
+        {
+          "left": "Consumer offset",
+          "right": "«Дочитали до сюди» — не втратити прогрес"
+        },
+        {
+          "left": "MongoDB collection",
+          "right": "≈ таблиця, але documents (JSON)"
+        },
+        {
+          "left": "Embedded document",
+          "right": "Nested array/object в одному doc"
+        },
+        {
+          "left": "Window / micro-batch",
+          "right": "Stream → агрегат за 5 хв (Spark/Flink)"
+        }
       ]
     },
     {
@@ -85,11 +220,27 @@
         "ask": "Заповни pipeline aggregation."
       },
       "sampleTable": {
-        "headers": ["device_id", "temp_c", "ts"],
+        "headers": [
+          "device_id",
+          "temp_c",
+          "ts"
+        ],
         "rows": [
-          ["d1", "21", "10:00"],
-          ["d1", "23", "10:05"],
-          ["d2", "85", "10:00"]
+          [
+            "d1",
+            "21",
+            "10:00"
+          ],
+          [
+            "d1",
+            "23",
+            "10:05"
+          ],
+          [
+            "d2",
+            "85",
+            "10:00"
+          ]
         ],
         "columnGlossary": {
           "device_id": "Ключ групування",
@@ -100,8 +251,21 @@
       },
       "controlTip": "Таблиця-аналог — вище.",
       "template": "[\n  { $____: { temp_c: { $____: null } } },\n  { $____: { _id: '$device_id', avg_temp: { $____: '$temp_c' } } }\n]",
-      "answers": ["match", "ne", "group", "avg"],
-      "wordBank": ["match", "ne", "group", "avg", "sum", "project", "lookup"],
+      "answers": [
+        "match",
+        "ne",
+        "group",
+        "avg"
+      ],
+      "wordBank": [
+        "match",
+        "ne",
+        "group",
+        "avg",
+        "sum",
+        "project",
+        "lookup"
+      ],
       "hints": [
         "$match: відкинути null temp.",
         "$group + $avg — аналог GROUP BY + AVG."
@@ -167,12 +331,36 @@
       "studyViz": {
         "type": "pipelineH",
         "nodes": [
-          { "label": "app event", "hint": "JSON", "color": "#5b8def" },
-          { "label": "Kafka", "hint": "topic", "color": "#4ecdc4" },
-          { "label": "consumer", "hint": "bronze/STG", "color": "#3d9a6a" },
-          { "label": "micro-batch", "hint": "aggregate", "color": "#e8a84b" },
-          { "label": "mart", "hint": "refresh", "color": "#c77dff" },
-          { "label": "lag alert", "hint": "monitor", "color": "#ff6b6b" }
+          {
+            "label": "app event",
+            "hint": "JSON",
+            "color": "#5b8def"
+          },
+          {
+            "label": "Kafka",
+            "hint": "topic",
+            "color": "#4ecdc4"
+          },
+          {
+            "label": "consumer",
+            "hint": "bronze/STG",
+            "color": "#3d9a6a"
+          },
+          {
+            "label": "micro-batch",
+            "hint": "aggregate",
+            "color": "#e8a84b"
+          },
+          {
+            "label": "mart",
+            "hint": "refresh",
+            "color": "#c77dff"
+          },
+          {
+            "label": "lag alert",
+            "hint": "monitor",
+            "color": "#ff6b6b"
+          }
         ]
       },
       "items": [

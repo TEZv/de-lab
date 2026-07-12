@@ -9,32 +9,156 @@
       "tag": "📥 · карта",
       "title": "Full vs incremental",
       "instruction": "На Middle DE: «як оновлюєш mart щодня без повного reload?»",
-      "viz": {
-        "type": "splitCompare",
-        "columns": [
-          {
-            "title": "🔄 Full load",
-            "color": "#ff6b6b",
-            "items": ["TRUNCATE + INSERT усе", "просто, але дорого", "OK для малих довідників"]
-          },
-          {
-            "title": "➕ Incremental",
-            "color": "#3d9a6a",
-            "items": ["лише нові/змінені рядки", "watermark / updated_at", "потрібна idempotency"]
-          }
-        ]
-      },
       "flow": [
-        { "title": "Read watermark", "desc": "max(updated_at) з meta або state table" },
-        { "title": "Extract delta", "desc": "WHERE updated_at > watermark" },
-        { "title": "Transform", "desc": "typing, dedup keys" },
-        { "title": "Load idempotent", "desc": "MERGE / upsert / partition swap" },
-        { "title": "Commit watermark", "desc": "лише після успішного load" }
+        {
+          "title": "Read watermark",
+          "desc": "max(updated_at) з meta або state table"
+        },
+        {
+          "title": "Extract delta",
+          "desc": "WHERE updated_at > watermark"
+        },
+        {
+          "title": "Transform",
+          "desc": "typing, dedup keys"
+        },
+        {
+          "title": "Load idempotent",
+          "desc": "MERGE / upsert / partition swap"
+        },
+        {
+          "title": "Commit watermark",
+          "desc": "лише після успішного load"
+        }
       ],
-      "bullets": [
-        "Watermark — «до куди вже прочитали» (timestamp, ID, LSN)",
-        "Idempotent = повторний run не псує дані (немає дублів)",
-        "Backfill — свідомий прогін за минулі періоди; не плутати з catchup Airflow"
+      "bullets": [],
+      "vizs": [
+        {
+          "type": "splitCompare",
+          "columns": [
+            {
+              "title": "🔄 Full load",
+              "color": "#ff6b6b",
+              "items": [
+                "TRUNCATE + INSERT усе",
+                "просто, але дорого",
+                "OK для малих довідників"
+              ]
+            },
+            {
+              "title": "➕ Incremental",
+              "color": "#3d9a6a",
+              "items": [
+                "лише нові/змінені рядки",
+                "watermark / updated_at",
+                "потрібна idempotency"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Три слова",
+          "cards": [
+            {
+              "icon": "🏷️",
+              "title": "Watermark",
+              "badge": "cursor",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "updated_at / LSN"
+                },
+                {
+                  "ok": false,
+                  "text": "вгадати «вчора»"
+                }
+              ]
+            },
+            {
+              "icon": "♻️",
+              "title": "Idempotent",
+              "badge": "safe rerun",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "MERGE / upsert"
+                },
+                {
+                  "ok": false,
+                  "text": "сліпий INSERT дублі"
+                }
+              ]
+            },
+            {
+              "icon": "⏪",
+              "title": "Backfill",
+              "badge": "past",
+              "color": "#c77dff",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "свідомий прогін"
+                },
+                {
+                  "ok": false,
+                  "text": "= Airflow catchup"
+                }
+              ]
+            }
+          ],
+          "footnote": "Читай watermark → delta → load → commit watermark."
+        }
+      ],
+      "recallTips": [
+        "спочатку watermark",
+        "idempotent load",
+        "backfill ≠ catchup"
+      ]
+    },
+    {
+      "id": "C0b",
+      "type": "drag_buckets",
+      "tag": "📥 · drag",
+      "title": "Перетягни: full vs incremental",
+      "instruction": "Який патерн load?",
+      "buckets": [
+        {
+          "id": "full",
+          "icon": "🔄",
+          "title": "Full",
+          "color": "#ff6b6b"
+        },
+        {
+          "id": "incr",
+          "icon": "➕",
+          "title": "Incremental",
+          "color": "#3d9a6a"
+        }
+      ],
+      "items": [
+        {
+          "text": "маленький dim country",
+          "bucket": "full"
+        },
+        {
+          "text": "TRUNCATE+INSERT щоночі",
+          "bucket": "full"
+        },
+        {
+          "text": "WHERE updated_at > wm",
+          "bucket": "incr"
+        },
+        {
+          "text": "MERGE on business key",
+          "bucket": "incr"
+        }
+      ],
+      "recallTips": [
+        "малі dims → full",
+        "факти → incremental"
       ]
     },
     {
@@ -44,11 +168,26 @@
       "title": "MATCH · патерн ↔ сенс",
       "instruction": "Терміни incremental ETL на інтервʼю.",
       "pairs": [
-        { "left": "Watermark", "right": "Межа «вже оброблено» (час / ID / offset)" },
-        { "left": "Idempotent load", "right": "Повторний run → той самий результат, без дублів" },
-        { "left": "Upsert / MERGE", "right": "INSERT нових + UPDATE існуючих по ключу" },
-        { "left": "Append-only", "right": "Лише INSERT; без idempotency → дублі при rerun" },
-        { "left": "Backfill", "right": "Свідомо перезавантажити історичний діапазон" }
+        {
+          "left": "Watermark",
+          "right": "Межа «вже оброблено» (час / ID / offset)"
+        },
+        {
+          "left": "Idempotent load",
+          "right": "Повторний run → той самий результат, без дублів"
+        },
+        {
+          "left": "Upsert / MERGE",
+          "right": "INSERT нових + UPDATE існуючих по ключу"
+        },
+        {
+          "left": "Append-only",
+          "right": "Лише INSERT; без idempotency → дублі при rerun"
+        },
+        {
+          "left": "Backfill",
+          "right": "Свідомо перезавантажити історичний діапазон"
+        }
       ]
     },
     {
@@ -64,11 +203,27 @@
         "ask": "Заповни поріг у WHERE."
       },
       "sampleTable": {
-        "headers": ["event_id", "updated_at", "payload"],
+        "headers": [
+          "event_id",
+          "updated_at",
+          "payload"
+        ],
         "rows": [
-          ["e1", "2026-07-10 22:00", "old"],
-          ["e2", "2026-07-11 01:00", "new"],
-          ["e3", "2026-07-11 03:00", "new"]
+          [
+            "e1",
+            "2026-07-10 22:00",
+            "old"
+          ],
+          [
+            "e2",
+            "2026-07-11 01:00",
+            "new"
+          ],
+          [
+            "e3",
+            "2026-07-11 03:00",
+            "new"
+          ]
         ],
         "columnGlossary": {
           "event_id": "PK / natural key для MERGE",
@@ -79,8 +234,15 @@
       },
       "controlTip": "Таблиця + watermark — вище.",
       "template": "SELECT event_id, updated_at, payload\nFROM staging.events\nWHERE updated_at > ____",
-      "answers": ["'2026-07-10 23:00:00'"],
-      "wordBank": ["'2026-07-10 23:00:00'", "'2026-07-11 00:00:00'", "MAX(updated_at)", "ORDER BY"],
+      "answers": [
+        "'2026-07-10 23:00:00'"
+      ],
+      "wordBank": [
+        "'2026-07-10 23:00:00'",
+        "'2026-07-11 00:00:00'",
+        "MAX(updated_at)",
+        "ORDER BY"
+      ],
       "hints": [
         "Watermark — остання успішна межа, не «сьогодні 00:00» без узгодження.",
         "Літерал timestamp у лапках для SQL."
@@ -99,10 +261,22 @@
         "ask": "Заповни UPDATE state table."
       },
       "sampleTable": {
-        "headers": ["pipeline", "watermark_ts", "rows_loaded"],
+        "headers": [
+          "pipeline",
+          "watermark_ts",
+          "rows_loaded"
+        ],
         "rows": [
-          ["events_to_core", "2026-07-10 23:00:00", "1200"],
-          ["events_to_core", "2026-07-11 03:00:00", "85"]
+          [
+            "events_to_core",
+            "2026-07-10 23:00:00",
+            "1200"
+          ],
+          [
+            "events_to_core",
+            "2026-07-11 03:00:00",
+            "85"
+          ]
         ],
         "columnGlossary": {
           "pipeline": "Імʼя DAG / job",
@@ -113,8 +287,17 @@
       },
       "controlTip": "Приклад state — у таблиці.",
       "template": "UPDATE meta.pipeline_watermarks\nSET watermark_ts = ____,\n    rows_loaded = ____\nWHERE pipeline = 'events_to_core';",
-      "answers": ["'2026-07-11 03:00:00'", "85"],
-      "wordBank": ["'2026-07-11 03:00:00'", "85", "1200", "NOW()", "NULL"],
+      "answers": [
+        "'2026-07-11 03:00:00'",
+        "85"
+      ],
+      "wordBank": [
+        "'2026-07-11 03:00:00'",
+        "85",
+        "1200",
+        "NOW()",
+        "NULL"
+      ],
       "hints": [
         "Новий watermark = max(updated_at) з обробленого batch.",
         "rows_loaded — з лічильника цього run."

@@ -8,27 +8,183 @@
       "type": "theory",
       "tag": "☁️ · map",
       "title": "Object storage + lake zones",
-      "instruction": "On interviews: one pattern — different names per cloud.",
-      "viz": {
-        "type": "layerStack",
-        "title": "Prefixes in bucket / container (typical)",
-        "layers": [
-          { "label": "bronze / raw", "sublabel": "raw CSV · JSON · logs as landed", "color": "#8b9cb3", "icon": "📥" },
-          { "label": "silver / curated", "sublabel": "cleaned · typed · dedup", "color": "#5b8def", "icon": "🧽" },
-          { "label": "gold / marts", "sublabel": "marts · parquet for BI/ML", "color": "#e8a84b", "icon": "📊" }
-        ],
-        "side": [
-          { "label": "AWS", "items": ["S3 bucket", "IAM role", "lifecycle → Glacier"] },
-          { "label": "Azure", "items": ["Blob container", "RBAC", "cool/archive tier"] },
-          { "label": "GCP", "items": ["GCS bucket", "IAM", "Nearline/Coldline"] }
-        ]
-      },
-      "bullets": [
-        "Object storage ≠ database: files + prefixes, no JOIN in S3",
-        "Path partition (year=/month=) — cheaper scans",
-        "Parquet in lake — compression + column pushdown in Spark/BQ/Synapse"
+      "instruction": "One pattern — three clouds. Zones = data maturity.",
+      "vizs": [
+        {
+          "type": "layerStack",
+          "title": "Lake zones (raw at bottom)",
+          "layers": [
+            {
+              "label": "bronze / raw",
+              "sublabel": "as landed",
+              "color": "#8b9cb3",
+              "icon": "📥"
+            },
+            {
+              "label": "silver / curated",
+              "sublabel": "typed · dedup",
+              "color": "#5b8def",
+              "icon": "🧽"
+            },
+            {
+              "label": "gold / marts",
+              "sublabel": "BI/ML marts",
+              "color": "#e8a84b",
+              "icon": "📊"
+            }
+          ],
+          "side": [
+            {
+              "label": "AWS",
+              "items": [
+                "S3",
+                "IAM",
+                "Glacier"
+              ]
+            },
+            {
+              "label": "Azure",
+              "items": [
+                "Blob",
+                "RBAC",
+                "Archive"
+              ]
+            },
+            {
+              "label": "GCP",
+              "items": [
+                "GCS",
+                "IAM",
+                "Coldline"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Interview memory",
+          "cards": [
+            {
+              "icon": "📁",
+              "title": "Object store",
+              "badge": "not a DB",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "files + prefix"
+                },
+                {
+                  "ok": false,
+                  "text": "JOIN in S3"
+                }
+              ]
+            },
+            {
+              "icon": "🗂️",
+              "title": "Partition",
+              "badge": "path",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "year=/month=/day="
+                },
+                {
+                  "ok": true,
+                  "text": "cheaper scan"
+                }
+              ]
+            },
+            {
+              "icon": "📦",
+              "title": "Parquet",
+              "badge": "columns",
+              "color": "#e8a84b",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "pushdown"
+                },
+                {
+                  "ok": false,
+                  "text": "CSV always"
+                }
+              ]
+            }
+          ],
+          "footnote": "bronze=mailbox · silver=unpacked · gold=shop window."
+        }
       ],
-      "recallMapRef": "📍 Bridge: DevOps K8s · K0 (Deployment → Pod — where ETL/service runs)."
+      "bullets": [],
+      "recallTips": [
+        "S3≠SQL JOIN",
+        "partition in key",
+        "bronze→silver→gold"
+      ],
+      "recallMapRef": "📍 Bridge: DevOps K8s · K0."
+    },
+    {
+      "id": "A0b",
+      "type": "drag_buckets",
+      "tag": "☁️ · drag",
+      "title": "Drag artifact into lake zone",
+      "instruction": "Where do raw JSON, typed table, BI mart belong?",
+      "buckets": [
+        {
+          "id": "bronze",
+          "icon": "📥",
+          "title": "Bronze",
+          "hint": "raw",
+          "color": "#8b9cb3"
+        },
+        {
+          "id": "silver",
+          "icon": "🧽",
+          "title": "Silver",
+          "hint": "curated",
+          "color": "#5b8def"
+        },
+        {
+          "id": "gold",
+          "icon": "📊",
+          "title": "Gold",
+          "hint": "mart",
+          "color": "#e8a84b"
+        }
+      ],
+      "items": [
+        {
+          "text": "API JSON dump as-is",
+          "bucket": "bronze"
+        },
+        {
+          "text": "raw app logs",
+          "bucket": "bronze"
+        },
+        {
+          "text": "typed orders parquet",
+          "bucket": "silver"
+        },
+        {
+          "text": "deduped customers",
+          "bucket": "silver"
+        },
+        {
+          "text": "mart_revenue",
+          "bucket": "gold"
+        },
+        {
+          "text": "KPI dashboard table",
+          "bucket": "gold"
+        }
+      ],
+      "recallTips": [
+        "raw → bronze",
+        "typed → silver",
+        "BI → gold"
+      ],
+      "recallMapRef": "📍 Map: A0 lake zones."
     },
     {
       "id": "A1",
@@ -37,11 +193,26 @@
       "title": "MATCH · cloud ↔ term",
       "instruction": "One concept — three vendors. Know the equivalents.",
       "pairs": [
-        { "left": "S3 bucket", "right": "Azure Blob container ≈ GCS bucket" },
-        { "left": "S3 object key", "right": "Blob name ≈ GCS object path" },
-        { "left": "IAM role + policy", "right": "Azure RBAC ≈ GCS IAM" },
-        { "left": "s3://bucket/prefix/", "right": "https://acct.blob.core.windows.net/c/ ≈ gs://bucket/" },
-        { "left": "Lifecycle → Glacier", "right": "Cool/Archive tier ≈ Nearline/Coldline" }
+        {
+          "left": "S3 bucket",
+          "right": "Azure Blob container ≈ GCS bucket"
+        },
+        {
+          "left": "S3 object key",
+          "right": "Blob name ≈ GCS object path"
+        },
+        {
+          "left": "IAM role + policy",
+          "right": "Azure RBAC ≈ GCS IAM"
+        },
+        {
+          "left": "s3://bucket/prefix/",
+          "right": "https://acct.blob.core.windows.net/c/ ≈ gs://bucket/"
+        },
+        {
+          "left": "Lifecycle → Glacier",
+          "right": "Cool/Archive tier ≈ Nearline/Coldline"
+        }
       ]
     },
     {
@@ -57,11 +228,27 @@
         "ask": "Fill lake zone and partition keys in the path."
       },
       "sampleTable": {
-        "headers": ["prefix", "zone", "purpose"],
+        "headers": [
+          "prefix",
+          "zone",
+          "purpose"
+        ],
         "rows": [
-          ["bronze/orders/", "raw", "as landed from API"],
-          ["silver/orders/", "curated", "after DQ"],
-          ["gold/mart_revenue/", "mart", "for BI"]
+          [
+            "bronze/orders/",
+            "raw",
+            "as landed from API"
+          ],
+          [
+            "silver/orders/",
+            "curated",
+            "after DQ"
+          ],
+          [
+            "gold/mart_revenue/",
+            "mart",
+            "for BI"
+          ]
         ],
         "columnGlossary": {
           "prefix": "Folder prefix in bucket (not a new bucket per day)",
@@ -72,9 +259,25 @@
       },
       "controlTip": "Mission and zone table above. Path below.",
       "template": "s3://acme-datalake/____/orders/year=____/month=____/day=____/part-0001.parquet",
-      "answers": ["bronze", "2026", "07", "01"],
-      "wordBank": ["bronze", "silver", "gold", "2026", "07", "01", "orders_id"],
-      "hints": ["Raw data → bronze.", "Partition = year/month/day folders in key."]
+      "answers": [
+        "bronze",
+        "2026",
+        "07",
+        "01"
+      ],
+      "wordBank": [
+        "bronze",
+        "silver",
+        "gold",
+        "2026",
+        "07",
+        "01",
+        "orders_id"
+      ],
+      "hints": [
+        "Raw data → bronze.",
+        "Partition = year/month/day folders in key."
+      ]
     },
     {
       "id": "A3",

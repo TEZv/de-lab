@@ -9,23 +9,151 @@
       "tag": "🌊 · map",
       "title": "Batch vs stream",
       "instruction": "You don't need to admin Kafka on interviews — know when stream vs nightly batch.",
-      "viz": {
-        "type": "splitCompare",
-        "columns": [
-          { "title": "📦 Batch", "color": "#5b8def", "items": ["file / table per period", "Airflow cron, incremental", "latency: minutes–hours OK"] },
-          { "title": "🌊 Stream", "color": "#4ecdc4", "items": ["events one-by-one", "Kafka / Kinesis / PubSub", "latency: seconds, alerts, fraud"] }
-        ]
-      },
       "flow": [
-        { "title": "Producer", "desc": "service publishes event" },
-        { "title": "Topic", "desc": "buffer / log (partitioned)" },
-        { "title": "Consumer", "desc": "reads offset, writes STG/DWH" },
-        { "title": "Mart", "desc": "batch aggregate or stream table" }
+        {
+          "title": "Producer",
+          "desc": "service publishes event"
+        },
+        {
+          "title": "Topic",
+          "desc": "buffer / log (partitioned)"
+        },
+        {
+          "title": "Consumer",
+          "desc": "reads offset, writes STG/DWH"
+        },
+        {
+          "title": "Mart",
+          "desc": "batch aggregate or stream table"
+        }
       ],
-      "bullets": [
-        "Kafka ≈ distributed commit log: producer → topic → consumer group",
-        "MongoDB — document store; flexible schema / nested JSON",
-        "DE often: stream → bronze → batch silver (lambda/kappa hybrid)"
+      "bullets": [],
+      "vizs": [
+        {
+          "type": "splitCompare",
+          "columns": [
+            {
+              "title": "📦 Batch",
+              "color": "#5b8def",
+              "items": [
+                "file / table per period",
+                "Airflow cron, incremental",
+                "latency: minutes–hours OK"
+              ]
+            },
+            {
+              "title": "🌊 Stream",
+              "color": "#4ecdc4",
+              "items": [
+                "events one-by-one",
+                "Kafka / Kinesis / PubSub",
+                "latency: seconds, alerts, fraud"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "When stream",
+          "cards": [
+            {
+              "icon": "📦",
+              "title": "Batch",
+              "badge": "hours OK",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "nightly mart"
+                },
+                {
+                  "ok": false,
+                  "text": "fraud <1s"
+                }
+              ]
+            },
+            {
+              "icon": "🌊",
+              "title": "Stream",
+              "badge": "seconds",
+              "color": "#4ecdc4",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "Kafka events"
+                },
+                {
+                  "ok": true,
+                  "text": "alerts/fraud"
+                }
+              ]
+            },
+            {
+              "icon": "🍃",
+              "title": "Mongo",
+              "badge": "docs",
+              "color": "#e8a84b",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "nested JSON"
+                },
+                {
+                  "ok": false,
+                  "text": "heavy SQL joins"
+                }
+              ]
+            }
+          ],
+          "footnote": "Often: stream → bronze → batch silver."
+        }
+      ],
+      "recallTips": [
+        "batch vs latency need",
+        "Kafka = log",
+        "hybrid lake"
+      ]
+    },
+    {
+      "id": "D0b",
+      "type": "drag_buckets",
+      "tag": "🌊 · drag",
+      "title": "Drag: batch or stream",
+      "buckets": [
+        {
+          "id": "batch",
+          "icon": "📦",
+          "title": "Batch",
+          "color": "#5b8def"
+        },
+        {
+          "id": "stream",
+          "icon": "🌊",
+          "title": "Stream",
+          "color": "#4ecdc4"
+        }
+      ],
+      "items": [
+        {
+          "text": "daily finance close",
+          "bucket": "batch"
+        },
+        {
+          "text": "fraud score < 2s",
+          "bucket": "stream"
+        },
+        {
+          "text": "Airflow incremental mart",
+          "bucket": "batch"
+        },
+        {
+          "text": "click events → topic",
+          "bucket": "stream"
+        }
+      ],
+      "recallTips": [
+        "hours OK → batch",
+        "seconds → stream"
       ]
     },
     {
@@ -35,11 +163,26 @@
       "title": "MATCH · stream + Mongo",
       "instruction": "Tea-time terms for Middle/Senior DE.",
       "pairs": [
-        { "left": "Kafka topic", "right": "Named log; partitions for parallelism" },
-        { "left": "Consumer offset", "right": "«Read up to here» — don't lose progress" },
-        { "left": "MongoDB collection", "right": "≈ table, but documents (JSON)" },
-        { "left": "Embedded document", "right": "Nested array/object in one doc" },
-        { "left": "Window / micro-batch", "right": "Stream → aggregate every 5 min (Spark/Flink)" }
+        {
+          "left": "Kafka topic",
+          "right": "Named log; partitions for parallelism"
+        },
+        {
+          "left": "Consumer offset",
+          "right": "«Read up to here» — don't lose progress"
+        },
+        {
+          "left": "MongoDB collection",
+          "right": "≈ table, but documents (JSON)"
+        },
+        {
+          "left": "Embedded document",
+          "right": "Nested array/object in one doc"
+        },
+        {
+          "left": "Window / micro-batch",
+          "right": "Stream → aggregate every 5 min (Spark/Flink)"
+        }
       ]
     },
     {
@@ -48,7 +191,12 @@
       "tag": "🌊 · 2/7",
       "title": "Kafka or nightly batch?",
       "instruction": "Product wants dashboard «active users in last 5 min».",
-      "mission": { "emoji": "📊", "title": "Near-real-time KPI", "brief": "Mobile app events. Mart refresh every 5 min.", "ask": "Which archetype?" },
+      "mission": {
+        "emoji": "📊",
+        "title": "Near-real-time KPI",
+        "brief": "Mobile app events. Mart refresh every 5 min.",
+        "ask": "Which archetype?"
+      },
       "question": "Most fitting design?",
       "options": [
         "Stream ingest (Kafka) + micro-batch aggregate every 5 min to mart",
@@ -65,18 +213,63 @@
       "tag": "🌊 · 3/7",
       "title": "MongoDB · simple agg",
       "instruction": "sensors collection: avg temp per device_id.",
-      "mission": { "emoji": "🍃", "title": "IoT documents", "brief": "Documents in Mongo, not relational. Need avg temp_c per device.", "ask": "Fill aggregation pipeline." },
+      "mission": {
+        "emoji": "🍃",
+        "title": "IoT documents",
+        "brief": "Documents in Mongo, not relational. Need avg temp_c per device.",
+        "ask": "Fill aggregation pipeline."
+      },
       "sampleTable": {
-        "headers": ["device_id", "temp_c", "ts"],
-        "rows": [["d1", "21", "10:00"], ["d1", "23", "10:05"], ["d2", "85", "10:00"]],
-        "columnGlossary": { "device_id": "Group key", "temp_c": "Field for $avg", "ts": "Event timestamp" },
+        "headers": [
+          "device_id",
+          "temp_c",
+          "ts"
+        ],
+        "rows": [
+          [
+            "d1",
+            "21",
+            "10:00"
+          ],
+          [
+            "d1",
+            "23",
+            "10:05"
+          ],
+          [
+            "d2",
+            "85",
+            "10:00"
+          ]
+        ],
+        "columnGlossary": {
+          "device_id": "Group key",
+          "temp_c": "Field for $avg",
+          "ts": "Event timestamp"
+        },
         "caption": "Mongo — one doc per reading; agg like SQL GROUP BY."
       },
       "controlTip": "Analog table above.",
       "template": "[\n  { $____: { temp_c: { $____: null } } },\n  { $____: { _id: '$device_id', avg_temp: { $____: '$temp_c' } } }\n]",
-      "answers": ["match", "ne", "group", "avg"],
-      "wordBank": ["match", "ne", "group", "avg", "sum", "project", "lookup"],
-      "hints": ["$match: drop null temp.", "$group + $avg — like GROUP BY + AVG."]
+      "answers": [
+        "match",
+        "ne",
+        "group",
+        "avg"
+      ],
+      "wordBank": [
+        "match",
+        "ne",
+        "group",
+        "avg",
+        "sum",
+        "project",
+        "lookup"
+      ],
+      "hints": [
+        "$match: drop null temp.",
+        "$group + $avg — like GROUP BY + AVG."
+      ]
     },
     {
       "id": "D4",
@@ -87,9 +280,18 @@
       "scene": "E-com: order with 50 line items, rarely JOIN products separately. PM: «Mongo or Postgres?»",
       "bestIndex": 0,
       "choices": [
-        { "label": "Mongo: order doc with embedded line_items — fast read of whole order", "feedback": "Read-heavy, nested shape — typical Mongo case." },
-        { "label": "12 normalized tables in Mongo «like Postgres»", "feedback": "Mongo without benefits; use SQL DWH." },
-        { "label": "Excel on each PM desktop", "feedback": "Doesn't scale." }
+        {
+          "label": "Mongo: order doc with embedded line_items — fast read of whole order",
+          "feedback": "Read-heavy, nested shape — typical Mongo case."
+        },
+        {
+          "label": "12 normalized tables in Mongo «like Postgres»",
+          "feedback": "Mongo without benefits; use SQL DWH."
+        },
+        {
+          "label": "Excel on each PM desktop",
+          "feedback": "Doesn't scale."
+        }
       ]
     },
     {
@@ -98,7 +300,11 @@
       "tag": "🌊 · 5/7",
       "title": "What's wrong with consumer?",
       "instruction": "Stream crashes — consumer reads topic from start without dedup.",
-      "mission": { "emoji": "🔁", "title": "At-least-once delivery", "brief": "Duplicate events land in mart." },
+      "mission": {
+        "emoji": "🔁",
+        "title": "At-least-once delivery",
+        "brief": "Duplicate events land in mart."
+      },
       "buggyCode": "for event in kafka_consumer:\n    row = parse(event)\n    insert_into_dwh(row)  # no key, no dedup\n    # offset commit after each batch — OK\n    # but rerun / retry → same event twice",
       "prompt": "Main risk for mart?",
       "options": [
@@ -117,7 +323,11 @@
       "tag": "🌊 · 6/7",
       "title": "Flow: app → mart",
       "instruction": "Arrange event pipeline steps (simplified).",
-      "mission": { "emoji": "⚡", "title": "Mobile events", "brief": "Click → Kafka → STG → hourly mart." },
+      "mission": {
+        "emoji": "⚡",
+        "title": "Mobile events",
+        "brief": "Click → Kafka → STG → hourly mart."
+      },
       "items": [
         "App publishes JSON event",
         "Kafka topic (partitioned by user_id)",
@@ -133,7 +343,11 @@
       "tag": "🌊 · 7/7",
       "title": "Consumer lag growing",
       "instruction": "Grafana: lag 2M messages. BI complains about stale data.",
-      "mission": { "emoji": "🚨", "title": "Ops triage", "brief": "What do you check first as DE?" },
+      "mission": {
+        "emoji": "🚨",
+        "title": "Ops triage",
+        "brief": "What do you check first as DE?"
+      },
       "question": "Smartest first step?",
       "options": [
         "Consumer health + processing rate + recent deploys; scale consumers or fix slow transform",

@@ -7,28 +7,143 @@
       "id": "O0",
       "type": "theory",
       "tag": "⚙️ · map",
-      "title": "Airflow in two minutes",
-      "instruction": "Middle DE: «how would you run nightly ETL?» — Cron or Airflow, and why.",
-      "viz": {
-        "type": "pipelineH",
-        "nodes": [
-          { "label": "Scheduler", "hint": "when to create DAG run", "color": "#5b8def" },
-          { "label": "DAG", "hint": "acyclic task graph", "color": "#3d9a6a" },
-          { "label": "Operator", "hint": "task action (SQL, Bash…)", "color": "#e8a84b" },
-          { "label": "Sensor", "hint": "wait for file/time/partition", "color": "#c77dff" }
-        ]
-      },
-      "flow": [
-        { "title": "Trigger", "desc": "schedule or manual run" },
-        { "title": "Tasks", "desc": "run by dependencies >>" },
-        { "title": "Retry", "desc": "retries + alert on failure" },
-        { "title": "Mart fresh", "desc": "BI sees new data" }
+      "title": "Airflow in two beats",
+      "instruction": "Nightly ETL: Cron for one script · Airflow when many steps.",
+      "vizs": [
+        {
+          "type": "pipelineH",
+          "nodes": [
+            {
+              "label": "⏱ Scheduler",
+              "hint": "when",
+              "color": "#5b8def"
+            },
+            {
+              "label": "🕸 DAG",
+              "hint": "graph",
+              "color": "#3d9a6a"
+            },
+            {
+              "label": "⚙️ Operator",
+              "hint": "action",
+              "color": "#e8a84b"
+            },
+            {
+              "label": "👂 Sensor",
+              "hint": "wait",
+              "color": "#c77dff"
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "When what",
+          "cards": [
+            {
+              "icon": "🕒",
+              "title": "Cron",
+              "badge": "simple",
+              "color": "#8b9cb3",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "1 bash"
+                },
+                {
+                  "ok": false,
+                  "text": "10 steps + retry UI"
+                }
+              ]
+            },
+            {
+              "icon": "🕸",
+              "title": "Airflow",
+              "badge": "graph",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "deps + retries"
+                },
+                {
+                  "ok": true,
+                  "text": "file sensor"
+                }
+              ]
+            },
+            {
+              "icon": "🚫",
+              "title": "Cycle",
+              "badge": "DAG",
+              "color": "#ff6b6b",
+              "rows": [
+                {
+                  "ok": false,
+                  "text": "A→B→A"
+                },
+                {
+                  "ok": true,
+                  "text": "acyclic only"
+                }
+              ]
+            }
+          ],
+          "footnote": "Sensor = turnstile: blocks downstream until file/partition appears."
+        }
       ],
-      "bullets": [
-        "DAG = Directed Acyclic Graph — no cycles A→B→A",
-        "Sensor blocks downstream until condition is true (file landed, partition exists)",
-        "Cron — OK for one script; Airflow — many steps, retries, UI, lineage"
+      "flow": [],
+      "bullets": [],
+      "recallTips": [
+        "DAG acyclic",
+        "Sensor waits",
+        "Cron vs Airflow"
       ]
+    },
+    {
+      "id": "O0b",
+      "type": "drag_buckets",
+      "tag": "⚙️ · drag",
+      "title": "Drag into Cron or Airflow",
+      "instruction": "What belongs on crontab vs orchestrator?",
+      "buckets": [
+        {
+          "id": "cron",
+          "icon": "🕒",
+          "title": "Cron",
+          "hint": "simple",
+          "color": "#8b9cb3"
+        },
+        {
+          "id": "airflow",
+          "icon": "🕸",
+          "title": "Airflow",
+          "hint": "graph",
+          "color": "#3d9a6a"
+        }
+      ],
+      "items": [
+        {
+          "text": "one ingest.sh at 03:00",
+          "bucket": "cron"
+        },
+        {
+          "text": "sensor S3 → transform → mart",
+          "bucket": "airflow"
+        },
+        {
+          "text": "retries + Slack fail",
+          "bucket": "airflow"
+        },
+        {
+          "text": "5-field crontab line",
+          "bucket": "cron"
+        }
+      ],
+      "recallTips": [
+        "1 script → Cron",
+        "deps/sensor → Airflow"
+      ],
+      "recallMapRef": "📍 Map: O0 Airflow."
     },
     {
       "id": "O1",
@@ -37,11 +152,26 @@
       "title": "MATCH · orchestration ↔ term",
       "instruction": "Airflow terms on interviews + when to mention Cron.",
       "pairs": [
-        { "left": "DAG", "right": "Acyclic task graph + schedule" },
-        { "left": "Operator", "right": "Task action template (PythonOperator, Bash…)" },
-        { "left": "Sensor", "right": "Task that waits for condition (S3 file, partition)" },
-        { "left": "Task instance", "right": "One run of a specific task in a DAG run" },
-        { "left": "Cron (crontab)", "right": "Linux scheduler: 5 fields + command, no DAG UI" }
+        {
+          "left": "DAG",
+          "right": "Acyclic task graph + schedule"
+        },
+        {
+          "left": "Operator",
+          "right": "Task action template (PythonOperator, Bash…)"
+        },
+        {
+          "left": "Sensor",
+          "right": "Task that waits for condition (S3 file, partition)"
+        },
+        {
+          "left": "Task instance",
+          "right": "One run of a specific task in a DAG run"
+        },
+        {
+          "left": "Cron (crontab)",
+          "right": "Linux scheduler: 5 fields + command, no DAG UI"
+        }
       ]
     },
     {
@@ -87,13 +217,37 @@
         "ask": "Fill minutes and hours in the cron line."
       },
       "sampleTable": {
-        "headers": ["field", "value", "meaning"],
+        "headers": [
+          "field",
+          "value",
+          "meaning"
+        ],
         "rows": [
-          ["1", "minutes", "0–59"],
-          ["2", "hours", "0–23"],
-          ["3", "day of month", "* = every day"],
-          ["4", "month", "*"],
-          ["5", "day of week", "*"]
+          [
+            "1",
+            "minutes",
+            "0–59"
+          ],
+          [
+            "2",
+            "hours",
+            "0–23"
+          ],
+          [
+            "3",
+            "day of month",
+            "* = every day"
+          ],
+          [
+            "4",
+            "month",
+            "*"
+          ],
+          [
+            "5",
+            "day of week",
+            "*"
+          ]
         ],
         "columnGlossary": {
           "field": "Crontab field order (5 fields + command)",
@@ -104,9 +258,21 @@
       },
       "controlTip": "Cron fields table above. Line below.",
       "template": "# min hour dom mon dow\n____ ____ * * * /opt/etl/ingest.sh",
-      "answers": ["0", "3"],
-      "wordBank": ["0", "3", "30", "*", "03"],
-      "hints": ["Minutes first: 0 = start of hour.", "03:00 → hour = 3."]
+      "answers": [
+        "0",
+        "3"
+      ],
+      "wordBank": [
+        "0",
+        "3",
+        "30",
+        "*",
+        "03"
+      ],
+      "hints": [
+        "Minutes first: 0 = start of hour.",
+        "03:00 → hour = 3."
+      ]
     },
     {
       "id": "O4",
@@ -190,12 +356,32 @@
         "ask": "Fill >> chain and retries."
       },
       "sampleTable": {
-        "headers": ["task", "operator", "purpose"],
+        "headers": [
+          "task",
+          "operator",
+          "purpose"
+        ],
         "rows": [
-          ["extract", "PythonOperator", "S3 → staging"],
-          ["validate", "ShortCircuit", "stop if rowcount=0"],
-          ["transform", "PythonOperator", "staging → core"],
-          ["load_mart", "PythonOperator", "core → mart"]
+          [
+            "extract",
+            "PythonOperator",
+            "S3 → staging"
+          ],
+          [
+            "validate",
+            "ShortCircuit",
+            "stop if rowcount=0"
+          ],
+          [
+            "transform",
+            "PythonOperator",
+            "staging → core"
+          ],
+          [
+            "load_mart",
+            "PythonOperator",
+            "core → mart"
+          ]
         ],
         "columnGlossary": {
           "task": "task_id in DAG",
@@ -206,9 +392,25 @@
       },
       "controlTip": "Task table above.",
       "template": "extract >> ____ >> transform >> ____\n\n# default_args\nretries=____,\nretry_delay=timedelta(minutes=____)",
-      "answers": ["validate", "load_mart", "2", "5"],
-      "wordBank": ["validate", "load_mart", "extract", "2", "5", "0", "sensor"],
-      "hints": ["After extract — validate before transform.", "Two retries, 5 minute pause."]
+      "answers": [
+        "validate",
+        "load_mart",
+        "2",
+        "5"
+      ],
+      "wordBank": [
+        "validate",
+        "load_mart",
+        "extract",
+        "2",
+        "5",
+        "0",
+        "sensor"
+      ],
+      "hints": [
+        "After extract — validate before transform.",
+        "Two retries, 5 minute pause."
+      ]
     }
   ]
 }

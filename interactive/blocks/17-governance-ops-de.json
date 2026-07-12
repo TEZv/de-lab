@@ -8,21 +8,158 @@
       "type": "theory",
       "tag": "🛡️ · карта",
       "title": "Governance без бюрократії",
-      "instruction": "Senior DE: не лише ETL, а «що ламається о 3 ночі і хто знає, що змінилось».",
-      "viz": {
-        "type": "dqGrid",
-        "checks": [
-          { "icon": "🔗", "label": "Lineage", "desc": "source → STG → core → mart", "color": "#5b8def" },
-          { "icon": "📋", "label": "Schema docs", "desc": "dbt schema.yml · catalog · owners", "color": "#3d9a6a" },
-          { "icon": "📟", "label": "Monitoring", "desc": "freshness · rowcount · null rate", "color": "#e8a84b" },
-          { "icon": "🚑", "label": "Runbook", "desc": "хто · що · rollback · comms", "color": "#ff6b6b" }
-        ]
-      },
-      "bullets": [
-        "Data catalog (Atlan, DataHub, dbt docs) — «де truth і хто owner»",
-        "Alert на anomaly (0 rows, 2× rowcount) краще за «вчора було OK»",
-        "Schema change: version + communicate до analysts"
+      "instruction": "Senior DE: не лише ETL — що ламається о 3 ночі і хто знає, що змінилось.",
+      "vizs": [
+        {
+          "type": "dqGrid",
+          "checks": [
+            {
+              "icon": "🔗",
+              "label": "Lineage",
+              "desc": "source → mart",
+              "color": "#5b8def"
+            },
+            {
+              "icon": "📋",
+              "label": "Docs",
+              "desc": "owners · schema",
+              "color": "#3d9a6a"
+            },
+            {
+              "icon": "📟",
+              "label": "Monitor",
+              "desc": "freshness · nulls",
+              "color": "#e8a84b"
+            },
+            {
+              "icon": "🚑",
+              "label": "Runbook",
+              "desc": "хто · rollback",
+              "color": "#ff6b6b"
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Картки памʼяті",
+          "cards": [
+            {
+              "icon": "🔗",
+              "title": "Lineage",
+              "badge": "граф",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "хто downstream"
+                },
+                {
+                  "ok": false,
+                  "text": "лише «в голові»"
+                }
+              ]
+            },
+            {
+              "icon": "🔔",
+              "title": "Alert",
+              "badge": "anomaly",
+              "color": "#e8a84b",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "0 rows / 2× count"
+                },
+                {
+                  "ok": false,
+                  "text": "вчора було OK"
+                }
+              ]
+            },
+            {
+              "icon": "📣",
+              "title": "Schema change",
+              "badge": "comms",
+              "color": "#c77dff",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "version + сказати analysts"
+                },
+                {
+                  "ok": false,
+                  "text": "silent alter"
+                }
+              ]
+            }
+          ],
+          "footnote": "Той самий ритуал, що Ops R0 — сигнал → дія → навчання."
+        }
+      ],
+      "bullets": [],
+      "recallTips": [
+        "lineage = граф",
+        "alert на anomaly",
+        "schema change = comms"
       ]
+    },
+    {
+      "id": "E0b",
+      "type": "drag_buckets",
+      "tag": "🛡️ · drag",
+      "title": "Перетягни в кошик governance",
+      "instruction": "Інструмент vs процес vs сигнал.",
+      "buckets": [
+        {
+          "id": "graph",
+          "icon": "🔗",
+          "title": "Граф / docs",
+          "color": "#5b8def"
+        },
+        {
+          "id": "signal",
+          "icon": "📟",
+          "title": "Сигнал",
+          "color": "#e8a84b"
+        },
+        {
+          "id": "action",
+          "icon": "🚑",
+          "title": "Дія",
+          "color": "#ff6b6b"
+        }
+      ],
+      "items": [
+        {
+          "text": "dbt lineage",
+          "bucket": "graph"
+        },
+        {
+          "text": "data catalog owner",
+          "bucket": "graph"
+        },
+        {
+          "text": "freshness SLA miss",
+          "bucket": "signal"
+        },
+        {
+          "text": "null rate spike",
+          "bucket": "signal"
+        },
+        {
+          "text": "incident runbook",
+          "bucket": "action"
+        },
+        {
+          "text": "rollback + #incidents",
+          "bucket": "action"
+        }
+      ],
+      "recallTips": [
+        "docs/lineage",
+        "сигнал monitor",
+        "runbook дія"
+      ],
+      "recallMapRef": "📍 Карта: E0 · bridge Ops R0."
     },
     {
       "id": "E1",
@@ -31,11 +168,26 @@
       "title": "MATCH · governance ↔ сенс",
       "instruction": "Терміни prod data platform.",
       "pairs": [
-        { "left": "Lineage", "right": "Граф: звідки колонка / хто downstream" },
-        { "left": "Data catalog", "right": "Пошук таблиць, owners, SLA" },
-        { "left": "Schema registry", "right": "Версії Avro/Protobuf для stream" },
-        { "left": "Runbook", "right": "Покроково при incident (не ad-hoc panic)" },
-        { "left": "SLA / freshness", "right": "Mart має бути свіжий до 08:00" }
+        {
+          "left": "Lineage",
+          "right": "Граф: звідки колонка / хто downstream"
+        },
+        {
+          "left": "Data catalog",
+          "right": "Пошук таблиць, owners, SLA"
+        },
+        {
+          "left": "Schema registry",
+          "right": "Версії Avro/Protobuf для stream"
+        },
+        {
+          "left": "Runbook",
+          "right": "Покроково при incident (не ad-hoc panic)"
+        },
+        {
+          "left": "SLA / freshness",
+          "right": "Mart має бути свіжий до 08:00"
+        }
       ]
     },
     {
@@ -74,11 +226,27 @@
         "ask": "Заповни фрагмент YAML."
       },
       "sampleTable": {
-        "headers": ["column", "business meaning", "test"],
+        "headers": [
+          "column",
+          "business meaning",
+          "test"
+        ],
         "rows": [
-          ["user_id", "PK користувача", "unique, not_null"],
-          ["is_active", "1 = активна підписка сьогодні", "accepted_values: [0,1]"],
-          ["mrr", "Monthly revenue USD", "not_null where is_active=1"]
+          [
+            "user_id",
+            "PK користувача",
+            "unique, not_null"
+          ],
+          [
+            "is_active",
+            "1 = активна підписка сьогодні",
+            "accepted_values: [0,1]"
+          ],
+          [
+            "mrr",
+            "Monthly revenue USD",
+            "not_null where is_active=1"
+          ]
         ],
         "columnGlossary": {
           "column": "Імʼя в mart",
@@ -89,8 +257,17 @@
       },
       "controlTip": "Приклад колонок — у таблиці.",
       "template": "models:\n  - name: mart_users\n    columns:\n      - name: is_active\n        description: ____\n        tests:\n          - ____:\n              values: [0, 1]",
-      "answers": ["1 = active subscription today", "accepted_values"],
-      "wordBank": ["1 = active subscription today", "accepted_values", "unique", "relationships", "not_null"],
+      "answers": [
+        "1 = active subscription today",
+        "accepted_values"
+      ],
+      "wordBank": [
+        "1 = active subscription today",
+        "accepted_values",
+        "unique",
+        "relationships",
+        "not_null"
+      ],
       "hints": [
         "description — business мова з таблиці.",
         "accepted_values для 0/1 flag."

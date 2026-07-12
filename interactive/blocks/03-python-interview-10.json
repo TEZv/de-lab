@@ -20,14 +20,37 @@
               "types": "list · tuple · str",
               "color": "#5b8def",
               "traits": [
-                { "yes": true, "label": "порядок", "value": "є (0,1,2…)" },
-                { "yes": true, "label": "доступ", "value": "[i] або [start:stop]" },
-                { "yes": true, "label": "дублікати", "value": "OK" }
+                {
+                  "yes": true,
+                  "label": "порядок",
+                  "value": "є (0,1,2…)"
+                },
+                {
+                  "yes": true,
+                  "label": "доступ",
+                  "value": "[i] або [start:stop]"
+                },
+                {
+                  "yes": true,
+                  "label": "дублікати",
+                  "value": "OK"
+                }
               ],
               "holdLabel": "елемент може бути",
-              "canHold": ["int", "str", "list", "dict", "set", "tuple"],
+              "canHold": [
+                "int",
+                "str",
+                "list",
+                "dict",
+                "set",
+                "tuple"
+              ],
               "noHoldLabel": "індекс НЕ може бути",
-              "cannotHold": ["dict", "set", "list"]
+              "cannotHold": [
+                "dict",
+                "set",
+                "list"
+              ]
             },
             {
               "icon": "🗝️",
@@ -35,14 +58,36 @@
               "types": "dict",
               "color": "#3d9a6a",
               "traits": [
-                { "yes": false, "label": "порядок", "value": "не для індексу (ключ!)" },
-                { "yes": true, "label": "доступ", "value": "[key] · .get(key, 0)" },
-                { "yes": false, "label": "ключ", "value": "унікальний" }
+                {
+                  "yes": false,
+                  "label": "порядок",
+                  "value": "не для індексу (ключ!)"
+                },
+                {
+                  "yes": true,
+                  "label": "доступ",
+                  "value": "[key] · .get(key, 0)"
+                },
+                {
+                  "yes": false,
+                  "label": "ключ",
+                  "value": "унікальний"
+                }
               ],
               "holdLabel": "ключ (hashable)",
-              "canHold": ["str", "int", "float", "tuple", "bool"],
+              "canHold": [
+                "str",
+                "int",
+                "float",
+                "tuple",
+                "bool"
+              ],
               "noHoldLabel": "ключ НЕ може бути",
-              "cannotHold": ["list", "dict", "set"]
+              "cannotHold": [
+                "list",
+                "dict",
+                "set"
+              ]
             },
             {
               "icon": "🎯",
@@ -50,14 +95,34 @@
               "types": "set · frozenset",
               "color": "#c77dff",
               "traits": [
-                { "yes": false, "label": "порядок", "value": "немає індексу" },
-                { "yes": false, "label": "доступ", "value": "немає set[i]" },
-                { "yes": true, "label": "унікальність", "value": "автоматична" }
+                {
+                  "yes": false,
+                  "label": "порядок",
+                  "value": "немає індексу"
+                },
+                {
+                  "yes": false,
+                  "label": "доступ",
+                  "value": "немає set[i]"
+                },
+                {
+                  "yes": true,
+                  "label": "унікальність",
+                  "value": "автоматична"
+                }
               ],
               "holdLabel": "член set",
-              "canHold": ["str", "int", "tuple"],
+              "canHold": [
+                "str",
+                "int",
+                "tuple"
+              ],
               "noHoldLabel": "член НЕ може бути",
-              "cannotHold": ["list", "dict", "set"]
+              "cannotHold": [
+                "list",
+                "dict",
+                "set"
+              ]
             }
           ],
           "footnote": "hashable = можна як ключ dict / член set. list і dict — mutable → не hashable."
@@ -69,10 +134,34 @@
           "colB": "що треба",
           "colC": "живий приклад",
           "rows": [
-            { "icon": "📚", "who": "list[i]", "need": "i = int або slice", "example": "a[0] · a[-1] · a[1:3]", "color": "#5b8def" },
-            { "icon": "🗝️", "who": "dict[k]", "need": "k = hashable", "example": "d['a'] · d[(1,2)]", "color": "#3d9a6a" },
-            { "icon": "💥", "who": "list[set/dict]", "need": "ніколи", "example": "a[{1}] → TypeError", "color": "#ff6b6b" },
-            { "icon": "🧪", "who": "isinstance", "need": "перед парсингом", "example": "isinstance(x, dict)", "color": "#e8a84b" }
+            {
+              "icon": "📚",
+              "who": "list[i]",
+              "need": "i = int або slice",
+              "example": "a[0] · a[-1] · a[1:3]",
+              "color": "#5b8def"
+            },
+            {
+              "icon": "🗝️",
+              "who": "dict[k]",
+              "need": "k = hashable",
+              "example": "d['a'] · d[(1,2)]",
+              "color": "#3d9a6a"
+            },
+            {
+              "icon": "💥",
+              "who": "list[set/dict]",
+              "need": "ніколи",
+              "example": "a[{1}] → TypeError",
+              "color": "#ff6b6b"
+            },
+            {
+              "icon": "🧪",
+              "who": "isinstance",
+              "need": "перед парсингом",
+              "example": "isinstance(x, dict)",
+              "color": "#e8a84b"
+            }
           ]
         },
         {
@@ -108,9 +197,18 @@
               "badge": "sequence",
               "color": "#5b8def",
               "rows": [
-                { "ok": true, "text": "words[0]" },
-                { "ok": true, "text": "words[::-1]" },
-                { "ok": false, "text": "words[{'a':1}]" }
+                {
+                  "ok": true,
+                  "text": "words[0]"
+                },
+                {
+                  "ok": true,
+                  "text": "words[::-1]"
+                },
+                {
+                  "ok": false,
+                  "text": "words[{'a':1}]"
+                }
               ]
             },
             {
@@ -119,9 +217,18 @@
               "badge": "mapping",
               "color": "#3d9a6a",
               "rows": [
-                { "ok": true, "text": "counts['apple']" },
-                { "ok": true, "text": "key = (1,'a')" },
-                { "ok": false, "text": "key = [1,'a']" }
+                {
+                  "ok": true,
+                  "text": "counts['apple']"
+                },
+                {
+                  "ok": true,
+                  "text": "key = (1,'a')"
+                },
+                {
+                  "ok": false,
+                  "text": "key = [1,'a']"
+                }
               ]
             },
             {
@@ -130,9 +237,18 @@
               "badge": "pandas",
               "color": "#c77dff",
               "rows": [
-                { "ok": true, "text": ".agg(..., 'mean')" },
-                { "ok": true, "text": ".reset_index()" },
-                { "ok": false, "text": "avg замість mean" }
+                {
+                  "ok": true,
+                  "text": ".agg(..., 'mean')"
+                },
+                {
+                  "ok": true,
+                  "text": ".reset_index()"
+                },
+                {
+                  "ok": false,
+                  "text": "avg замість mean"
+                }
               ]
             }
           ],
@@ -148,15 +264,138 @@
       ]
     },
     {
+      "id": "P0b",
+      "type": "drag_buckets",
+      "tag": "PY · drag",
+      "title": "Перетягни тип у сімʼю",
+      "instruction": "Закріпи P0 руками: кожен тип — у Sequence / Mapping / Set.",
+      "bucketTip": "Перетягни чіпи з пулу в три кошики.",
+      "studyViz": {
+        "type": "typeFamily",
+        "title": "Підказка-карта (якщо забула)",
+        "families": [
+          {
+            "icon": "📚",
+            "title": "Sequence",
+            "types": "порядок + індекс",
+            "color": "#5b8def",
+            "traits": [
+              {
+                "yes": true,
+                "label": "індекс",
+                "value": "int/slice"
+              }
+            ]
+          },
+          {
+            "icon": "🗝️",
+            "title": "Mapping",
+            "types": "ключ → значення",
+            "color": "#3d9a6a",
+            "traits": [
+              {
+                "yes": true,
+                "label": "ключ",
+                "value": "hashable"
+              }
+            ]
+          },
+          {
+            "icon": "🎯",
+            "title": "Set",
+            "types": "унікальні",
+            "color": "#c77dff",
+            "traits": [
+              {
+                "yes": false,
+                "label": "індекс",
+                "value": "немає"
+              }
+            ]
+          }
+        ]
+      },
+      "buckets": [
+        {
+          "id": "seq",
+          "icon": "📚",
+          "title": "Sequence",
+          "hint": "list · tuple · str",
+          "color": "#5b8def"
+        },
+        {
+          "id": "map",
+          "icon": "🗝️",
+          "title": "Mapping",
+          "hint": "dict",
+          "color": "#3d9a6a"
+        },
+        {
+          "id": "set",
+          "icon": "🎯",
+          "title": "Set",
+          "hint": "set · frozenset",
+          "color": "#c77dff"
+        }
+      ],
+      "items": [
+        {
+          "text": "list",
+          "bucket": "seq"
+        },
+        {
+          "text": "tuple",
+          "bucket": "seq"
+        },
+        {
+          "text": "str",
+          "bucket": "seq"
+        },
+        {
+          "text": "dict",
+          "bucket": "map"
+        },
+        {
+          "text": "set",
+          "bucket": "set"
+        },
+        {
+          "text": "frozenset",
+          "bucket": "set"
+        }
+      ],
+      "recallTips": [
+        "📚 індекс int",
+        "🗝️ ключ hashable",
+        "🎯 без set[i]"
+      ],
+      "recallMapRef": "📍 Карта: P0 «Чистий Python vs Pandas»."
+    },
+    {
       "id": "P1",
       "type": "fill_blanks",
       "tag": "PY · 1/10",
       "title": "Паліндром",
       "instruction": "Перевірка слова з обох боків.",
       "template": "def is_palindrome(word):\n    clean = word.____()\n    if clean == clean[____]:\n        return True\n    else:\n        return ____",
-      "answers": ["lower", "::-1", "False"],
-      "wordBank": ["lower", "upper", "::-1", "False", "True", "None"],
-      "hints": ["Нормалізуй регістр.", "Зріз [::-1] перевертає.", "Повертай bool, не саме слово."]
+      "answers": [
+        "lower",
+        "::-1",
+        "False"
+      ],
+      "wordBank": [
+        "lower",
+        "upper",
+        "::-1",
+        "False",
+        "True",
+        "None"
+      ],
+      "hints": [
+        "Нормалізуй регістр.",
+        "Зріз [::-1] перевертає.",
+        "Повертай bool, не саме слово."
+      ]
     },
     {
       "id": "P2",
@@ -165,9 +404,20 @@
       "title": "Лічильник у dict",
       "instruction": "Скільки разів зустрічається кожен бренд.",
       "template": "counts = {}\nfor car in cars:\n    if car in counts:\n        counts[car] += ____\n    else:\n        counts[car] = ____",
-      "answers": ["1", "1"],
-      "wordBank": ["1", "0", "car", "True"],
-      "hints": ["Вперше = 1, далі += 1.", "Альтернатива: counts.get(car, 0) + 1."]
+      "answers": [
+        "1",
+        "1"
+      ],
+      "wordBank": [
+        "1",
+        "0",
+        "car",
+        "True"
+      ],
+      "hints": [
+        "Вперше = 1, далі += 1.",
+        "Альтернатива: counts.get(car, 0) + 1."
+      ]
     },
     {
       "id": "P3",
@@ -176,9 +426,19 @@
       "title": "Рекурсія · факторіал",
       "instruction": "Базовий випадок + виклик себе.",
       "template": "def factorial(n):\n    if n == 1:\n        return 1\n    else:\n        return n * ____(n - 1)",
-      "answers": ["factorial"],
-      "wordBank": ["factorial", "n", "loop", "return"],
-      "hints": ["Функція викликає себе по імені.", "Без базового випадку → StackOverflow."]
+      "answers": [
+        "factorial"
+      ],
+      "wordBank": [
+        "factorial",
+        "n",
+        "loop",
+        "return"
+      ],
+      "hints": [
+        "Функція викликає себе по імені.",
+        "Без базового випадку → StackOverflow."
+      ]
     },
     {
       "id": "P4",
@@ -211,13 +471,37 @@
         "ask": "Заповни ланцюжок groupby → agg(mean) → reset_index."
       },
       "sampleTable": {
-        "headers": ["employee_id", "department", "salary"],
+        "headers": [
+          "employee_id",
+          "department",
+          "salary"
+        ],
         "rows": [
-          ["e1", "IT", "3000"],
-          ["e2", "IT", "3500"],
-          ["e3", "HR", "2100"],
-          ["e4", "Sales", "1800"],
-          ["e5", "Sales", "2200"]
+          [
+            "e1",
+            "IT",
+            "3000"
+          ],
+          [
+            "e2",
+            "IT",
+            "3500"
+          ],
+          [
+            "e3",
+            "HR",
+            "2100"
+          ],
+          [
+            "e4",
+            "Sales",
+            "1800"
+          ],
+          [
+            "e5",
+            "Sales",
+            "2200"
+          ]
         ],
         "columnGlossary": {
           "employee_id": "ID співробітника (не групуємо)",
@@ -228,8 +512,21 @@
       },
       "controlTip": "Таблиця й місія — вище. Код нижче.",
       "template": "result = df.____('department')\n    .____(mean_salary=('salary', '____'))\n    .____()",
-      "answers": ["groupby", "agg", "mean", "reset_index"],
-      "wordBank": ["groupby", "agg", "mean", "avg", "sum", "reset_index", "merge"],
+      "answers": [
+        "groupby",
+        "agg",
+        "mean",
+        "reset_index"
+      ],
+      "wordBank": [
+        "groupby",
+        "agg",
+        "mean",
+        "avg",
+        "sum",
+        "reset_index",
+        "merge"
+      ],
       "hints": [
         "SQL AVG → Pandas 'mean'.",
         "groupby робить ключ індексом → reset_index()."
@@ -250,8 +547,24 @@
       "joinTables": [
         {
           "title": "df_users",
-          "headers": ["user_id", "name"],
-          "rows": [["u1", "Anna"], ["u2", "Bob"], ["u3", "Cara"]],
+          "headers": [
+            "user_id",
+            "name"
+          ],
+          "rows": [
+            [
+              "u1",
+              "Anna"
+            ],
+            [
+              "u2",
+              "Bob"
+            ],
+            [
+              "u3",
+              "Cara"
+            ]
+          ],
           "columnGlossary": {
             "user_id": "Ключ merge",
             "name": "Атрибут user"
@@ -259,8 +572,28 @@
         },
         {
           "title": "df_orders",
-          "headers": ["order_id", "user_id", "amount"],
-          "rows": [["o100", "u1", "50"], ["o101", "u1", "30"], ["o200", "u3", "80"]],
+          "headers": [
+            "order_id",
+            "user_id",
+            "amount"
+          ],
+          "rows": [
+            [
+              "o100",
+              "u1",
+              "50"
+            ],
+            [
+              "o101",
+              "u1",
+              "30"
+            ],
+            [
+              "o200",
+              "u3",
+              "80"
+            ]
+          ],
           "columnGlossary": {
             "order_id": "ID замовлення",
             "user_id": "FK → users",
@@ -271,9 +604,25 @@
       "joinCaption": "pd.merge(..., how='left') = SQL LEFT JOIN. u2 без orders → NaN у колонках orders.",
       "controlTip": "Дві таблиці вище — заповни merge нижче.",
       "template": "merged = pd.merge(\n    ____,\n    ____,\n    on='____',\n    how='____'\n)",
-      "answers": ["df_users", "df_orders", "user_id", "left"],
-      "wordBank": ["df_users", "df_orders", "user_id", "left", "inner", "right", "outer"],
-      "hints": ["Ліва таблиця — куди джойнимо.", "how='left' зберігає всіх users."]
+      "answers": [
+        "df_users",
+        "df_orders",
+        "user_id",
+        "left"
+      ],
+      "wordBank": [
+        "df_users",
+        "df_orders",
+        "user_id",
+        "left",
+        "inner",
+        "right",
+        "outer"
+      ],
+      "hints": [
+        "Ліва таблиця — куди джойнимо.",
+        "how='left' зберігає всіх users."
+      ]
     },
     {
       "id": "P7",
@@ -324,11 +673,23 @@
             "types": "sequence",
             "color": "#5b8def",
             "traits": [
-              { "yes": true, "label": "індекс", "value": "int / slice" },
-              { "yes": false, "label": "індекс", "value": "dict/set → TypeError" }
+              {
+                "yes": true,
+                "label": "індекс",
+                "value": "int / slice"
+              },
+              {
+                "yes": false,
+                "label": "індекс",
+                "value": "dict/set → TypeError"
+              }
             ],
-            "canHold": ["будь-що"],
-            "cannotHold": ["— як індекс"]
+            "canHold": [
+              "будь-що"
+            ],
+            "cannotHold": [
+              "— як індекс"
+            ]
           },
           {
             "icon": "🗝️",
@@ -336,11 +697,23 @@
             "types": "mapping",
             "color": "#3d9a6a",
             "traits": [
-              { "yes": true, "label": "ключ", "value": "str/int/tuple" },
-              { "yes": false, "label": "ключ", "value": "list/dict/set" }
+              {
+                "yes": true,
+                "label": "ключ",
+                "value": "str/int/tuple"
+              },
+              {
+                "yes": false,
+                "label": "ключ",
+                "value": "list/dict/set"
+              }
             ],
-            "canHold": ["value: будь-що"],
-            "cannotHold": ["list як key"]
+            "canHold": [
+              "value: будь-що"
+            ],
+            "cannotHold": [
+              "list як key"
+            ]
           },
           {
             "icon": "🎯",
@@ -348,20 +721,54 @@
             "types": "unique",
             "color": "#c77dff",
             "traits": [
-              { "yes": false, "label": "індекс", "value": "немає set[i]" },
-              { "yes": true, "label": "член", "value": "лише hashable" }
+              {
+                "yes": false,
+                "label": "індекс",
+                "value": "немає set[i]"
+              },
+              {
+                "yes": true,
+                "label": "член",
+                "value": "лише hashable"
+              }
             ],
-            "canHold": ["str", "int", "tuple"],
-            "cannotHold": ["list", "dict"]
+            "canHold": [
+              "str",
+              "int",
+              "tuple"
+            ],
+            "cannotHold": [
+              "list",
+              "dict"
+            ]
           }
         ]
       },
       "pairs": [
-        { "left": "list[i]", "right": "лише int (або slice)", "studyHint": "↑ list-колонка" },
-        { "left": "dict[k]", "right": "hashable key (str/int/tuple)", "studyHint": "↑ dict-колонка" },
-        { "left": "isinstance(x, dict)", "right": "перевірка типу перед парсингом" },
-        { "left": "word[::-1]", "right": "перевернутий рядок", "studyHint": "↑ slice" },
-        { "left": "counts.get(k, 0)", "right": "лічильник без if/else", "studyHint": "↑ .get()" }
+        {
+          "left": "list[i]",
+          "right": "лише int (або slice)",
+          "studyHint": "↑ list-колонка"
+        },
+        {
+          "left": "dict[k]",
+          "right": "hashable key (str/int/tuple)",
+          "studyHint": "↑ dict-колонка"
+        },
+        {
+          "left": "isinstance(x, dict)",
+          "right": "перевірка типу перед парсингом"
+        },
+        {
+          "left": "word[::-1]",
+          "right": "перевернутий рядок",
+          "studyHint": "↑ slice"
+        },
+        {
+          "left": "counts.get(k, 0)",
+          "right": "лічильник без if/else",
+          "studyHint": "↑ .get()"
+        }
       ]
     },
     {

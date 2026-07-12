@@ -9,24 +9,156 @@
       "tag": "📥 · map",
       "title": "Full vs incremental",
       "instruction": "Middle DE: «how do you refresh mart daily without full reload?»",
-      "viz": {
-        "type": "splitCompare",
-        "columns": [
-          { "title": "🔄 Full load", "color": "#ff6b6b", "items": ["TRUNCATE + INSERT all", "simple but expensive", "OK for small dims"] },
-          { "title": "➕ Incremental", "color": "#3d9a6a", "items": ["only new/changed rows", "watermark / updated_at", "needs idempotency"] }
-        ]
-      },
       "flow": [
-        { "title": "Read watermark", "desc": "max(updated_at) from meta or state table" },
-        { "title": "Extract delta", "desc": "WHERE updated_at > watermark" },
-        { "title": "Transform", "desc": "typing, dedup keys" },
-        { "title": "Load idempotent", "desc": "MERGE / upsert / partition swap" },
-        { "title": "Commit watermark", "desc": "only after successful load" }
+        {
+          "title": "Read watermark",
+          "desc": "max(updated_at) from meta or state table"
+        },
+        {
+          "title": "Extract delta",
+          "desc": "WHERE updated_at > watermark"
+        },
+        {
+          "title": "Transform",
+          "desc": "typing, dedup keys"
+        },
+        {
+          "title": "Load idempotent",
+          "desc": "MERGE / upsert / partition swap"
+        },
+        {
+          "title": "Commit watermark",
+          "desc": "only after successful load"
+        }
       ],
-      "bullets": [
-        "Watermark — «how far we've read» (timestamp, ID, LSN)",
-        "Idempotent = rerun does not corrupt data (no dupes)",
-        "Backfill — deliberate reprocess of past periods; not Airflow catchup"
+      "bullets": [],
+      "vizs": [
+        {
+          "type": "splitCompare",
+          "columns": [
+            {
+              "title": "🔄 Full load",
+              "color": "#ff6b6b",
+              "items": [
+                "TRUNCATE + INSERT all",
+                "simple but expensive",
+                "OK for small dims"
+              ]
+            },
+            {
+              "title": "➕ Incremental",
+              "color": "#3d9a6a",
+              "items": [
+                "only new/changed rows",
+                "watermark / updated_at",
+                "needs idempotency"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Three words",
+          "cards": [
+            {
+              "icon": "🏷️",
+              "title": "Watermark",
+              "badge": "cursor",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "updated_at / LSN"
+                },
+                {
+                  "ok": false,
+                  "text": "guess last night"
+                }
+              ]
+            },
+            {
+              "icon": "♻️",
+              "title": "Idempotent",
+              "badge": "safe rerun",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "MERGE / upsert"
+                },
+                {
+                  "ok": false,
+                  "text": "blind INSERT dups"
+                }
+              ]
+            },
+            {
+              "icon": "⏪",
+              "title": "Backfill",
+              "badge": "past",
+              "color": "#c77dff",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "conscious past run"
+                },
+                {
+                  "ok": false,
+                  "text": "= Airflow catchup"
+                }
+              ]
+            }
+          ],
+          "footnote": "Read watermark → delta → load → commit watermark."
+        }
+      ],
+      "recallTips": [
+        "watermark first",
+        "idempotent load",
+        "backfill ≠ catchup"
+      ]
+    },
+    {
+      "id": "C0b",
+      "type": "drag_buckets",
+      "tag": "📥 · drag",
+      "title": "Drag: full vs incremental",
+      "instruction": "Which load pattern fits?",
+      "buckets": [
+        {
+          "id": "full",
+          "icon": "🔄",
+          "title": "Full",
+          "color": "#ff6b6b"
+        },
+        {
+          "id": "incr",
+          "icon": "➕",
+          "title": "Incremental",
+          "color": "#3d9a6a"
+        }
+      ],
+      "items": [
+        {
+          "text": "tiny dim country",
+          "bucket": "full"
+        },
+        {
+          "text": "TRUNCATE+INSERT nightly",
+          "bucket": "full"
+        },
+        {
+          "text": "WHERE updated_at > wm",
+          "bucket": "incr"
+        },
+        {
+          "text": "MERGE on business key",
+          "bucket": "incr"
+        }
+      ],
+      "recallTips": [
+        "small dims → full",
+        "facts → incremental"
       ]
     },
     {
@@ -36,11 +168,26 @@
       "title": "MATCH · pattern ↔ meaning",
       "instruction": "Incremental ETL terms on interviews.",
       "pairs": [
-        { "left": "Watermark", "right": "«Already processed» boundary (time / ID / offset)" },
-        { "left": "Idempotent load", "right": "Rerun → same result, no duplicates" },
-        { "left": "Upsert / MERGE", "right": "INSERT new + UPDATE existing by key" },
-        { "left": "Append-only", "right": "INSERT only; no idempotency → dupes on rerun" },
-        { "left": "Backfill", "right": "Deliberately reload a historical range" }
+        {
+          "left": "Watermark",
+          "right": "«Already processed» boundary (time / ID / offset)"
+        },
+        {
+          "left": "Idempotent load",
+          "right": "Rerun → same result, no duplicates"
+        },
+        {
+          "left": "Upsert / MERGE",
+          "right": "INSERT new + UPDATE existing by key"
+        },
+        {
+          "left": "Append-only",
+          "right": "INSERT only; no idempotency → dupes on rerun"
+        },
+        {
+          "left": "Backfill",
+          "right": "Deliberately reload a historical range"
+        }
       ]
     },
     {
@@ -56,8 +203,28 @@
         "ask": "Fill threshold in WHERE."
       },
       "sampleTable": {
-        "headers": ["event_id", "updated_at", "payload"],
-        "rows": [["e1", "2026-07-10 22:00", "old"], ["e2", "2026-07-11 01:00", "new"], ["e3", "2026-07-11 03:00", "new"]],
+        "headers": [
+          "event_id",
+          "updated_at",
+          "payload"
+        ],
+        "rows": [
+          [
+            "e1",
+            "2026-07-10 22:00",
+            "old"
+          ],
+          [
+            "e2",
+            "2026-07-11 01:00",
+            "new"
+          ],
+          [
+            "e3",
+            "2026-07-11 03:00",
+            "new"
+          ]
+        ],
         "columnGlossary": {
           "event_id": "PK / natural key for MERGE",
           "updated_at": "Column for incremental filter",
@@ -67,9 +234,19 @@
       },
       "controlTip": "Table + watermark above.",
       "template": "SELECT event_id, updated_at, payload\nFROM staging.events\nWHERE updated_at > ____",
-      "answers": ["'2026-07-10 23:00:00'"],
-      "wordBank": ["'2026-07-10 23:00:00'", "'2026-07-11 00:00:00'", "MAX(updated_at)", "ORDER BY"],
-      "hints": ["Watermark = last successful boundary.", "SQL timestamp literal in quotes."]
+      "answers": [
+        "'2026-07-10 23:00:00'"
+      ],
+      "wordBank": [
+        "'2026-07-10 23:00:00'",
+        "'2026-07-11 00:00:00'",
+        "MAX(updated_at)",
+        "ORDER BY"
+      ],
+      "hints": [
+        "Watermark = last successful boundary.",
+        "SQL timestamp literal in quotes."
+      ]
     },
     {
       "id": "C3",
@@ -84,8 +261,23 @@
         "ask": "Fill UPDATE state table."
       },
       "sampleTable": {
-        "headers": ["pipeline", "watermark_ts", "rows_loaded"],
-        "rows": [["events_to_core", "2026-07-10 23:00:00", "1200"], ["events_to_core", "2026-07-11 03:00:00", "85"]],
+        "headers": [
+          "pipeline",
+          "watermark_ts",
+          "rows_loaded"
+        ],
+        "rows": [
+          [
+            "events_to_core",
+            "2026-07-10 23:00:00",
+            "1200"
+          ],
+          [
+            "events_to_core",
+            "2026-07-11 03:00:00",
+            "85"
+          ]
+        ],
         "columnGlossary": {
           "pipeline": "DAG / job name",
           "watermark_ts": "New boundary after successful run",
@@ -95,9 +287,21 @@
       },
       "controlTip": "State example in table above.",
       "template": "UPDATE meta.pipeline_watermarks\nSET watermark_ts = ____,\n    rows_loaded = ____\nWHERE pipeline = 'events_to_core';",
-      "answers": ["'2026-07-11 03:00:00'", "85"],
-      "wordBank": ["'2026-07-11 03:00:00'", "85", "1200", "NOW()", "NULL"],
-      "hints": ["New watermark = max(updated_at) from batch.", "rows_loaded from this run counter."]
+      "answers": [
+        "'2026-07-11 03:00:00'",
+        "85"
+      ],
+      "wordBank": [
+        "'2026-07-11 03:00:00'",
+        "85",
+        "1200",
+        "NOW()",
+        "NULL"
+      ],
+      "hints": [
+        "New watermark = max(updated_at) from batch.",
+        "rows_loaded from this run counter."
+      ]
     },
     {
       "id": "C4",
@@ -105,7 +309,11 @@
       "tag": "📥 · 4/7",
       "title": "What's wrong with this load?",
       "instruction": "DAG failed after load; morning rerun doubles orders in mart.",
-      "mission": { "emoji": "⚠️", "title": "Rerun without idempotency", "brief": "Script appends to mart every time." },
+      "mission": {
+        "emoji": "⚠️",
+        "title": "Rerun without idempotency",
+        "brief": "Script appends to mart every time."
+      },
       "buggyCode": "# incremental extract OK\nnew_rows = read_delta(watermark)\n\ndf = transform(new_rows)\n\ndf.to_sql(\n    'mart_orders',\n    con,\n    if_exists='append',\n    index=False\n)\n# watermark updated even if load failed",
       "prompt": "Main cause of duplicates on rerun?",
       "options": [
@@ -124,7 +332,12 @@
       "tag": "📥 · 5/7",
       "title": "MERGE or append?",
       "instruction": "core.orders already has order_id. Daily batch with status updates.",
-      "mission": { "emoji": "🔑", "title": "Slowly changing facts", "brief": "Same order_id may arrive with new status in delta.", "ask": "Which load pattern?" },
+      "mission": {
+        "emoji": "🔑",
+        "title": "Slowly changing facts",
+        "brief": "Same order_id may arrive with new status in delta.",
+        "ask": "Which load pattern?"
+      },
       "question": "Safest idempotent incremental pattern?",
       "options": [
         "MERGE / upsert on order_id: INSERT new, UPDATE changed",
@@ -144,9 +357,18 @@
       "scene": "Transform bug Jul 1–5. Core has bad rows for those days. Prod mart in use.",
       "bestIndex": 1,
       "choices": [
-        { "label": "Full TRUNCATE prod mart and reload from 2020", "feedback": "Overkill, long downtime, BI risk." },
-        { "label": "Deliberate backfill: reprocess Jul 1–5 idempotent MERGE staging→core→mart + rowcount check", "feedback": "Typical prod fix: narrow range + idempotency." },
-        { "label": "Ignore — next incremental will fix it", "feedback": "Bad data stays without reprocess." }
+        {
+          "label": "Full TRUNCATE prod mart and reload from 2020",
+          "feedback": "Overkill, long downtime, BI risk."
+        },
+        {
+          "label": "Deliberate backfill: reprocess Jul 1–5 idempotent MERGE staging→core→mart + rowcount check",
+          "feedback": "Typical prod fix: narrow range + idempotency."
+        },
+        {
+          "label": "Ignore — next incremental will fix it",
+          "feedback": "Bad data stays without reprocess."
+        }
       ]
     },
     {
@@ -155,7 +377,12 @@
       "tag": "📥 · 7/7",
       "title": "Safe incremental run",
       "instruction": "Arrange nightly job steps (happy path + safe commit).",
-      "mission": { "emoji": "✅", "title": "Runbook", "brief": "Don't update watermark if validate failed.", "ask": "Correct order." },
+      "mission": {
+        "emoji": "✅",
+        "title": "Runbook",
+        "brief": "Don't update watermark if validate failed.",
+        "ask": "Correct order."
+      },
       "items": [
         "Read watermark from meta table",
         "Extract delta from source (updated_at > watermark)",

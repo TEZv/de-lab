@@ -264,6 +264,114 @@
       ]
     },
     {
+      "id": "P0b",
+      "type": "drag_buckets",
+      "tag": "PY · drag",
+      "title": "Drag type into family",
+      "instruction": "Lock P0 with your hands: each type → Sequence / Mapping / Set.",
+      "bucketTip": "Drag chips from the pool into three buckets.",
+      "studyViz": {
+        "type": "typeFamily",
+        "title": "Hint map (if you forgot)",
+        "families": [
+          {
+            "icon": "📚",
+            "title": "Sequence",
+            "types": "order + index",
+            "color": "#5b8def",
+            "traits": [
+              {
+                "yes": true,
+                "label": "index",
+                "value": "int/slice"
+              }
+            ]
+          },
+          {
+            "icon": "🗝️",
+            "title": "Mapping",
+            "types": "key → value",
+            "color": "#3d9a6a",
+            "traits": [
+              {
+                "yes": true,
+                "label": "key",
+                "value": "hashable"
+              }
+            ]
+          },
+          {
+            "icon": "🎯",
+            "title": "Set",
+            "types": "uniques",
+            "color": "#c77dff",
+            "traits": [
+              {
+                "yes": false,
+                "label": "index",
+                "value": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "buckets": [
+        {
+          "id": "seq",
+          "icon": "📚",
+          "title": "Sequence",
+          "hint": "list · tuple · str",
+          "color": "#5b8def"
+        },
+        {
+          "id": "map",
+          "icon": "🗝️",
+          "title": "Mapping",
+          "hint": "dict",
+          "color": "#3d9a6a"
+        },
+        {
+          "id": "set",
+          "icon": "🎯",
+          "title": "Set",
+          "hint": "set · frozenset",
+          "color": "#c77dff"
+        }
+      ],
+      "items": [
+        {
+          "text": "list",
+          "bucket": "seq"
+        },
+        {
+          "text": "tuple",
+          "bucket": "seq"
+        },
+        {
+          "text": "str",
+          "bucket": "seq"
+        },
+        {
+          "text": "dict",
+          "bucket": "map"
+        },
+        {
+          "text": "set",
+          "bucket": "set"
+        },
+        {
+          "text": "frozenset",
+          "bucket": "set"
+        }
+      ],
+      "recallTips": [
+        "📚 int index",
+        "🗝️ hashable key",
+        "🎯 no set[i]"
+      ],
+      "recallMapRef": "📍 Map: P0 «Pure Python vs Pandas»."
+    },
+    {
       "id": "P1",
       "type": "fill_blanks",
       "tag": "PY · 1/10",

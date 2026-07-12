@@ -8,27 +8,167 @@
       "type": "theory",
       "tag": "⚙️ · карта",
       "title": "Airflow у двох словах",
-      "instruction": "На Middle DE питають «як би ти запустив nightly ETL» — Cron або Airflow, і чому.",
+      "instruction": "Nightly ETL: Cron для одного скрипта · Airflow коли кроків багато.",
       "viz": {
         "type": "pipelineH",
         "nodes": [
-          { "label": "Scheduler", "hint": "коли створити DAG run", "color": "#5b8def" },
-          { "label": "DAG", "hint": "граф задач без циклів", "color": "#3d9a6a" },
-          { "label": "Operator", "hint": "дія task (SQL, Bash…)", "color": "#e8a84b" },
-          { "label": "Sensor", "hint": "чекати файл/час/partition", "color": "#c77dff" }
+          {
+            "label": "Scheduler",
+            "hint": "коли створити DAG run",
+            "color": "#5b8def"
+          },
+          {
+            "label": "DAG",
+            "hint": "граф задач без циклів",
+            "color": "#3d9a6a"
+          },
+          {
+            "label": "Operator",
+            "hint": "дія task (SQL, Bash…)",
+            "color": "#e8a84b"
+          },
+          {
+            "label": "Sensor",
+            "hint": "чекати файл/час/partition",
+            "color": "#c77dff"
+          }
         ]
       },
-      "flow": [
-        { "title": "Trigger", "desc": "schedule або manual run" },
-        { "title": "Tasks", "desc": "виконуються за залежностями >>" },
-        { "title": "Retry", "desc": "retries + alert якщо failed" },
-        { "title": "Mart fresh", "desc": "BI бачить нові дані" }
+      "flow": [],
+      "bullets": [],
+      "vizs": [
+        {
+          "type": "pipelineH",
+          "nodes": [
+            {
+              "label": "⏱ Scheduler",
+              "hint": "коли",
+              "color": "#5b8def"
+            },
+            {
+              "label": "🕸 DAG",
+              "hint": "граф",
+              "color": "#3d9a6a"
+            },
+            {
+              "label": "⚙️ Operator",
+              "hint": "дія",
+              "color": "#e8a84b"
+            },
+            {
+              "label": "👂 Sensor",
+              "hint": "чекати",
+              "color": "#c77dff"
+            }
+          ]
+        },
+        {
+          "type": "conceptCards",
+          "title": "Коли що",
+          "cards": [
+            {
+              "icon": "🕒",
+              "title": "Cron",
+              "badge": "просте",
+              "color": "#8b9cb3",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "1 bash"
+                },
+                {
+                  "ok": false,
+                  "text": "10 кроків + retry UI"
+                }
+              ]
+            },
+            {
+              "icon": "🕸",
+              "title": "Airflow",
+              "badge": "граф",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "deps + retries"
+                },
+                {
+                  "ok": true,
+                  "text": "sensor file"
+                }
+              ]
+            },
+            {
+              "icon": "🚫",
+              "title": "Cycle",
+              "badge": "DAG",
+              "color": "#ff6b6b",
+              "rows": [
+                {
+                  "ok": false,
+                  "text": "A→B→A"
+                },
+                {
+                  "ok": true,
+                  "text": "acyclic only"
+                }
+              ]
+            }
+          ],
+          "footnote": "Sensor = турнікет: далі не пускає, доки файл/partition не зʼявились."
+        }
       ],
-      "bullets": [
-        "DAG = Directed **Acyclic** Graph — без циклів A→B→A",
-        "Sensor блокує downstream, поки умова не true (file landed, partition exists)",
-        "Cron — ок для одного скрипта; Airflow — коли кроків багато, retries, UI, lineage"
+      "recallTips": [
+        "DAG без циклів",
+        "Sensor чекає",
+        "Cron vs Airflow"
       ]
+    },
+    {
+      "id": "O0b",
+      "type": "drag_buckets",
+      "tag": "⚙️ · drag",
+      "title": "Перетягни в Cron чи Airflow",
+      "instruction": "Що тягне на crontab, а що — на оркестратор?",
+      "buckets": [
+        {
+          "id": "cron",
+          "icon": "🕒",
+          "title": "Cron",
+          "hint": "просте",
+          "color": "#8b9cb3"
+        },
+        {
+          "id": "airflow",
+          "icon": "🕸",
+          "title": "Airflow",
+          "hint": "граф",
+          "color": "#3d9a6a"
+        }
+      ],
+      "items": [
+        {
+          "text": "один ingest.sh о 03:00",
+          "bucket": "cron"
+        },
+        {
+          "text": "sensor S3 → transform → mart",
+          "bucket": "airflow"
+        },
+        {
+          "text": "retries + Slack fail",
+          "bucket": "airflow"
+        },
+        {
+          "text": "5-field crontab line",
+          "bucket": "cron"
+        }
+      ],
+      "recallTips": [
+        "1 скрипт → Cron",
+        "deps/sensor → Airflow"
+      ],
+      "recallMapRef": "📍 Карта: O0 Airflow."
     },
     {
       "id": "O1",
@@ -37,11 +177,26 @@
       "title": "MATCH · оркестрація ↔ термін",
       "instruction": "Airflow-терміни на інтервʼю + коли згадати Cron.",
       "pairs": [
-        { "left": "DAG", "right": "Граф задач без циклів + schedule" },
-        { "left": "Operator", "right": "Шаблон дії task (PythonOperator, Bash…)" },
-        { "left": "Sensor", "right": "Task, що чекає умову (S3 file, partition)" },
-        { "left": "Task instance", "right": "Один запуск конкретного task у DAG run" },
-        { "left": "Cron (crontab)", "right": "Linux scheduler: 5 полів + команда, без DAG UI" }
+        {
+          "left": "DAG",
+          "right": "Граф задач без циклів + schedule"
+        },
+        {
+          "left": "Operator",
+          "right": "Шаблон дії task (PythonOperator, Bash…)"
+        },
+        {
+          "left": "Sensor",
+          "right": "Task, що чекає умову (S3 file, partition)"
+        },
+        {
+          "left": "Task instance",
+          "right": "Один запуск конкретного task у DAG run"
+        },
+        {
+          "left": "Cron (crontab)",
+          "right": "Linux scheduler: 5 полів + команда, без DAG UI"
+        }
       ]
     },
     {
@@ -87,13 +242,37 @@
         "ask": "Заповни хвилини та години в cron-рядку."
       },
       "sampleTable": {
-        "headers": ["поле", "значення", "що означає"],
+        "headers": [
+          "поле",
+          "значення",
+          "що означає"
+        ],
         "rows": [
-          ["1", "хвилини", "0–59"],
-          ["2", "години", "0–23"],
-          ["3", "день місяця", "* = щодня"],
-          ["4", "місяць", "*"],
-          ["5", "день тижня", "*"]
+          [
+            "1",
+            "хвилини",
+            "0–59"
+          ],
+          [
+            "2",
+            "години",
+            "0–23"
+          ],
+          [
+            "3",
+            "день місяця",
+            "* = щодня"
+          ],
+          [
+            "4",
+            "місяць",
+            "*"
+          ],
+          [
+            "5",
+            "день тижня",
+            "*"
+          ]
         ],
         "columnGlossary": {
           "поле": "Порядок у crontab (5 полів + команда)",
@@ -104,8 +283,17 @@
       },
       "controlTip": "Таблиця полів cron — вище. Рядок нижче.",
       "template": "# min hour dom mon dow\n____ ____ * * * /opt/etl/ingest.sh",
-      "answers": ["0", "3"],
-      "wordBank": ["0", "3", "30", "*", "03"],
+      "answers": [
+        "0",
+        "3"
+      ],
+      "wordBank": [
+        "0",
+        "3",
+        "30",
+        "*",
+        "03"
+      ],
       "hints": [
         "Хвилини першими: 0 = на початку години.",
         "03:00 → година = 3 (не 03 у word bank — число 3)."
@@ -193,12 +381,32 @@
         "ask": "Заповни >> ланцюжок і retries."
       },
       "sampleTable": {
-        "headers": ["task", "operator", "навіщо"],
+        "headers": [
+          "task",
+          "operator",
+          "навіщо"
+        ],
         "rows": [
-          ["extract", "PythonOperator", "з S3 у staging"],
-          ["validate", "ShortCircuit", "stop якщо rowcount=0"],
-          ["transform", "PythonOperator", "staging → core"],
-          ["load_mart", "PythonOperator", "core → mart"]
+          [
+            "extract",
+            "PythonOperator",
+            "з S3 у staging"
+          ],
+          [
+            "validate",
+            "ShortCircuit",
+            "stop якщо rowcount=0"
+          ],
+          [
+            "transform",
+            "PythonOperator",
+            "staging → core"
+          ],
+          [
+            "load_mart",
+            "PythonOperator",
+            "core → mart"
+          ]
         ],
         "columnGlossary": {
           "task": "task_id у DAG",
@@ -209,8 +417,21 @@
       },
       "controlTip": "Таблиця task-ів — вище.",
       "template": "extract >> ____ >> transform >> ____\n\n# default_args\nretries=____,\nretry_delay=timedelta(minutes=____)",
-      "answers": ["validate", "load_mart", "2", "5"],
-      "wordBank": ["validate", "load_mart", "extract", "2", "5", "0", "sensor"],
+      "answers": [
+        "validate",
+        "load_mart",
+        "2",
+        "5"
+      ],
+      "wordBank": [
+        "validate",
+        "load_mart",
+        "extract",
+        "2",
+        "5",
+        "0",
+        "sensor"
+      ],
       "hints": [
         "Після extract — validate перед transform.",
         "Два retries, пауза 5 хвилин."

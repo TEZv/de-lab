@@ -164,6 +164,25 @@
       }
     },
     {
+      "id": "gym-02-sql-interview-10-S0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "02-sql-interview-10",
+      "levelId": "S0b",
+      "tag": "SQL · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни clause у крок виконання",
+        "en": "Перетягни clause у крок виконання"
+      },
+      "prompt": {
+        "ua": "Порядок сервера, не очей.",
+        "en": "Порядок сервера, не очей."
+      }
+    },
+    {
       "id": "gym-02-sql-interview-10-S1",
       "archetype": "universal",
       "kind": "gym",
@@ -330,8 +349,8 @@
         "en": "MATCH · віконні vs агрегати"
       },
       "prompt": {
-        "ua": "Зʼєднай інструмент із поведінкою.",
-        "en": "Зʼєднай інструмент із поведінкою."
+        "ua": "Зʼєднай інструмент із поведінкою — спочатку подивись таблиці, не лише слова.",
+        "en": "Зʼєднай інструмент із поведінкою — спочатку подивись таблиці, не лише слова."
       }
     },
     {
@@ -368,8 +387,27 @@
         "en": "Чистий Python vs Pandas"
       },
       "prompt": {
-        "ua": "На скрінінгу можуть заборонити import pandas — май обидва шаблони.",
-        "en": "На скрінінгу можуть заборонити import pandas — май обидва шаблони."
+        "ua": "На скрінінгу можуть заборонити import pandas — май обидва шаблони. Спочатку сімʼї типів, потім інструменти.",
+        "en": "На скрінінгу можуть заборонити import pandas — май обидва шаблони. Спочатку сімʼї типів, потім інструменти."
+      }
+    },
+    {
+      "id": "gym-03-python-interview-10-P0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "03-python-interview-10",
+      "levelId": "P0b",
+      "tag": "PY · drag",
+      "skill": "python",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни тип у сімʼю",
+        "en": "Перетягни тип у сімʼю"
+      },
+      "prompt": {
+        "ua": "Закріпи P0 руками: кожен тип — у Sequence / Mapping / Set.",
+        "en": "Закріпи P0 руками: кожен тип — у Sequence / Mapping / Set."
       }
     },
     {
@@ -539,8 +577,8 @@
         "en": "MATCH · типи"
       },
       "prompt": {
-        "ua": "Що можна юзати як ключ / індекс?",
-        "en": "Що можна юзати як ключ / індекс?"
+        "ua": "Що можна юзати як ключ / індекс? Спочатку — приклади, не абстракції.",
+        "en": "Що можна юзати як ключ / індекс? Спочатку — приклади, не абстракції."
       }
     },
     {
@@ -1261,8 +1299,27 @@
         "en": "Object storage + зони lake"
       },
       "prompt": {
-        "ua": "На інтервʼю (Amazinum, NDA, consultancy): один патерн — різні назви в хмарах.",
-        "en": "На інтервʼю (Amazinum, NDA, consultancy): один патерн — різні назви в хмарах."
+        "ua": "Один патерн — три хмари. Зони = зрілість даних.",
+        "en": "Один патерн — три хмари. Зони = зрілість даних."
+      }
+    },
+    {
+      "id": "gym-13-cloud-storage-de-A0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "13-cloud-storage-de",
+      "levelId": "A0b",
+      "tag": "☁️ · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни артефакт у зону lake",
+        "en": "Перетягни артефакт у зону lake"
+      },
+      "prompt": {
+        "ua": "Куди кладеш сирий JSON, typed table, BI mart?",
+        "en": "Куди кладеш сирий JSON, typed table, BI mart?"
       }
     },
     {
@@ -1394,8 +1451,27 @@
         "en": "Airflow у двох словах"
       },
       "prompt": {
-        "ua": "На Middle DE питають «як би ти запустив nightly ETL» — Cron або Airflow, і чому.",
-        "en": "На Middle DE питають «як би ти запустив nightly ETL» — Cron або Airflow, і чому."
+        "ua": "Nightly ETL: Cron для одного скрипта · Airflow коли кроків багато.",
+        "en": "Nightly ETL: Cron для одного скрипта · Airflow коли кроків багато."
+      }
+    },
+    {
+      "id": "gym-14-orchestration-de-O0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "14-orchestration-de",
+      "levelId": "O0b",
+      "tag": "⚙️ · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни в Cron чи Airflow",
+        "en": "Перетягни в Cron чи Airflow"
+      },
+      "prompt": {
+        "ua": "Що тягне на crontab, а що — на оркестратор?",
+        "en": "Що тягне на crontab, а що — на оркестратор?"
       }
     },
     {
@@ -1551,6 +1627,25 @@
       }
     },
     {
+      "id": "gym-15-incremental-loads-de-C0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "15-incremental-loads-de",
+      "levelId": "C0b",
+      "tag": "📥 · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни: full vs incremental",
+        "en": "Перетягни: full vs incremental"
+      },
+      "prompt": {
+        "ua": "Який патерн load?",
+        "en": "Який патерн load?"
+      }
+    },
+    {
       "id": "gym-15-incremental-loads-de-C1",
       "archetype": "universal",
       "kind": "gym",
@@ -1703,6 +1798,25 @@
       }
     },
     {
+      "id": "gym-16-stream-nosql-de-D0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "16-stream-nosql-de",
+      "levelId": "D0b",
+      "tag": "🌊 · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни: batch чи stream",
+        "en": "Перетягни: batch чи stream"
+      },
+      "prompt": {
+        "ua": "batch vs stream · Kafka · MongoDB · when NoSQL",
+        "en": "batch vs stream · Kafka · MongoDB · when NoSQL"
+      }
+    },
+    {
       "id": "gym-16-stream-nosql-de-D1",
       "archetype": "universal",
       "kind": "gym",
@@ -1850,8 +1964,27 @@
         "en": "Governance без бюрократії"
       },
       "prompt": {
-        "ua": "Senior DE: не лише ETL, а «що ламається о 3 ночі і хто знає, що змінилось».",
-        "en": "Senior DE: не лише ETL, а «що ламається о 3 ночі і хто знає, що змінилось»."
+        "ua": "Senior DE: не лише ETL — що ламається о 3 ночі і хто знає, що змінилось.",
+        "en": "Senior DE: не лише ETL — що ламається о 3 ночі і хто знає, що змінилось."
+      }
+    },
+    {
+      "id": "gym-17-governance-ops-de-E0b",
+      "archetype": "universal",
+      "kind": "gym",
+      "blockId": "17-governance-ops-de",
+      "levelId": "E0b",
+      "tag": "🛡️ · drag",
+      "skill": "sql",
+      "difficulty": "medium",
+      "minutes": 15,
+      "title": {
+        "ua": "Перетягни в кошик governance",
+        "en": "Перетягни в кошик governance"
+      },
+      "prompt": {
+        "ua": "Інструмент vs процес vs сигнал.",
+        "en": "Інструмент vs процес vs сигнал."
       }
     },
     {
