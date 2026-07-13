@@ -426,6 +426,98 @@
       "recallMapRef": "📍 P0 order map."
     },
     {
+      "id": "P0pd",
+      "type": "theory",
+      "tag": "PY · pandas map",
+      "title": "Pandas · top methods (cheat sheet)",
+      "instruction": "Before P5–P8 drills: what each method does on a tiny table. Library basics, not only interview tricks.",
+      "vizs": [
+        {
+          "type": "conceptCards",
+          "title": "Top methods to recognize",
+          "cards": [
+            {
+              "icon": "👀",
+              "title": "head / shape / columns",
+              "badge": "peek",
+              "color": "#8b9cb3",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "inspect DF"
+                },
+                {
+                  "ok": false,
+                  "text": "mutates data"
+                }
+              ]
+            },
+            {
+              "icon": "📦",
+              "title": "groupby + agg",
+              "badge": "rollup",
+              "color": "#5b8def",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "groups → mean/sum"
+                },
+                {
+                  "ok": true,
+                  "text": "result = DataFrame"
+                }
+              ]
+            },
+            {
+              "icon": "🔗",
+              "title": "merge",
+              "badge": "JOIN",
+              "color": "#3d9a6a",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "join 2 DFs on a key"
+                },
+                {
+                  "ok": true,
+                  "text": "how='left'|'inner'"
+                }
+              ]
+            },
+            {
+              "icon": "🧹",
+              "title": "dropna / fillna",
+              "badge": "NULL",
+              "color": "#e8a84b",
+              "rows": [
+                {
+                  "ok": true,
+                  "text": "return a NEW DF"
+                },
+                {
+                  "ok": false,
+                  "text": "mutate df alone"
+                }
+              ]
+            }
+          ],
+          "footnote": "res after groupby is a normal DataFrame: sort, merge, to_csv."
+        }
+      ],
+      "given": {
+        "label": "Mini example (remember the names)",
+        "note": "Same names appear in P5–P7.",
+        "code": "df = employees\nres = df.groupby('department').agg(mean_salary=('salary','mean')).reset_index()\n# res is a small table: department | mean_salary\n# later: res.sort_values(...); df.merge(res, on='department')",
+        "expect": "groupby→res (DF); merge(res) attaches the aggregate back"
+      },
+      "recallTips": [
+        "groupby+agg → DataFrame (not list)",
+        "merge = SQL JOIN on a column",
+        "assign dropna/fillna: clean = df.dropna()"
+      ],
+      "recallMapRef": "📍 Next: P5 groupby → P6 merge → P7 what is res → P8 dropna."
+    },
+    {
       "id": "P1",
       "type": "fill_blanks",
       "tag": "PY · 1/10",
@@ -580,7 +672,29 @@
       ],
       "correctIndex": 0,
       "explainOk": "Паттерн лічильника — для dict, не для модифікації list через складний обʼєкт як індекс.",
-      "explanation": "isinstance + розбір типів, або порожній dict."
+      "explanation": "isinstance + розбір типів, або порожній dict.",
+      "mission": {
+        "emoji": "💥",
+        "title": "Why the counter crashes on a list",
+        "brief": "Wanted to count items but wrote a[item] += 1 where a is a list. List index must be int; item can be set/dict.",
+        "ask": "See the example, then pick the diagnosis."
+      },
+      "given": {
+        "label": "Given · intent vs code",
+        "note": "Counter needs counts={}, not list indexing with a complex object.",
+        "code": "a = [[16,'A'], (5,'R'), {2:'O'}, {3:'N'}, 7, 'T']\n# a[item] → TypeError when item is set/dict\n\ncounts = {}\nfor item in a:\n    counts[str(item)] = counts.get(str(item), 0) + 1",
+        "expect": "list needs int index; counter = dict"
+      },
+      "resultTrace": {
+        "title": "What counts should look like",
+        "input": "after a proper dict counter",
+        "steps": [
+          "each element becomes a key",
+          "value = how many times seen"
+        ],
+        "output": "counts ≈ { \"[16, 'A']\": 1, ... }",
+        "note": "Don’t confuse list[i] with dict[key]."
+      }
     },
     {
       "id": "P5",
@@ -786,16 +900,130 @@
       "id": "P7",
       "type": "multi_choice",
       "tag": "PY · 7/10",
-      "title": "Що далі з res?",
-      "question": "Після groupby+agg ти маєш res. Як використати далі?",
+      "title": "What’s next with res?",
+      "question": "After groupby+agg you have res. How do you use it next?",
       "options": [
-        "res — звичайний DataFrame: filter / sort / merge назад / to_csv",
-        "res можна лише print; далі мерджити не можна",
-        "reset_index знищує дані",
-        "agg завжди повертає list"
+        "res is a normal DataFrame: filter / sort / merge back / to_csv",
+        "res can only be printed; you cannot merge further",
+        "reset_index destroys the data",
+        "agg always returns a list"
       ],
       "correctIndex": 0,
-      "explanation": "res.sort_values(...).head(10); df.merge(res, on='k'); res.to_csv(...)."
+      "explanation": "Yes: res is a DataFrame. Merge above adds mean_salary to each employee.",
+      "mission": {
+        "emoji": "🧩",
+        "title": "What is res after groupby?",
+        "brief": "res is not “text on screen” — it is a new small table (DataFrame). You can sort it, merge it back into the big df, or save CSV.",
+        "ask": "Look at the tables: df → res → merge. Then pick the answer."
+      },
+      "sampleTable": {
+        "title": "df (like P5) — raw employees",
+        "headers": [
+          "employee_id",
+          "department",
+          "salary"
+        ],
+        "rows": [
+          [
+            "e1",
+            "IT",
+            "3000"
+          ],
+          [
+            "e2",
+            "IT",
+            "3500"
+          ],
+          [
+            "e3",
+            "HR",
+            "2100"
+          ],
+          [
+            "e4",
+            "Sales",
+            "1800"
+          ],
+          [
+            "e5",
+            "Sales",
+            "2200"
+          ]
+        ],
+        "caption": "groupby+agg compresses this to 1 row per department."
+      },
+      "joinTables": [
+        {
+          "title": "res after groupby+agg+reset_index",
+          "headers": [
+            "department",
+            "mean_salary"
+          ],
+          "rows": [
+            [
+              "IT",
+              "3250"
+            ],
+            [
+              "HR",
+              "2100"
+            ],
+            [
+              "Sales",
+              "2000"
+            ]
+          ],
+          "caption": "This is variable res — a normal 3-row DataFrame."
+        },
+        {
+          "title": "df.merge(res, on=\"department\")",
+          "headers": [
+            "employee_id",
+            "department",
+            "salary",
+            "mean_salary"
+          ],
+          "rows": [
+            [
+              "e1",
+              "IT",
+              "3000",
+              "3250"
+            ],
+            [
+              "e2",
+              "IT",
+              "3500",
+              "3250"
+            ],
+            [
+              "e3",
+              "HR",
+              "2100",
+              "2100"
+            ]
+          ],
+          "caption": "Merge on department attaches the dept mean to EVERY employee."
+        }
+      ],
+      "given": {
+        "label": "Code that already ran",
+        "note": "Not about groupby syntax — about what object res is.",
+        "code": "res = (\n  df.groupby('department')\n    .agg(mean_salary=('salary', 'mean'))\n    .reset_index()\n)\nres.sort_values('mean_salary')\ndf.merge(res, on='department')\nres.to_csv('dept_means.csv')",
+        "expect": "res = DataFrame → filter / sort / merge / to_csv"
+      },
+      "resultTrace": {
+        "title": "What merge joins on",
+        "input": "key = department (in df and res)",
+        "steps": [
+          "df has many rows (people)",
+          "res has 3 rows (dept means)",
+          "df.merge(res, on='department') matches department",
+          "each IT employee gets 3250 from res"
+        ],
+        "output": "employee_id | department | salary | mean_salary\ne1 | IT | 3000 | 3250\ne2 | IT | 3500 | 3250\n…",
+        "note": "Merge is a JOIN of two tables on a shared column."
+      }
     },
     {
       "id": "P8",
@@ -812,7 +1040,92 @@
       ],
       "correctIndex": 0,
       "explainOk": "Без присвоєння / inplace оригінал не змінюється.",
-      "explanation": "На інтервʼю кажи: clean = df.dropna(subset=['amount'])."
+      "explanation": "На інтервʼю кажи: clean = df.dropna(subset=['amount']).",
+      "mission": {
+        "emoji": "🧹",
+        "title": "dropna/fillna do not mutate df by default",
+        "brief": "Without assignment you build a new DF and throw it away. Old df still has NULL.",
+        "ask": "See before/after tables, then pick the trap."
+      },
+      "sampleTable": {
+        "title": "df at start",
+        "headers": [
+          "id",
+          "amount"
+        ],
+        "rows": [
+          [
+            "1",
+            "10"
+          ],
+          [
+            "2",
+            "NULL"
+          ],
+          [
+            "3",
+            "5"
+          ]
+        ]
+      },
+      "joinTables": [
+        {
+          "title": "after df.dropna() WITHOUT assign — print(df)",
+          "headers": [
+            "id",
+            "amount"
+          ],
+          "rows": [
+            [
+              "1",
+              "10"
+            ],
+            [
+              "2",
+              "NULL"
+            ],
+            [
+              "3",
+              "5"
+            ]
+          ],
+          "caption": "NULL remains! dropna returned a new DF you did not keep."
+        },
+        {
+          "title": "after clean = df.dropna()",
+          "headers": [
+            "id",
+            "amount"
+          ],
+          "rows": [
+            [
+              "1",
+              "10"
+            ],
+            [
+              "3",
+              "5"
+            ]
+          ],
+          "caption": "Now the NULL row is gone in clean."
+        }
+      ],
+      "given": {
+        "label": "Trap code",
+        "code": "df.dropna()\ndf.fillna(0)\nprint(df)\n\nclean = df.dropna(subset=['amount'])\n# or: df = df.fillna(0)",
+        "expect": "need assignment or inplace=True"
+      },
+      "resultTrace": {
+        "title": "Correct chain",
+        "input": "df with NULL amount",
+        "steps": [
+          "clean = df.dropna(...)",
+          "filled = df.fillna(0)",
+          "or df = df.fillna(0)"
+        ],
+        "output": "clean / filled — objects you work with next",
+        "note": "Say out loud: pandas methods are often immutable-by-default."
+      }
     },
     {
       "id": "P9",
