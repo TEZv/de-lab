@@ -112,6 +112,16 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: T1 (AE · 1)\n# Контекст\nROI-звіт: кліки Ads + платежі.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "Layers after fill",
+        "input": "raw logs → clean facts → mart",
+        "steps": [
+          "Raw unchanged → STAGING",
+          "Clean facts → CORE (DWH)",
+          "BI mart → MARTS"
+        ],
+        "output": "STAGING → CORE (DWH) → MARTS"
       }
     },
     {
@@ -167,6 +177,16 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: T3 (AE · 3)\n# Контекст\nЗберегти історію статусу юзера Free→Premium.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "SCD2 columns",
+        "input": "dim_users with status history",
+        "steps": [
+          "valid_from — when version started",
+          "valid_to — when it closed",
+          "is_current — current version flag"
+        ],
+        "output": "valid_from | valid_to | is_current"
       }
     },
     {
@@ -288,6 +308,17 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: T7 (AE · 7 · A/B)\n# Контекст\nМінімум статистики для Analytics Engineer.\n\n# Задача\nЗаповни пропуски нижче.\n# Кістяк нижче — заповни ____",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "A/B glossary",
+        "input": "test vs control",
+        "steps": [
+          "H0 = no difference",
+          "H1 = there is a difference",
+          "p < 0.05 → reject H0",
+          "Type I = false +, Type II = false −"
+        ],
+        "output": "H0 / H1 / reject / + / −"
       }
     },
     {

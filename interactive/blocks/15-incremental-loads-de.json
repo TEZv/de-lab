@@ -252,6 +252,15 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nВчора watermark = 2026-07-10 23:00:00. Тягнемо лише свіжіші події.\n\nevent_id | updated_at | payload\n--- | --- | ---\ne1 | 2026-07-10 22:00 | old\ne2 | 2026-07-11 01:00 | new\ne3 | 2026-07-11 03:00 | new\n# e1 ≤ watermark → не беремо. e2, e3 → у delta.",
         "expect": "Заповни поріг у WHERE."
+      },
+      "resultTrace": {
+        "title": "Delta після watermark",
+        "input": "watermark = '2026-07-10 23:00:00'",
+        "steps": [
+          "беремо лише updated_at > watermark",
+          "повний скан таблиці не потрібен"
+        ],
+        "output": "рядки events новіші за watermark"
       }
     },
     {
@@ -313,6 +322,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nWatermark пишемо лише коли core.events і mart узгоджені.\n\npipeline | watermark_ts | rows_loaded\n--- | --- | ---\nevents_to_core | 2026-07-10 23:00:00 | 1200\nevents_to_core | 2026-07-11 03:00:00 | 85\n# Другий рядок — після сьогоднішнього run (max updated_at у batch).",
         "expect": "Заповни UPDATE state table."
+      },
+      "resultTrace": {
+        "title": "Commit state",
+        "input": "після успішного load",
+        "steps": [
+          "watermark_ts → '2026-07-11 03:00:00'",
+          "rows_loaded → 85",
+          "наступний run стартує з нового WM"
+        ],
+        "output": "meta.pipeline_watermarks оновлено"
       }
     },
     {

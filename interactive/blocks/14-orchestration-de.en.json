@@ -324,6 +324,16 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nOne bash script ingest.sh — run daily at 03:00 UTC.\n\nfield | value | meaning\n--- | --- | ---\n1 | minutes | 0–59\n2 | hours | 0–23\n3 | day of month | * = every day\n4 | month | *\n5 | day of week | *\n# 03:00 UTC → minutes=0, hours=3.",
         "expect": "Fill minutes and hours in the cron line."
+      },
+      "resultTrace": {
+        "title": "Cron schedule",
+        "input": "daily at 03:00",
+        "steps": [
+          "field 1 = minute → 0",
+          "field 2 = hour → 3",
+          "* * * = every day/month/dow"
+        ],
+        "output": "0 3 * * * /opt/etl/ingest.sh"
       }
     },
     {
@@ -468,6 +478,15 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nextract → validate → transform → mart. Two retries after 5 min.\n\ntask | operator | purpose\n--- | --- | ---\nextract | PythonOperator | S3 → staging\nvalidate | ShortCircuit | stop if rowcount=0\ntransform | PythonOperator | staging → core\nload_mart | PythonOperator | core → mart\n# >> sets order; retries in default_args or per task.",
         "expect": "Fill >> chain and retries."
+      },
+      "resultTrace": {
+        "title": "Graph + retry",
+        "input": "extract → … → mart",
+        "steps": [
+          "extract >> validate >> transform >> load_mart",
+          "retries=2, delay=5 minutes"
+        ],
+        "output": "task chain + default_args retries/delay"
       }
     }
   ]

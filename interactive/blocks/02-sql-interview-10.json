@@ -313,6 +313,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nВендори надсилають quote на ту саму категорію й tier якості. Потрібен один рядок на (category_code, tier) — з мінімальною unit_price. Типовий live-coding патерн (як min price per group), без fantasy-даних.\n\nquote_id | category_code | tier | unit_price | у фіналі?\n--- | --- | --- | --- | ---\nQ-101 | ELEC | A | 12.50 | —\nQ-102 | ELEC | A | 9.99 | ✓ min\nQ-201 | ELEC | B | 15.00 | ✓ єдиний\nQ-301 | HOME | A | 8.00 | ✓ єдиний\n# Аналог публічних задач «cheapest SKU / listing» — тільки B2B-назви колонок.",
         "expect": "Grain = одна перемога на (category_code, tier). За чим ранжуємо?"
+      },
+      "resultTrace": {
+        "title": "Що лишиться після rn = 1",
+        "input": "котирування: кілька цін на (category_code, tier)",
+        "steps": [
+          "PARTITION BY category_code — група по категорії",
+          "ORDER BY unit_price ASC — найдешевша = rn 1",
+          "WHERE rn = 1 — по одному рядку на групу"
+        ],
+        "output": "топ-1 (мін. ціна) у кожній категорії"
       }
     },
     {
@@ -439,6 +449,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nСеред активних: для кожної пари (power, age) — мінімальна price. Сортування: power↓ age↓.\n\nsku_id | power | age | price | is_active | у фіналі?\n--- | --- | --- | --- | --- | ---\n77 | 5 | 45 | 10 | 1 | ✓ min\n12 | 5 | 45 | 50 | 1 | —\n99 | 5 | 45 | 120 | 1 | —\n43 | 8 | 40 | 25 | 1 | ✓ min\n55 | 8 | 40 | 80 | 1 | —\n3 | 8 | 40 | 5 | 0 | inactive\n…\n# Очікуваний результат (3 рядки): (10,20,40) → (8,40,25) → (5,45,10). is_active=0 не беремо навіть якщо price мінімальна.",
         "expect": "У таблиці нижче — сирі рядки. Знайди 3 фінальні SKU, потім заповни SQL."
+      },
+      "resultTrace": {
+        "title": "Мін. ціна на пару power×age",
+        "input": "sku_prices (активні SKU)",
+        "steps": [
+          "PARTITION BY power, age",
+          "ORDER BY price ASC → rn=1 = найдешевша",
+          "WHERE rn = 1; ORDER BY power DESC, age DESC"
+        ],
+        "output": "по одному SKU на кожну пару (power, age)"
       }
     },
     {
@@ -508,6 +528,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nТаблиця core.user_sessions: user_id, session_start. Менеджер хоче колонку prev_session — коли цей юзер був онлайн ДО поточного рядка.\n\nuser_id | session_start | prev_session\n--- | --- | ---\n42 | 2026-01-01 10:00 | NULL\n42 | 2026-01-03 14:00 | 2026-01-01 10:00\n42 | 2026-01-05 09:00 | 2026-01-03 14:00\n# PARTITION BY user_id · ORDER BY session_start — хронологія всередині юзера.",
         "expect": "Яка функція дивиться на попередній рядок у вікні?"
+      },
+      "resultTrace": {
+        "title": "Попередня сесія",
+        "input": "сесії юзера в часі",
+        "steps": [
+          "LAG(session_start) у вікні user_id",
+          "перша сесія → NULL",
+          "далі — старт попередньої сесії"
+        ],
+        "output": "session_start | prev_session (або NULL)"
       }
     },
     {
@@ -679,6 +709,15 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nУ staging.orders частина amount = NULL (збій джерела). У вітрині сума не може бути NULL — дефолт 0.\n\norder_id | amount (raw) | cleaned_amount\n--- | --- | ---\nO-1 | 120.50 | 120.50\nO-2 | NULL | 0\nO-3 | 80 | 80\n# Типова вимога data quality на інтервʼю DE/AE.",
         "expect": "Яка функція «перше не-NULL»?"
+      },
+      "resultTrace": {
+        "title": "NULL → 0",
+        "input": "staging.orders з amount = NULL на деяких рядках",
+        "steps": [
+          "COALESCE(amount, 0) — якщо NULL, підстав 0",
+          "cleaned_amount завжди число"
+        ],
+        "output": "order_id | cleaned_amount (без NULL)"
       }
     },
     {
@@ -750,6 +789,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nstaging.users отримує повторні завантаження одного user_id. Для core потрібен один актуальний рядок на ключа.\n\nuser_id | updated_at | лишити?\n--- | --- | ---\nU-9 | 2026-06-01 | —\nU-9 | 2026-06-10 | ✓ newest\nU-9 | 2026-06-05 | —\n# ROW_NUMBER … WHERE rn = 1 — стандарт дедупу на інтервʼю.",
         "expect": "PARTITION BY що? ORDER BY що DESC? rn = ?"
+      },
+      "resultTrace": {
+        "title": "Один рядок на user_id",
+        "input": "дублікати user_id з різними updated_at",
+        "steps": [
+          "PARTITION BY user_id",
+          "ORDER BY updated_at DESC → rn=1 = найновіший",
+          "WHERE rn = 1"
+        ],
+        "output": "по одному актуальному рядку на юзера"
       }
     },
     {

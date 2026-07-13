@@ -180,6 +180,16 @@
         "note": "Спочатку прочитай повну умову (і таблицю вище, якщо є), потім заповни ____.",
         "code": "# Контекст\nPARTITION BY power, age · ORDER BY price ASC · rn=1 · is_active=1 · ORDER BY power DESC, age DESC\n\n# Задача\nЗаповни.\n# Кістяк нижче — заповни ____",
         "expect": "Заповни."
+      },
+      "resultTrace": {
+        "title": "Кістяк відпрацював",
+        "input": "sku_prices, лише is_active = true",
+        "steps": [
+          "PARTITION BY power, age; ORDER BY price ASC",
+          "WHERE rn = 1",
+          "ORDER BY power DESC, age DESC"
+        ],
+        "output": "найдешевші активні SKU на пару power×age"
       }
     },
     {

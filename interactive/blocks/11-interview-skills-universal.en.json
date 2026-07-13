@@ -100,6 +100,16 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: U3 (Python)\n# Контекст\nSQL каже AVG, Pandas — mean. reset_index повертає ключ у колонку.\n\ndepartment | salary\n--- | ---\nIT | 3000\nIT | 3500\nHR | 1500\n# Після agg: IT→3250, HR→1500.",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "groupby+mean result",
+        "input": "df salary by department",
+        "steps": [
+          "groupby('department')",
+          "agg mean (not avg!)",
+          "reset_index() → plain DataFrame"
+        ],
+        "output": "department | avg_sal (one row per dept)"
       }
     },
     {

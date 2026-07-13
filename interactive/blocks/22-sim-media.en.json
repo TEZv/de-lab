@@ -84,6 +84,15 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: E2 (SQL)\n# Контекст\nДо фільтра bot/seconds треба замінити NULL seconds на 0 для звітів.\n\nview_id | seconds\n--- | ---\n5 | NULL\n1 | 30\n4 | 60\n# Рядок 5 — типовий кейс для COALESCE перед WHERE.",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "seconds without NULL",
+        "input": "staging.views with NULL seconds",
+        "steps": [
+          "COALESCE(seconds, 0)",
+          "safe for SUM/AVG later"
+        ],
+        "output": "view_id | seconds_clean"
       }
     },
     {

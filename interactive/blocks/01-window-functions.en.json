@@ -119,6 +119,16 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: L2 (L2 · місія LAG)\n# Контекст\nМенеджер питає: «для кожної оплати покажи суму ПОПЕРЕДНЬОЙ оплати цього ж юзера». Рядки стискати не можна.\n\nuser_id | paid_at | amount | prev (очікуємо)\n--- | --- | --- | ---\n7 | 01-01 | 10 | NULL\n7 | 01-05 | 40 | 10\n7 | 01-09 | 15 | 40\n9 | 01-03 | 20 | NULL\n# LAG дивиться «вгору» всередині user_id після сортування по paid_at.",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "What LAG returns",
+        "input": "payments per user_id over time (paid_at)",
+        "steps": [
+          "PARTITION BY user_id — one window per user",
+          "ORDER BY paid_at — previous payment in time",
+          "LAG(amount, 1) — prior amount; first payment → NULL"
+        ],
+        "output": "each payment: amount + prev_amount (or NULL on first)"
       }
     },
     {

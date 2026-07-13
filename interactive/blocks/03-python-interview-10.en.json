@@ -768,6 +768,18 @@
         "note": "Two tables above = left and right sides of the join.",
         "code": "df_users ⟕ df_orders on user_id\nhow='left'  → keep every user; missing orders → NaN",
         "expect": "pd.merge(left, right, on='user_id', how='left')"
+      },
+      "resultTrace": {
+        "title": "What merged looks like",
+        "input": "df_users: u1 Anna, u2 Bob, u3 Cara\ndf_orders: o100/u1/50, o101/u1/30, o200/u3/80",
+        "steps": [
+          "how='left' → keep every df_users row",
+          "u1 has 2 orders → 2 rows",
+          "u2 has no orders → 1 row with NaN order columns",
+          "u3 has o200 → 1 row"
+        ],
+        "output": "user_id | name | order_id | amount\nu1 | Anna | o100 | 50\nu1 | Anna | o101 | 30\nu2 | Bob  | NaN  | NaN\nu3 | Cara | o200 | 80",
+        "note": "LEFT JOIN ≠ inner: Bob stays, order columns are NaN."
       }
     },
     {

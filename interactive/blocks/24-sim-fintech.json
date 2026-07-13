@@ -89,6 +89,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nstaging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.\n\npayment_id | amount | updated_at | лишити?\n--- | --- | --- | ---\np1 | 10 | 10:00 | —\np1 | 10 | 10:05 | ✓ newest\np2 | 20 | 10:01 | ✓ only\np3 | 15 | 10:03 | ✓ newest\n# Ті самі дані що F1 csv_lab.",
         "expect": "Заповни PARTITION BY, ORDER BY, rn."
+      },
+      "resultTrace": {
+        "title": "Дедуп payments",
+        "input": "staging.payments з дублями payment_id",
+        "steps": [
+          "PARTITION BY payment_id",
+          "ORDER BY updated_at DESC → свіжий = rn 1",
+          "WHERE rn = 1"
+        ],
+        "output": "по одному актуальному платежу на payment_id"
       }
     },
     {

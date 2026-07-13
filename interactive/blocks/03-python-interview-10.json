@@ -768,6 +768,18 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nЛіва таблиця users — усі користувачі лишаються. orders додає колонки справа.\n\n# df_users\nuser_id | name\n--- | ---\nu1 | Anna\nu2 | Bob\nu3 | Cara\n\n# df_orders\norder_id | user_id | amount\n--- | --- | ---\no100 | u1 | 50\no101 | u1 | 30\no200 | u3 | 80",
         "expect": "Заповни merge: ліва, права, ключ, how='left'."
+      },
+      "resultTrace": {
+        "title": "Що вийде в merged",
+        "input": "df_users: u1 Anna, u2 Bob, u3 Cara\ndf_orders: o100/u1/50, o101/u1/30, o200/u3/80",
+        "steps": [
+          "how='left' → усі рядки з df_users лишаються",
+          "u1 має 2 замовлення → 2 рядки (Anna×o100, Anna×o101)",
+          "u2 без orders → 1 рядок Bob + NaN у order_id/amount",
+          "u3 має o200 → 1 рядок Cara×o200"
+        ],
+        "output": "user_id | name | order_id | amount\nu1 | Anna | o100 | 50\nu1 | Anna | o101 | 30\nu2 | Bob  | NaN  | NaN\nu3 | Cara | o200 | 80",
+        "note": "LEFT JOIN ≠ inner: Bob не зникає, просто порожні колонки orders."
       }
     },
     {

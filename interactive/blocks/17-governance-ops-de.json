@@ -323,6 +323,15 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nДокументуємо колонку в dbt — description + tests.\n\ncolumn | business meaning | test\n--- | --- | ---\nuser_id | PK користувача | unique, not_null\nis_active | 1 = активна підписка сьогодні | accepted_values: [0,1]\nmrr | Monthly revenue USD | not_null where is_active=1\n# Docs живуть поруч із кодом — не в Confluence-only.",
         "expect": "Заповни фрагмент YAML."
+      },
+      "resultTrace": {
+        "title": "Документація колонки",
+        "input": "mart_users.is_active",
+        "steps": [
+          "description пояснює сенс бізнесу",
+          "accepted_values: лише 0 або 1"
+        ],
+        "output": "schema.yml з description + test accepted_values"
       }
     },
     {

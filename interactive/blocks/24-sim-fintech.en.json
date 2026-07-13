@@ -89,6 +89,16 @@
         "note": "Read the full prompt (and table above, if any), then fill ____.",
         "code": "# Fill blanks in the skeleton below.\n# Task: F2 (SQL)\n# Контекст\nstaging.payments має дублі payment_id. Лишаємо найсвіжіший updated_at.\n\npayment_id | amount | updated_at | лишити?\n--- | --- | --- | ---\np1 | 10 | 10:00 | —\np1 | 10 | 10:05 | ✓ newest\np2 | 20 | 10:01 | ✓ only\np3 | 15 | 10:03 | ✓ newest\n# Ті самі дані що F1 csv_lab.",
         "expect": "Fill every ____ to match the goal."
+      },
+      "resultTrace": {
+        "title": "Payments dedup",
+        "input": "staging.payments with duplicate payment_id",
+        "steps": [
+          "PARTITION BY payment_id",
+          "ORDER BY updated_at DESC → newest = rn 1",
+          "WHERE rn = 1"
+        ],
+        "output": "one current payment per payment_id"
       }
     },
     {

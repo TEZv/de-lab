@@ -340,6 +340,16 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nCompany stores parquet by day. Analysts read only the needed prefix — lower cost.\n\nprefix | zone | purpose\n--- | --- | ---\nbronze/orders/ | raw | as landed from API\nsilver/orders/ | curated | after DQ\ngold/mart_revenue/ | mart | for BI\n# Hive-style: year= / month= / day= in path — partition, not a column in every file.",
         "expect": "Fill lake zone and partition keys in the path."
+      },
+      "resultTrace": {
+        "title": "Built S3 path",
+        "input": "zone + date partitions",
+        "steps": [
+          "bronze = raw lake zone",
+          "year/month/day = key partitions",
+          "scanner reads only that day"
+        ],
+        "output": "s3://acme-datalake/bronze/orders/year=2026/month=07/day=01/part-0001.parquet"
       }
     },
     {

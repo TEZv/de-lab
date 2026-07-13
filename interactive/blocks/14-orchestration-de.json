@@ -349,6 +349,16 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nОдин bash-скрипт ingest.sh — запускати щодня о 03:00 UTC.\n\nполе | значення | що означає\n--- | --- | ---\n1 | хвилини | 0–59\n2 | години | 0–23\n3 | день місяця | * = щодня\n4 | місяць | *\n5 | день тижня | *\n# 03:00 UTC → хвилини=0, години=3.",
         "expect": "Заповни хвилини та години в cron-рядку."
+      },
+      "resultTrace": {
+        "title": "Cron розклад",
+        "input": "щодня о 03:00",
+        "steps": [
+          "поле 1 = хвилина → 0",
+          "поле 2 = година → 3",
+          "* * * = кожен день/місяць/dow"
+        ],
+        "output": "0 3 * * * /opt/etl/ingest.sh"
       }
     },
     {
@@ -493,6 +503,15 @@
         "note": "Таблиця вище — вхідні дані; ____ дописують код/SQL нижче.",
         "code": "# Контекст\nextract → validate → transform → mart. Два retries через 5 хв.\n\ntask | operator | навіщо\n--- | --- | ---\nextract | PythonOperator | з S3 у staging\nvalidate | ShortCircuit | stop якщо rowcount=0\ntransform | PythonOperator | staging → core\nload_mart | PythonOperator | core → mart\n# >> задає порядок; retries на рівні default_args або task.",
         "expect": "Заповни >> ланцюжок і retries."
+      },
+      "resultTrace": {
+        "title": "Граф + retry",
+        "input": "extract → … → mart",
+        "steps": [
+          "extract >> validate >> transform >> load_mart",
+          "retries=2, delay=5 хв між спробами"
+        ],
+        "output": "ланцюг task + default_args retries/delay"
       }
     }
   ]

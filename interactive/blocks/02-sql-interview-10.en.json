@@ -334,6 +334,16 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nVendors submit quotes for the same category and quality tier. Need one row per (category_code, tier) with minimum unit_price. Standard live-coding pattern (min per group) — no fantasy tables.\n\nquote_id | category_code | tier | unit_price | in result?\n--- | --- | --- | --- | ---\nQ-101 | ELEC | A | 12.50 | —\nQ-102 | ELEC | A | 9.99 | ✓ min\nQ-201 | ELEC | B | 15.00 | ✓ only\nQ-301 | HOME | A | 8.00 | ✓ only\n# Same pattern as public «cheapest SKU / listing» tasks — B2B column names.",
         "expect": "Grain = one winner per (category_code, tier). What do we rank by?"
+      },
+      "resultTrace": {
+        "title": "What remains after rn = 1",
+        "input": "quotes: several prices per (category_code, tier)",
+        "steps": [
+          "PARTITION BY category_code",
+          "ORDER BY unit_price ASC — cheapest = rn 1",
+          "WHERE rn = 1 — one row per group"
+        ],
+        "output": "top-1 (min price) per category"
       }
     },
     {
@@ -460,6 +470,16 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nAmong active rows: for each (power, age) pair — minimum price. Sort: power↓ age↓.\n\nsku_id | power | age | price | is_active | in result?\n--- | --- | --- | --- | --- | ---\n77 | 5 | 45 | 10 | 1 | ✓ min\n12 | 5 | 45 | 50 | 1 | —\n99 | 5 | 45 | 120 | 1 | —\n43 | 8 | 40 | 25 | 1 | ✓ min\n55 | 8 | 40 | 80 | 1 | —\n3 | 8 | 40 | 5 | 0 | inactive\n…\n# Expected result (3 rows): (10,20,40) → (8,40,25) → (5,45,10). Skip is_active=0 even if price is lowest.",
         "expect": "Raw rows in the table below. Find 3 final SKUs, then fill SQL."
+      },
+      "resultTrace": {
+        "title": "Min price per power×age",
+        "input": "sku_prices (active SKUs)",
+        "steps": [
+          "PARTITION BY power, age",
+          "ORDER BY price ASC → rn=1 = cheapest",
+          "WHERE rn = 1"
+        ],
+        "output": "one SKU per (power, age) pair"
       }
     },
     {
@@ -529,6 +549,16 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nTable core.user_sessions: user_id, session_start. PM wants prev_session — when this user was online BEFORE the current row.\n\nuser_id | session_start | prev_session\n--- | --- | ---\n42 | 2026-01-01 10:00 | NULL\n42 | 2026-01-03 14:00 | 2026-01-01 10:00\n42 | 2026-01-05 09:00 | 2026-01-03 14:00\n# PARTITION BY user_id · ORDER BY session_start — timeline per user.",
         "expect": "Which function looks at the previous row in the window?"
+      },
+      "resultTrace": {
+        "title": "Previous session",
+        "input": "user sessions over time",
+        "steps": [
+          "LAG(session_start) in user_id window",
+          "first session → NULL",
+          "later → previous session_start"
+        ],
+        "output": "session_start | prev_session (or NULL)"
       }
     },
     {
@@ -700,6 +730,15 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nIn staging.orders some amount = NULL (source glitch). In marts, sums cannot be NULL — default 0.\n\norder_id | amount (raw) | cleaned_amount\n--- | --- | ---\nO-1 | 120.50 | 120.50\nO-2 | NULL | 0\nO-3 | 80 | 80\n# Typical DQ requirement on DE/AE interviews.",
         "expect": "Which function returns first non-NULL?"
+      },
+      "resultTrace": {
+        "title": "NULL → 0",
+        "input": "staging.orders with some NULL amount",
+        "steps": [
+          "COALESCE(amount, 0) replaces NULL with 0",
+          "cleaned_amount is always numeric"
+        ],
+        "output": "order_id | cleaned_amount (no NULL)"
       }
     },
     {
@@ -771,6 +810,16 @@
         "note": "Use the table above as input; blanks complete the code/SQL below.",
         "code": "# Context\nstaging.users gets repeat loads for the same user_id. Core needs one current row per key.\n\nuser_id | updated_at | keep?\n--- | --- | ---\nU-9 | 2026-06-01 | —\nU-9 | 2026-06-10 | ✓ newest\nU-9 | 2026-06-05 | —\n# ROW_NUMBER … WHERE rn = 1 — standard dedup on interviews.",
         "expect": "PARTITION BY what? ORDER BY what DESC? rn = ?"
+      },
+      "resultTrace": {
+        "title": "One row per user_id",
+        "input": "duplicate user_id with different updated_at",
+        "steps": [
+          "PARTITION BY user_id",
+          "ORDER BY updated_at DESC → rn=1 = newest",
+          "WHERE rn = 1"
+        ],
+        "output": "one current row per user"
       }
     },
     {
